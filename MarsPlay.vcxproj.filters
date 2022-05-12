@@ -62,10 +62,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\qube_fragment.shader">
+    <None Include="Shader\mars_fragment.shader">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shader\qube_vertex.shader">
+    <None Include="Shader\mars_vertex.shader">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

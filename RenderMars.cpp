@@ -39,8 +39,8 @@ namespace GL {
 	{
 		ShaderProgramPtr pFlyingCubeProgram = std::make_shared<ShaderProgram>();
 
-			pFlyingCubeProgram->addShader(ShaderName::qube_vertex, ShaderProgram::ShaderType::Vertex());
-			pFlyingCubeProgram->addShader(ShaderName::qube_fragment, ShaderProgram::ShaderType::Fragment());
+			pFlyingCubeProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
+			pFlyingCubeProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
 
 		bool bProgramCompile = pFlyingCubeProgram->init();
 		if (!bProgramCompile)
@@ -72,16 +72,12 @@ namespace GL {
 		//  Coords
 		m_pVertex->attribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 
-		//  Colors
-		//m_pVertex->attribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
-
 		//-------------------------------------------------------------------------------------------------
 
 		m_mPerspective = glm::perspective(glm::radians(60.0f), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.1f, 1000.0f);
 		m_pFlyingCubeProgram->setUniformMat4f("m_mPerspective", &m_mPerspective[0][0]);
 
 		m_mTrunslate = glm::translate(m_mTrunslate, glm::vec3(0.0f, 0.0f, 0.0f));
-		//m_mRotate = glm::rotate(m_mRotate, glm::radians(30.0f), glm::vec3(0.5f, 1.0f, 0.7f));
 
 		lib::Matrix4 mModel = m_mTrunslate * m_mRotate;
 		m_pFlyingCubeProgram->setUniformMat4f("m_mModel", &mModel[0][0]);

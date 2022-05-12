@@ -168,8 +168,8 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\qube_fragment.shader" />
-    <None Include="Shader\qube_vertex.shader" />
+    <None Include="Shader\mars_fragment.shader" />
+    <None Include="Shader\mars_vertex.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BufferBounder.h" />

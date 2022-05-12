@@ -26,20 +26,4 @@ namespace GL {
 
 
 	};
-
-	struct ShaderName
-	{
-		static const int qube_vertex	= IDR_DATA1;
-		static const int qube_fragment	= IDR_DATA2;
-
-		static const char* getName(int ID_)
-		{
-			switch (ID_)
-			{
-			case qube_vertex	: return "qube_vertex";
-			case qube_fragment	: return "qube_fragment";
-			default: return "";
-			}
-		}
-	};
 }

@@ -7,6 +7,22 @@
 
  namespace GL {
 
+     struct ShaderName
+     {
+         static const int mars_vertex = IDR_DATA1;
+         static const int mars_fragment = IDR_DATA2;
+
+         static const char* getName(int ID_)
+         {
+             switch (ID_)
+             {
+             case mars_vertex: return "mars_vertex";
+             case mars_fragment: return "mars_fragment";
+             default: return "";
+             }
+         }
+     };
+
       struct SMarsVertex
       {
           float fLatitude;
