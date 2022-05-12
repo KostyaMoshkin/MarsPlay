@@ -1,4 +1,4 @@
-#include "RenderCube.h"
+#include "RenderMars.h"
 #include "BufferBounder.h"
 
 #include "lib.h"
@@ -74,11 +74,11 @@ namespace GL {
 	}
 	//-------------------------------------------------------------------------------------
 
-	RenderCube::RenderCube()
+	RenderMars::RenderMars()
 	{
 	}
 
-	bool RenderCube::init(lib::iPoint2D ptScreenSize_)
+	bool RenderMars::init(lib::iPoint2D ptScreenSize_)
 	{
 		ShaderProgramPtr pFlyingCubeProgram = std::make_shared<ShaderProgram>();
 
@@ -94,7 +94,7 @@ namespace GL {
 		glGenVertexArrays(1, &m_nVAO);
 
 		BufferBounder<ShaderProgram> programBounder(m_pFlyingCubeProgram);
-		BufferBounder<RenderCube> renderBounder(this);
+		BufferBounder<RenderMars> renderBounder(this);
 
 		//-------------------------------------------------------------------------------------
 
@@ -139,16 +139,16 @@ namespace GL {
 		return true;
 	}
 
-	void RenderCube::draw()
+	void RenderMars::draw()
 	{
 		BufferBounder<ShaderProgram> programBounder(m_pFlyingCubeProgram);
-		BufferBounder<RenderCube> renderBounder(this);
+		BufferBounder<RenderMars> renderBounder(this);
 		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);
 
 		glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
 	}
 
-	void RenderCube::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)
+	void RenderMars::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)
 	{
 		lib::Matrix4 mView = glm::lookAt(fCamPosition_, vCamUp3D_, vCamUp3D_);  //  eye, center, up
 
@@ -156,12 +156,12 @@ namespace GL {
 		m_pFlyingCubeProgram->setUniformMat4f("m_mView", &mView[0][0]);
 	}
 
-	void RenderCube::bound()
+	void RenderMars::bound()
 	{
 		glBindVertexArray(m_nVAO);
 	}
 
-	void RenderCube::unbound()
+	void RenderMars::unbound()
 	{
 		glBindVertexArray(0);
 	}

@@ -154,7 +154,7 @@
     <ClCompile Include="BufferOpenGL.cpp" />
     <ClCompile Include="MarsPlay.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
-    <ClCompile Include="RenderCube.cpp" />
+    <ClCompile Include="RenderMars.cpp" />
     <ClCompile Include="SceneRender.cpp" />
     <ClCompile Include="SceneRenderBase.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
@@ -171,7 +171,7 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="Render.h" />
-    <ClInclude Include="RenderCube.h" />
+    <ClInclude Include="RenderMars.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneRender.h" />
     <ClInclude Include="SceneRenderBase.h" />

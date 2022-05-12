@@ -9,11 +9,11 @@
 
 namespace GL {
 
-	class RenderCube;
-	using RenderCubePtr = std::shared_ptr<RenderCube>;
+	class RenderMars;
+	using RenderMarsPtr = std::shared_ptr<RenderMars>;
 
 
-	class RenderCube : public Render
+	class RenderMars : public Render
 	{
 		ShaderProgramPtr m_pFlyingCubeProgram = nullptr;
 		VertexBufferPtr m_pVertex = nullptr;
@@ -29,7 +29,7 @@ namespace GL {
 		GLuint m_nVAO = 0;
 
 	public:
-		RenderCube();
+		RenderMars();
 
 	public:
 		// Унаследовано через Render

@@ -1,6 +1,6 @@
 #include "SceneRender.h"
 #include "ShaderProgram.h"
-#include "RenderCube.h"
+#include "RenderMars.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -33,18 +33,18 @@ int main()
 
 	//------------------------------------------------------------------------------------------
 
-	GL::RenderCubePtr pRenderCube = std::make_shared<GL::RenderCube>();
+	GL::RenderMarsPtr pRenderMars = std::make_shared<GL::RenderMars>();
 
 	lib::iPoint2D ptScreenSize = pSceneRender->getScreenSize();
 
-	if (!pRenderCube->init(ptScreenSize))
+	if (!pRenderMars->init(ptScreenSize))
 	{
 		pSceneRender.reset();
 		message("OpenGL CUBE init ERROR");
 		wait_return();
 	}
 
-	pSceneRender->addElement(pRenderCube);
+	pSceneRender->addElement(pRenderMars);
 
 	//------------------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ int main()
 	float fStepForward = 1.0f;
 	float fRoteteAngle = 1.0f;
 
-	pRenderCube->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+	pRenderMars->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 	pSceneRender->draw();
 
 	while (!pSceneRender->WindowShouldClose())
@@ -85,7 +85,7 @@ int main()
 		//  Применение поворота
 		vCamPosition3D = qMove * qRotate * vCamPosition3D;
 
-		pRenderCube->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+		pRenderMars->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 		pSceneRender->draw();
 	}
 
