@@ -7,10 +7,11 @@
 
  namespace GL {
 
-      struct SQubeVertex
+      struct SMarsVertex
       {
-          lib::Vector3 vCoord;
-          lib::Vector3 vColor;
+          float fLatitude;
+          float fLongitude;
+          float fDistance;
       };
 
       class Render;

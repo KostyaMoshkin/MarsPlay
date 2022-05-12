@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 #include <GLM/glm.hpp>
 
 #include <glm/gtc/quaternion.hpp>
@@ -39,5 +41,13 @@ namespace lib
 
 		return glm::normalize(lib::Quat(fCos, fSin * vDirection_.x, fSin * vDirection_.y, fSin * vDirection_.z));
 	}
+
+	template <typename T> int sign(T val) {
+		return (T(0) < val) - (val < T(0));
+	}
+
+
+	std::vector<std::string> create_file_list(const char* sPath_);
+
 
 }

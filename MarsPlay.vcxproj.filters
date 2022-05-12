@@ -54,6 +54,12 @@
     <ClCompile Include="VertexBuffer.cpp">
       <Filter>GL</Filter>
     </ClCompile>
+    <ClCompile Include="PedrReader.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="lib.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\qube_fragment.shader">
@@ -105,6 +111,9 @@
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="PedrReader.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

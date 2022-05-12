@@ -12,7 +12,6 @@ namespace GL {
 	class RenderMars;
 	using RenderMarsPtr = std::shared_ptr<RenderMars>;
 
-
 	class RenderMars : public Render
 	{
 		ShaderProgramPtr m_pFlyingCubeProgram = nullptr;

@@ -4,74 +4,31 @@
 #include "lib.h"
 #include "Vocabulary.h"
 
+#include "PedrReader.h"
+
+#include <memory>
+
 namespace GL {
 
-	static void fillCube(std::vector<SQubeVertex>& vPosition_, float  fSideHalfSide_ = 0.8f)
+
+	static void fillVertex(std::vector<SMarsVertex>& vPosition_)
 	{
-		//  Side 1
+		vPosition_.clear();
 
-		vPosition_[00] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 0) };
-		vPosition_[01] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 0) };
-		vPosition_[02] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 0) };
+		std::string sPEDRbinPath("E:\\Mars\\Pedr_BIN\\");
 
-		vPosition_[03] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 0) };
-		vPosition_[04] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 0) };
-		vPosition_[05] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 0) };
+		std::vector<std::string> vsFileList = lib::create_file_list(sPEDRbinPath.c_str());
 
-		//  Side 2
+		if (vsFileList.empty())
+			return;
 
-		vPosition_[06] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 1, 0) };
-		vPosition_[07] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 1, 0) };
-		vPosition_[8]  = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 1, 0) };
+		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::create();
+		pPedrReader->read_bin(vsFileList[0].c_str());
 
-		vPosition_[9]  = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 1, 0) };
-		vPosition_[10] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 1, 0) };
-		vPosition_[11] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 1, 0) };
-
-		//  Side 3
-
-		vPosition_[12] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 1) };
-		vPosition_[13] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 0, 1) };
-		vPosition_[14] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 0, 1) };
-
-		vPosition_[15] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(1, 0, 1) };
-		vPosition_[16] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 1) };
-		vPosition_[17] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(1, 0, 1) };
-
-		//  Side 4
-
-		vPosition_[18] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 0, 1) };
-		vPosition_[19] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 0, 1) };
-		vPosition_[20] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 0, 1) };
-
-		vPosition_[21] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 0, 1) };
-		vPosition_[22] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 0, 1) };
-		vPosition_[23] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 0, 1) };
-
-		//  Side 5
-
-		vPosition_[24] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 1, 1) };
-		vPosition_[25] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 1, 1) };
-		vPosition_[26] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 1, 1) };
-
-		vPosition_[27] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 1, 1) };
-		vPosition_[28] = { lib::Vector3(+fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 1, 1) };
-		vPosition_[29] = { lib::Vector3(-fSideHalfSide_, -fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 1, 1) };
-
-		//  Side 6
-
-		vPosition_[30] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 1, 0) };
-		vPosition_[31] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 1, 0) };
-		vPosition_[32] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 1, 0) };
-
-		vPosition_[33] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, +fSideHalfSide_), lib::Vector3(0, 1, 0) };
-		vPosition_[34] = { lib::Vector3(+fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 1, 0) };
-		vPosition_[35] = { lib::Vector3(-fSideHalfSide_, +fSideHalfSide_, -fSideHalfSide_), lib::Vector3(0, 1, 0) };
+		for (pedr::SPedr pedr : pPedrReader->gerVPedr())
+			vPosition_.push_back({pedr.fLatitude, pedr.fLongitude, pedr.fPlanetaryRadius + pedr.fTopo});
 	}
 
-	template <typename T> int sign(T val) {
-		return (T(0) < val) - (val < T(0));
-	}
 	//-------------------------------------------------------------------------------------
 
 	RenderMars::RenderMars()
@@ -99,8 +56,8 @@ namespace GL {
 		//-------------------------------------------------------------------------------------
 
 		//  Координаты вершин
-		std::vector<SQubeVertex> vPosition(2 * 3 * 6);
-		fillCube(vPosition, 0.5f);
+		std::vector<SMarsVertex> vPosition;
+		fillVertex(vPosition);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -109,13 +66,14 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> positionBounder(m_pVertex);
 
-		m_pVertex->fillBuffer(sizeof(SQubeVertex) * vPosition.size(), vPosition.data());
+		if (!m_pVertex->fillBuffer(sizeof(SMarsVertex) * vPosition.size(), vPosition.data()))
+			return false;
 
 		//  Coords
-		m_pVertex->attribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+		m_pVertex->attribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 
 		//  Colors
-		m_pVertex->attribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+		//m_pVertex->attribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 
 		//-------------------------------------------------------------------------------------------------
 
