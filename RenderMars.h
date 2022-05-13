@@ -24,6 +24,8 @@ namespace GL {
 
 		lib::fPoint2D m_fCamPosition;
 
+		size_t m_nElementCount = 0;
+
 	public:
 		GLuint m_nVAO = 0;
 

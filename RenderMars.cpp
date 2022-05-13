@@ -23,10 +23,16 @@ namespace GL {
 			return;
 
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::create();
-		pPedrReader->read_bin(vsFileList[0].c_str());
 
-		for (pedr::SPedr pedr : pPedrReader->gerVPedr())
-			vPosition_.push_back({pedr.fLatitude, pedr.fLongitude, pedr.fPlanetaryRadius + pedr.fTopo});
+		const unsigned nOrbitCount = 2500;
+
+		for (unsigned i = 0; i < nOrbitCount; ++i)
+		{
+			pPedrReader->read_bin(vsFileList[i].c_str());
+
+			for (pedr::SPedr pedr : pPedrReader->gerVPedr())
+				vPosition_.push_back({pedr.fLatitude, pedr.fLongitude, pedr.fPlanetaryRadius + pedr.fTopo});
+		}
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -66,7 +72,9 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> positionBounder(m_pVertex);
 
-		if (!m_pVertex->fillBuffer(sizeof(SMarsVertex) * vPosition.size(), vPosition.data()))
+		m_nElementCount = vPosition.size();
+
+		if (!m_pVertex->fillBuffer(sizeof(SMarsVertex) * m_nElementCount, vPosition.data()))
 			return false;
 
 		//  Coords
@@ -99,7 +107,7 @@ namespace GL {
 		BufferBounder<RenderMars> renderBounder(this);
 		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);
 
-		glDrawArrays(GL_TRIANGLES, 0, 6 * 6);
+		glDrawArrays(GL_POINTS, 0, m_nElementCount);
 	}
 
 	void RenderMars::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)

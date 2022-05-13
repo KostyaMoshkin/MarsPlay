@@ -18,11 +18,11 @@ namespace GL {
 
 	bool SceneRender::init()
 	{
-		//m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
-		//	glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
-		//	"OpenGL", glfwGetPrimaryMonitor(), nullptr);
+		m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+			glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
+			"OpenGL", glfwGetPrimaryMonitor(), nullptr);
 
-		m_pWindow = glfwCreateWindow(1024, 768, "OpenGL", nullptr, nullptr);
+		//m_pWindow = glfwCreateWindow(1024, 768, "OpenGL", nullptr, nullptr);
 
 		if (m_pWindow == nullptr)
 			return false;
@@ -46,6 +46,8 @@ namespace GL {
 		glViewport(0, 0, nWidth, nHeight);
 
 		glEnable(GL_DEPTH_TEST);
+
+		glPointSize(5);
 
 		return true;
 	}

@@ -9,7 +9,7 @@ namespace pedr
 	{
 	}
 
-	unsigned PedrReader::getPedrCount()
+	size_t PedrReader::getPedrCount()
 	{
 		return m_vPedr.size();
 	}

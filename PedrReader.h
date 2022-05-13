@@ -28,7 +28,7 @@ namespace pedr
 		PedrReader();
 		~PedrReader();
 
-		unsigned getPedrCount();
+		size_t getPedrCount();
 		std::vector<SPedr> gerVPedr();
 
 		int read_bin(const char* sBinFileName_);

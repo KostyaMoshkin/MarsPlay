@@ -1,7 +1,7 @@
 #include "ShaderProgram.h"
 #include "ShaderLoader.h"
 
-#include "Vocabulary.h"
+#include "Render.h"
 
 #include <iostream>
 

@@ -10,7 +10,17 @@ smooth out vec3 vColor;
 
 void main()
 {
-  gl_Position = m_mPerspective * m_mView * m_mModel * vec4(m_vPosition, 1.0);
+	vec3 position = m_vPosition;
+	float fDistance = m_vPosition.z / 3300000.0;
 
-  vColor = vec3(0.5, 0.5, 0.5);
+	float fLatitude = m_vPosition.x * 3.1415926 / 180.0;
+	float fLongitude = m_vPosition.y * 3.1415926 / 180.0;
+
+	position.x = fDistance * cos(fLatitude) * sin(fLongitude);
+	position.y = fDistance * sin(fLatitude);
+	position.z = fDistance * cos(fLatitude) * cos(fLongitude);
+
+	gl_Position = m_mPerspective * m_mView * m_mModel * vec4(position, 1.0);
+
+	vColor = vec3(0.8, 0.8, 0.8);
 }
