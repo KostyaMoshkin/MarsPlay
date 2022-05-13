@@ -3,6 +3,8 @@
 #include "ShaderProgram.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Palette.h"
+#include "TextureBuffer.h"
 
 #include "Lib.h"
 #include "Vocabulary.h"
@@ -14,8 +16,10 @@ namespace GL {
 
 	class RenderMars : public Render
 	{
-		ShaderProgramPtr m_pFlyingCubeProgram = nullptr;
+		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
 		VertexBufferPtr m_pVertex = nullptr;
+		PalettePtr m_pPalette = nullptr;
+		TextureBufferPtr m_pPeletteTexture = nullptr;
 
 		lib::Matrix4 m_mTrunslate	= lib::Matrix4(1.0f);
 		lib::Matrix4 m_mRotate		= lib::Matrix4(1.0f);

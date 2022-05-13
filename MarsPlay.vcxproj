@@ -167,12 +167,14 @@
     <ClCompile Include="lib.cpp" />
     <ClCompile Include="MarsPlay.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="Palette.cpp" />
     <ClCompile Include="PedrReader.cpp" />
     <ClCompile Include="RenderMars.cpp" />
     <ClCompile Include="SceneRender.cpp" />
     <ClCompile Include="SceneRenderBase.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="TextureBuffer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +186,7 @@
     <ClInclude Include="BufferOpenGL.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="lib.h" />
+    <ClInclude Include="Palette.h" />
     <ClInclude Include="PedrReader.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="RenderMars.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="SceneRenderBase.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="TextureBuffer.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Vocabulary.h" />

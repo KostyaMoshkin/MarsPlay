@@ -20,6 +20,19 @@ namespace lib
 		Point2D(T x_, T y_) : x(x_), y(y_) {}
 	};
 
+	template <typename  T>
+	class Point3D
+	{
+	public:
+		T x;
+		T y;
+		T z;
+	public:
+		Point3D() : x(0), y(0), z(0) {}
+
+		Point3D(T x_, T y_, T z_) : x(x_), y(y_), z(z_) {}
+	};
+
 	using iPoint2D = Point2D<int>;
 	using fPoint2D = Point2D<float>;
 	using dPoint2D = Point2D<double>;
@@ -48,6 +61,12 @@ namespace lib
 
 
 	std::vector<std::string> create_file_list(const char* sPath_);
+
+
+	void unpackColor(lib::iPoint3D vColor256_, float* vColorRGB_);
+
+	//------------------------------------------------------------------------------------------
+
 
 
 }

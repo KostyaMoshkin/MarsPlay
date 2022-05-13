@@ -16,4 +16,16 @@ namespace lib
 		return vsFileList;
 	}
 
+
+	void unpackColor(lib::iPoint3D  vColor256_, float* vColorRGB_)
+	{
+		vColorRGB_[0] = 1.0f * (vColor256_.r & 0xff) / 255;
+		vColorRGB_[1] = 1.0f * ((vColor256_.g >> 8) & 0xff) / 255;
+		vColorRGB_[2] = 1.0f * (vColor256_.b >> 16) / 255;
+	}
+
+	//------------------------------------------------------------------------------------------
+
+
+
 }

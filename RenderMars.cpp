@@ -24,7 +24,7 @@ namespace GL {
 
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::create();
 
-		const unsigned nOrbitCount = 2500;
+		const unsigned nOrbitCount = 200;
 
 		for (unsigned i = 0; i < nOrbitCount; ++i)
 		{
@@ -43,20 +43,20 @@ namespace GL {
 
 	bool RenderMars::init(lib::iPoint2D ptScreenSize_)
 	{
-		ShaderProgramPtr pFlyingCubeProgram = std::make_shared<ShaderProgram>();
+		ShaderProgramPtr pMarsPlayProgram = std::make_shared<ShaderProgram>();
 
-			pFlyingCubeProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
-			pFlyingCubeProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
+			pMarsPlayProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
+			pMarsPlayProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
 
-		bool bProgramCompile = pFlyingCubeProgram->init();
+		bool bProgramCompile = pMarsPlayProgram->init();
 		if (!bProgramCompile)
 			return false;
 
-		m_pFlyingCubeProgram = pFlyingCubeProgram;
+		m_pMarsPlayProgram = pMarsPlayProgram;
 
 		glGenVertexArrays(1, &m_nVAO);
 
-		BufferBounder<ShaderProgram> programBounder(m_pFlyingCubeProgram);
+		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		BufferBounder<RenderMars> renderBounder(this);
 
 		//-------------------------------------------------------------------------------------
@@ -83,15 +83,39 @@ namespace GL {
 		//-------------------------------------------------------------------------------------------------
 
 		m_mPerspective = glm::perspective(glm::radians(60.0f), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.1f, 1000.0f);
-		m_pFlyingCubeProgram->setUniformMat4f("m_mPerspective", &m_mPerspective[0][0]);
+		m_pMarsPlayProgram->setUniformMat4f("m_mPerspective", &m_mPerspective[0][0]);
 
 		m_mTrunslate = glm::translate(m_mTrunslate, glm::vec3(0.0f, 0.0f, 0.0f));
 
 		lib::Matrix4 mModel = m_mTrunslate * m_mRotate;
-		m_pFlyingCubeProgram->setUniformMat4f("m_mModel", &mModel[0][0]);
+		m_pMarsPlayProgram->setUniformMat4f("m_mModel", &mModel[0][0]);
 
 		lib::Matrix4 mView = lib::Matrix4(1.0f);
-		m_pFlyingCubeProgram->setUniformMat4f("m_mView", &mView[0][0]);
+		m_pMarsPlayProgram->setUniformMat4f("m_mView", &mView[0][0]);
+
+		//-------------------------------------------------------------------------------------------------
+
+		m_pPalette = std::make_shared<Palette>();
+		m_pPalette->init();
+
+		float fDataMin;
+		float fDataMax;
+
+		m_pPalette->getMinMax(fDataMin, fDataMax);
+
+		const unsigned nPaletteSize = 1024;
+		std::vector<float[3]> vColorText(nPaletteSize);
+		for (size_t i = 0; i < vColorText.size(); ++i)
+			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);
+
+		m_pPeletteTexture = std::make_shared<TextureBuffer>(GL_TEXTURE_1D);
+
+		if (!m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))
+			return;
+
+		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
+		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
+
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -103,7 +127,7 @@ namespace GL {
 
 	void RenderMars::draw()
 	{
-		BufferBounder<ShaderProgram> programBounder(m_pFlyingCubeProgram);
+		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		BufferBounder<RenderMars> renderBounder(this);
 		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);
 
@@ -114,8 +138,8 @@ namespace GL {
 	{
 		lib::Matrix4 mView = glm::lookAt(fCamPosition_, vCamUp3D_, vCamUp3D_);  //  eye, center, up
 
-		BufferBounder<ShaderProgram> programBounder(m_pFlyingCubeProgram);
-		m_pFlyingCubeProgram->setUniformMat4f("m_mView", &mView[0][0]);
+		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
+		m_pMarsPlayProgram->setUniformMat4f("m_mView", &mView[0][0]);
 	}
 
 	void RenderMars::bound()

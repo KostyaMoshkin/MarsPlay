@@ -180,4 +180,25 @@ namespace GL {
 		m_cursorCurrentPos = { float(fPosX_), float(fPosY_) };
 
 	}
+
+
+	bool SceneRender::read_error(bool check_error_, const char* szFileName /*= __FILE__*/, unsigned nLine /*= __LINE__*/, const char* szDateTime /*= __TIMESTAMP__*/)
+	{
+		bool result = true;
+
+		GLenum err;
+		int nCount = 0;
+		while (((err = glGetError()) != GL_NO_ERROR) && ++nCount < 1000)
+		{
+			if (check_error_)
+			{
+
+			}
+
+			result = false;
+		}
+
+		return result;
+	}
+
 }
