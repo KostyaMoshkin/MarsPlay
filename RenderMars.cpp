@@ -11,7 +11,7 @@
 namespace GL {
 
 
-	static void fillVertex(std::vector<SMarsVertex>& vPosition_)
+	static void fillVertex(std::vector<SMarsVertex>& vPosition_, float& fTopoMin_, float& fTopoMax_)
 	{
 		vPosition_.clear();
 
@@ -22,16 +22,23 @@ namespace GL {
 		if (vsFileList.empty())
 			return;
 
+		fTopoMin_ = 0;
+		fTopoMax_ = 0;
+
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::create();
 
-		const unsigned nOrbitCount = 200;
+		const unsigned nOrbitCount = 500;
 
 		for (unsigned i = 0; i < nOrbitCount; ++i)
 		{
 			pPedrReader->read_bin(vsFileList[i].c_str());
 
 			for (pedr::SPedr pedr : pPedrReader->gerVPedr())
-				vPosition_.push_back({pedr.fLatitude * 3.1415926f / 180, pedr.fLongitude * 3.1415926f / 180, pedr.fPlanetaryRadius, pedr.fTopo});
+			{
+				vPosition_.push_back({ pedr.fLatitude * 3.1415926f / 180, pedr.fLongitude * 3.1415926f / 180, pedr.fPlanetaryRadius, pedr.fTopo });
+				fTopoMin_ = std::min(fTopoMin_, pedr.fTopo);
+				fTopoMax_ = std::max(fTopoMax_, pedr.fTopo);
+			}
 		}
 	}
 
@@ -61,9 +68,12 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------
 
+		float fTopoMin;
+		float fTopoMax;
+
 		//  Координаты вершин
 		std::vector<SMarsVertex> vPosition;
-		fillVertex(vPosition);
+		fillVertex(vPosition, fTopoMin, fTopoMax);
 
 		//-------------------------------------------------------------------------------------------------
 
