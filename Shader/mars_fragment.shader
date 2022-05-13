@@ -1,8 +1,11 @@
 #version 460 core
 
-smooth in vec3 vColor;
+uniform sampler1D tTexture;
+
+smooth in float fPaletteIndex;
 
 void main()
 {
-  gl_FragColor = vec4(vColor, 1.0);
+	vec3 vColor = texture(tTexture, fPaletteIndex).rgb;
+	gl_FragColor = vec4(vColor, 1.0);
 }

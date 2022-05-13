@@ -43,12 +43,12 @@ namespace GL {
 	lib::iPoint3D Palette::get(int value_)
 	{
 		if (value_ <= m_nMinValue)
-			return m_vPalette[m_nMinValue].second;
+			return m_vPalette[0].second;
 
 		if (value_ >= m_nMaxValue)
-			return m_vPalette[m_nMaxValue].second;
+			return m_vPalette[m_vPalette.size() - 1].second;
 
-		std::pair<int, lib::iPoint3D> paletteElementPrevious = m_vPalette[m_nMinValue];
+		std::pair<int, lib::iPoint3D> paletteElementPrevious = m_vPalette[0];
 
 		for (std::pair<int, lib::iPoint3D> paletteElement : m_vPalette)
 		{
@@ -78,7 +78,7 @@ namespace GL {
 		return lib::iPoint3D(0, 0, 0);
 	}
 
-	void Palette::getMinMax(float& fMin_, float fMax_)
+	void Palette::getMinMax(float& fMin_, float& fMax_)
 	{
 		fMin_ = (float)m_nMinValue;
 		fMax_ = (float)m_nMaxValue;

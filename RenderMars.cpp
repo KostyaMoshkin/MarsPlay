@@ -31,7 +31,7 @@ namespace GL {
 			pPedrReader->read_bin(vsFileList[i].c_str());
 
 			for (pedr::SPedr pedr : pPedrReader->gerVPedr())
-				vPosition_.push_back({pedr.fLatitude, pedr.fLongitude, pedr.fPlanetaryRadius + pedr.fTopo});
+				vPosition_.push_back({pedr.fLatitude * 3.1415926f / 180, pedr.fLongitude * 3.1415926f / 180, pedr.fPlanetaryRadius, pedr.fTopo});
 		}
 	}
 
@@ -77,8 +77,10 @@ namespace GL {
 		if (!m_pVertex->fillBuffer(sizeof(SMarsVertex) * m_nElementCount, vPosition.data()))
 			return false;
 
-		//  Coords
-		m_pVertex->attribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+		m_pVertex->attribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(0 * sizeof(float)));
+		m_pVertex->attribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(1 * sizeof(float)));
+		m_pVertex->attribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+		m_pVertex->attribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -104,17 +106,21 @@ namespace GL {
 		m_pPalette->getMinMax(fDataMin, fDataMax);
 
 		const unsigned nPaletteSize = 1024;
-		std::vector<float[3]> vColorText(nPaletteSize);
-		for (size_t i = 0; i < vColorText.size(); ++i)
+		std::vector<lib::fPoint3D> vColorText(nPaletteSize);
+		for (size_t i = 0; i < nPaletteSize; ++i)
 			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);
 
 		m_pPeletteTexture = std::make_shared<TextureBuffer>(GL_TEXTURE_1D);
+		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 
 		if (!m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))
-			return;
+			return false;
 
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
+
+		float fScale = 10.0f;
+		m_pMarsPlayProgram->setUniform1f("m_fScale", &fScale);
 
 
 		//-------------------------------------------------------------------------------------------------
@@ -130,8 +136,9 @@ namespace GL {
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		BufferBounder<RenderMars> renderBounder(this);
 		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);
+		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 
-		glDrawArrays(GL_POINTS, 0, m_nElementCount);
+		glDrawArrays(GL_POINTS, 0, (GLsizei)m_nElementCount);
 	}
 
 	void RenderMars::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)

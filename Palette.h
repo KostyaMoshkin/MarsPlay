@@ -28,7 +28,7 @@ namespace GL {
 	public:
 		void add(int value_, lib::iPoint3D color_);
 		lib::iPoint3D get(int value_);
-		void getMinMax(float& fMin_, float fMax_);
+		void getMinMax(float& fMin_, float& fMax_);
 	};
 }
 

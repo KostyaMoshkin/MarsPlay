@@ -36,6 +36,9 @@ namespace lib
 	using iPoint2D = Point2D<int>;
 	using fPoint2D = Point2D<float>;
 	using dPoint2D = Point2D<double>;
+
+	using fPoint3D = Point3D<float>;
+
 	using dPoint3D = glm::f32vec3;
 
 	using iPoint3D = glm::i32vec3;
@@ -63,7 +66,7 @@ namespace lib
 	std::vector<std::string> create_file_list(const char* sPath_);
 
 
-	void unpackColor(lib::iPoint3D vColor256_, float* vColorRGB_);
+	void unpackColor(lib::iPoint3D vColor256_, lib::fPoint3D& vColorRGB_);
 
 	//------------------------------------------------------------------------------------------
 

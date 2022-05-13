@@ -28,6 +28,7 @@
           float fLatitude;
           float fLongitude;
           float fDistance;
+          float fTopology;
       };
 
       class Render;
