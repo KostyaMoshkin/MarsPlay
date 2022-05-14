@@ -12,7 +12,6 @@
 #include "Vocabulary.h"
 #include "Utils.h"
 
-
 int main()
 {
 	//static_assert(index < count, "index larger than array size");
@@ -62,8 +61,16 @@ int main()
 		Sleep(50);
 		pSceneRender->PollEvents();
 
-		if ( pSceneRender->isKeyPress(GL::EKeyPress::esk) )
+		if (!pSceneRender->isInteraction())
+			continue;
+
+		if (pSceneRender->isKeyPress(GL::EKeyPress::esk))
 			break;
+
+		if (pSceneRender->isKeyPress(GL::EKeyPress::key_1))
+			pRenderMars->keyPress(GL::EKeyPress::key_1);
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_2))
+			pRenderMars->keyPress(GL::EKeyPress::key_2);
 
 		lib::fPoint2D ptCursorMove = pSceneRender->getCursorMove();
 

@@ -74,6 +74,7 @@
     <None Include="Shader\mars_vertex.shader">
       <Filter>Shader</Filter>
     </None>
+    <None Include="MarsPlay.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Render.h">
@@ -126,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="TextureBuffer.h">
       <Filter>GL</Filter>
+    </ClInclude>
+    <ClInclude Include="MarsPlay.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

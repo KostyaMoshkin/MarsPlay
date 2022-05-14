@@ -33,6 +33,8 @@ namespace pedr
 
 		int read_bin(const char* sBinFileName_);
 
+		const SPedr &operator[](size_t index);
+
 	public:
 		static PedrReaderPtr create();
 	};

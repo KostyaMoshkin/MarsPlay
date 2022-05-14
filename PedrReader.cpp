@@ -47,6 +47,12 @@ namespace pedr
 
 		return 0;
 	}
+
+	const SPedr& PedrReader::operator[](size_t index)
+	{
+		return m_vPedr[index];
+	}
+
 	PedrReaderPtr PedrReader::create()
 	{
 		return std::make_shared<PedrReader>();

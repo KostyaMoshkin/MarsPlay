@@ -58,6 +58,7 @@ namespace GL {
 
 		bool isCursoreMove();
 		lib::fPoint2D getCursorMove();
+		bool isInteraction();
 
 	public:
 		static bool read_error(bool check_error_, const char* szFileName = __FILE__, unsigned nLine = __LINE__, const char* szDateTime = __TIMESTAMP__);

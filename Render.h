@@ -46,6 +46,8 @@
             virtual void rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_) = 0;
             virtual void draw() = 0;
 
+            virtual void keyPress(GL::EKeyPress nKey_) = 0;
+
             virtual void bound() = 0;
             virtual void unbound() = 0;
       };

@@ -27,14 +27,18 @@ namespace GL {
 
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::create();
 
-		const unsigned nOrbitCount = 500;
+		unsigned nOrbitCount = std::min<unsigned>(10000, (unsigned)vsFileList.size());
 
 		for (unsigned i = 0; i < nOrbitCount; ++i)
 		{
 			pPedrReader->read_bin(vsFileList[i].c_str());
 
-			for (pedr::SPedr pedr : pPedrReader->gerVPedr())
+			rsize_t nPointOnOrbit = pPedrReader->getPedrCount();
+			const unsigned nPointOnOrbitStep = 20;
+
+			for (size_t j = 0; j < nPointOnOrbit; j += nPointOnOrbitStep)
 			{
+				pedr::SPedr pedr = (*pPedrReader)[j];
 				vPosition_.push_back({ pedr.fLatitude * 3.1415926f / 180, pedr.fLongitude * 3.1415926f / 180, pedr.fPlanetaryRadius, pedr.fTopo });
 				fTopoMin_ = std::min(fTopoMin_, pedr.fTopo);
 				fTopoMax_ = std::max(fTopoMax_, pedr.fTopo);
@@ -128,14 +132,17 @@ namespace GL {
 
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
-
-		float fScale = 10.0f;
-		m_pMarsPlayProgram->setUniform1f("m_fScale", &fScale);
+		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
 
 
 		//-------------------------------------------------------------------------------------------------
 
 		m_fCamPosition.y = 0.0f;
+
+
+		glPointSize(5);
+		glLineWidth(5);
+
 
 		renderBounder.unbound();
 		return true;
@@ -148,7 +155,7 @@ namespace GL {
 		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 
-		glDrawArrays(GL_POINTS, 0, (GLsizei)m_nElementCount);
+		glDrawArrays(GL_POINTS, 0, (GLsizei)m_nElementCount); //GL_POINTS //GL_LINE_STRIP
 	}
 
 	void RenderMars::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)
@@ -167,5 +174,19 @@ namespace GL {
 	void RenderMars::unbound()
 	{
 		glBindVertexArray(0);
+	}
+
+	void RenderMars::keyPress(GL::EKeyPress nKey_)
+	{
+		if ((nKey_ != GL::EKeyPress::key_1) && (nKey_ != GL::EKeyPress::key_2))
+			return;
+
+		if (nKey_ == GL::EKeyPress::key_1)
+			m_fScale *= 0.8f;
+		else if (nKey_ == GL::EKeyPress::key_2)
+			m_fScale *= 1.2f;
+
+		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
+		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
 	}
 }

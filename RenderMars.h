@@ -30,6 +30,8 @@ namespace GL {
 
 		size_t m_nElementCount = 0;
 
+		float m_fScale = 1.0f;
+
 	public:
 		GLuint m_nVAO = 0;
 
@@ -43,6 +45,9 @@ namespace GL {
 		void rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_) override;
 		void bound() override;
 		void unbound() override;
+
+		// Унаследовано через Render
+		virtual void keyPress(GL::EKeyPress nKey_) override;
 	};
 }
 

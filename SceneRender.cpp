@@ -18,11 +18,13 @@ namespace GL {
 
 	bool SceneRender::init()
 	{
-		//m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
-		//	glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
-		//	"OpenGL", glfwGetPrimaryMonitor(), nullptr);
-
+#ifdef __DEBUG
 		m_pWindow = glfwCreateWindow(1024, 768, "OpenGL", nullptr, nullptr);
+#else
+		m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+			glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
+			"OpenGL", glfwGetPrimaryMonitor(), nullptr);
+#endif // __DEBUG
 
 		if (m_pWindow == nullptr)
 			return false;
@@ -46,8 +48,6 @@ namespace GL {
 		glViewport(0, 0, nWidth, nHeight);
 
 		glEnable(GL_DEPTH_TEST);
-
-		glPointSize(5);
 
 		return true;
 	}
@@ -130,10 +130,12 @@ namespace GL {
 
 		SwapBuffers();
 	}
+
 	bool SceneRender::isCursoreMove()
 	{
 		return !(m_cursorMove.x == 0 && m_cursorMove.y == 0);
 	}
+
 	void SceneRender::keyCallback(GLFWwindow* pWindow_, int nKey_, int nScancode_, int nAction_, int nMods_)
 	{
 		bool bPress;
@@ -171,6 +173,29 @@ namespace GL {
 			m_vKeyPress[(int)EKeyPress::key_home] = bPress;
 		else if (nKey_ == GLFW_KEY_END)
 			m_vKeyPress[(int)EKeyPress::key_end] = bPress;
+	}
+
+	bool SceneRender::isInteraction()
+	{
+		if (m_vKeyPress[(int)EKeyPress::esk])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_1])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_2])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_left])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_right])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_up])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_down])
+			return true;
+		else if (isCursoreMove())
+			return true;
+
+
+		return false;
 	}
 
 	void SceneRender::mouseMoveCallback(GLFWwindow* window_, double fPosX_, double fPosY_)

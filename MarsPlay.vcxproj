@@ -178,6 +178,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="MarsPlay.config" />
     <None Include="Shader\mars_fragment.shader" />
     <None Include="Shader\mars_vertex.shader" />
   </ItemGroup>
@@ -186,6 +187,7 @@
     <ClInclude Include="BufferOpenGL.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="lib.h" />
+    <ClInclude Include="MarsPlay.h" />
     <ClInclude Include="Palette.h" />
     <ClInclude Include="PedrReader.h" />
     <ClInclude Include="Render.h" />
