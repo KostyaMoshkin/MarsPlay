@@ -2,6 +2,7 @@
 
 #include "lib.h"
 #include "Vocabulary.h"
+#include "CConfig.h"
 
 #include <memory>
 
@@ -35,7 +36,7 @@
       using RenderPtr = std::shared_ptr<Render>;
 
       // Класс интерфейс рисования. Для каждой версии OpenGL и для каждой графической сущности свой наследник
-      class Render
+      class Render : public lib::CConfig
       {
       public:
           Render() = default;

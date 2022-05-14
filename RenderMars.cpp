@@ -5,43 +5,42 @@
 #include "Vocabulary.h"
 
 #include "PedrReader.h"
+#include "XMLreader.h"
 
 #include <memory>
 
 namespace GL {
 
 
-	static void fillVertex(std::vector<SMarsVertex>& vPosition_, float& fTopoMin_, float& fTopoMax_)
+	static void fillVertex(std::vector<SMarsVertex>& vPosition_, lib::XMLnodePtr pConfigRoot_)
 	{
 		vPosition_.clear();
 
-		std::string sPEDRbinPath("E:\\Mars\\Pedr_BIN\\");
+		std::string sPEDRbinPath(pConfigRoot_->FirstChild("PedrDirectory")->FirstChild()->Value());
 
 		std::vector<std::string> vsFileList = lib::create_file_list(sPEDRbinPath.c_str());
 
 		if (vsFileList.empty())
 			return;
 
-		fTopoMin_ = 0;
-		fTopoMax_ = 0;
-
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::create();
 
-		unsigned nOrbitCount = std::min<unsigned>(10000, (unsigned)vsFileList.size());
+		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild("OrbitStart")->FirstChild();
 
-		for (unsigned i = 0; i < nOrbitCount; ++i)
+		unsigned nOrbitCountMin = std::min<unsigned>(std::stoi(pConfigRoot_->FirstChild("OrbitStart")->FirstChild()->Value()), (unsigned)vsFileList.size());
+		unsigned nOrbitCountMax = std::min<unsigned>(std::stoi(pConfigRoot_->FirstChild("OrbitEnd")->FirstChild()->Value()), (unsigned)vsFileList.size());
+		unsigned nPointOnOrbitStep = std::stoi(pConfigRoot_->FirstChild("OrbitpointStep")->FirstChild()->Value());
+
+		for (unsigned i = nOrbitCountMin; i < nOrbitCountMax; ++i)
 		{
 			pPedrReader->read_bin(vsFileList[i].c_str());
 
 			rsize_t nPointOnOrbit = pPedrReader->getPedrCount();
-			const unsigned nPointOnOrbitStep = 20;
 
 			for (size_t j = 0; j < nPointOnOrbit; j += nPointOnOrbitStep)
 			{
 				pedr::SPedr pedr = (*pPedrReader)[j];
 				vPosition_.push_back({ pedr.fLatitude * 3.1415926f / 180, pedr.fLongitude * 3.1415926f / 180, pedr.fPlanetaryRadius, pedr.fTopo });
-				fTopoMin_ = std::min(fTopoMin_, pedr.fTopo);
-				fTopoMax_ = std::max(fTopoMax_, pedr.fTopo);
 			}
 		}
 	}
@@ -72,12 +71,9 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------
 
-		float fTopoMin;
-		float fTopoMax;
-
 		//  Координаты вершин
 		std::vector<SMarsVertex> vPosition;
-		fillVertex(vPosition, fTopoMin, fTopoMax);
+		fillVertex(vPosition, getConfig());
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -119,7 +115,10 @@ namespace GL {
 
 		m_pPalette->getMinMax(fDataMin, fDataMax);
 
-		const unsigned nPaletteSize = 1024;
+		lib::XMLnodePtr pPaletteConfig = getConfig()->FirstChild("PalettSize")->FirstChild();
+		const char * sPalettSize = pPaletteConfig->Value();
+
+		const unsigned nPaletteSize = std::stoi(sPalettSize);
 		std::vector<lib::fPoint3D> vColorText(nPaletteSize);
 		for (size_t i = 0; i < nPaletteSize; ++i)
 			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);

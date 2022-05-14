@@ -25,6 +25,9 @@
     <Filter Include="Lib">
       <UniqueIdentifier>{c0fbfc68-2be2-4910-a55d-a421713a5865}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib\TinyXML">
+      <UniqueIdentifier>{599fea5b-7935-4da1-84c7-3b5202d58159}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MarsPlay.cpp">
@@ -65,6 +68,21 @@
     </ClCompile>
     <ClCompile Include="TextureBuffer.cpp">
       <Filter>GL</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLreader.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="tinystr.cpp">
+      <Filter>Lib\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml.cpp">
+      <Filter>Lib\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlerror.cpp">
+      <Filter>Lib\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlparser.cpp">
+      <Filter>Lib\TinyXML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +148,18 @@
     </ClInclude>
     <ClInclude Include="MarsPlay.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLreader.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="tinystr.h">
+      <Filter>Lib\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml.h">
+      <Filter>Lib\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="CConfig.h">
+      <Filter>Lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

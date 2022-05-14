@@ -12,9 +12,13 @@
 #include "Vocabulary.h"
 #include "Utils.h"
 
+#include "XMLreader.h"
+
 int main()
 {
 	//static_assert(index < count, "index larger than array size");
+
+	lib::XMLreaderPtr pXMLconfig = lib::XMLreader::Create("D:\\VisualStudioProjects\\MarsPlay\\MarsPlay.config");
 
 	GL::SceneRenderPtr pSceneRender = std::make_shared<GL::SceneRender>();
 
@@ -33,6 +37,7 @@ int main()
 	//------------------------------------------------------------------------------------------
 
 	GL::RenderMarsPtr pRenderMars = std::make_shared<GL::RenderMars>();
+	pRenderMars->setConfig(pXMLconfig->getRoot());
 
 	lib::iPoint2D ptScreenSize = pSceneRender->getScreenSize();
 
