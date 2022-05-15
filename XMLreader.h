@@ -34,7 +34,6 @@ namespace lib {
 		XMLnodePtr getRoot();
 		bool changeCurrentNode(const char* sNode_ = nullptr);
 
-		//XMLnodePtr getNode(const char* sNode_);
 		XMLnodePtr getCurrentNode();
 		bool getNextCurrentNode();
 
