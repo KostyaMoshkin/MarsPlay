@@ -80,7 +80,7 @@ namespace lib {
 
 		int nBase = 10;
 
-		int nXpos = sValue.find('x');
+		size_t nXpos = sValue.find('x');
 		if (nXpos > 0)
 			nBase = 16;
 
@@ -106,7 +106,7 @@ namespace lib {
 
 		int nBase = 10;
 
-		int nXpos = sValue.find('x');
+		size_t nXpos = sValue.find('x');
 		if (nXpos > 0)
 			nBase = 16;
 
@@ -130,7 +130,7 @@ namespace lib {
 			return false;
 		int nBase = 10;
 
-		int nXpos = sValue.find('x');
+		size_t nXpos = sValue.find('x');
 		if (nXpos > 0)
 			nBase = 16;
 
