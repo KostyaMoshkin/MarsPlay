@@ -64,10 +64,10 @@ namespace GL {
 
 	bool RenderMars::init(lib::iPoint2D ptScreenSize_)
 	{
-		ShaderProgramPtr pMarsPlayProgram = GL::ShaderProgram::Create();
+		ShaderProgramPtr pMarsPlayProgram = ShaderProgram::Create();
 
-			pMarsPlayProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
-			pMarsPlayProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
+		pMarsPlayProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
+		pMarsPlayProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
 
 		bool bProgramCompile = pMarsPlayProgram->init();
 		if (!bProgramCompile)

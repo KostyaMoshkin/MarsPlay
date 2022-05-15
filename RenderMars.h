@@ -19,7 +19,6 @@ namespace GL {
 	public:
 		const char* sPedrDirectory()	{ return "PedrDirectory";	}
 		const char* sOrbitStart()		{ return "OrbitStart";		}
-		const char* sOrbitStart()		{ return "OrbitStart";		}
 		const char* sOrbitEnd()			{ return "OrbitEnd";		}
 		const char* sOrbitpointStep()	{ return "OrbitpointStep";	}
 
