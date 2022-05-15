@@ -19,7 +19,8 @@ namespace GL {
 		if (!!xmlPaletteDefault && !lib::XMLreader::getInt(xmlPaletteDefault, nDefaultPaletteId))
 			nDefaultPaletteId = 1;
 
-		lib::XMLnodePtr xmlPalette = lib::XMLreader::getNode(getConfig(), "Palette");
+		const char* sPalette = "Palette";
+		lib::XMLnodePtr xmlPalette = lib::XMLreader::getNode(getConfig(), sPalette);
 		while (!!xmlPalette)
 		{
 			int nId = -1;
@@ -27,10 +28,11 @@ namespace GL {
 				if (nId == nDefaultPaletteId)
 					break;
 
-			xmlPalette = xmlPalette->NextSibling("Palette");
+			xmlPalette = xmlPalette->NextSibling(sPalette);
 		}
 
-		lib::XMLnodePtr xmlColor = lib::XMLreader::getNode(xmlPalette, "Color");
+		const char* sColor = "Color";
+		lib::XMLnodePtr xmlColor = lib::XMLreader::getNode(xmlPalette, sColor);
 		while (!!xmlColor)
 		{
 			unsigned nColor = 0;
@@ -39,26 +41,8 @@ namespace GL {
 			if (lib::XMLreader::getInt(xmlColor, nColor) && lib::XMLreader::getInt(xmlColor, "Height", nHeight))
 				add(nHeight, { nColor  >> 16, (nColor & 0x00FF00) >> 8, nColor & 0x0000FF });
 
-			xmlColor = xmlColor->NextSibling("Color");
-
+			xmlColor = xmlColor->NextSibling(sColor);
 		}
-
-
-		//add(-32565, { 0, 0, 65 });
-		//add(-20000, { 0, 60, 0 });
-		//add(-70000, { 0, 60, 80 });
-		//add(-5000, { 15, 60, 200 });
-		//add(-2000, { 150, 90, 15 });
-		//add( -1000, {32, 128, 32} );
-		//add( -500,  {166, 200, 33} );
-		//add( 0,  {18, 26, 165} );
-		//add( 100,  {24, 95, 158} );
-		//add( 500,     {19, 164, 164} );
-		//add( 1000,  {167, 131, 7} );
-		//add(3000, { 215, 114, 128 });
-		//add(5000, { 215, 114, 0 });
-		//add(12000, { 0, 128, 128 });
-		//add(21180, { 255, 0, 0 });
 	}
 
 	void Palette::arrange()
