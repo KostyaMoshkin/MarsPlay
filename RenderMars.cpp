@@ -16,7 +16,7 @@ namespace GL {
 		vPosition_.clear();
 
 		std::string sPEDRbinPath;
-		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMars::sPedrDirectory()), sPEDRbinPath))
+		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(GL::RenderMars::sPedrDirectory()), sPEDRbinPath))
 			return;
 
 		std::vector<std::string> vsFileList = lib::create_file_list(sPEDRbinPath.c_str());
@@ -26,20 +26,20 @@ namespace GL {
 
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::Create();
 
-		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild(RenderMars::sOrbitStart())->FirstChild();
+		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild(GL::RenderMars::sOrbitStart())->FirstChild();
 
 		size_t nOrbitCountMin;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitStart()), nOrbitCountMin))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(GL::RenderMars::sOrbitStart()), nOrbitCountMin))
 			nOrbitCountMin = 0;
 
 		size_t nOrbitCountMax;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitEnd()), nOrbitCountMax))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(GL::RenderMars::sOrbitEnd()), nOrbitCountMax))
 			nOrbitCountMax = vsFileList.size();
 		else
 			nOrbitCountMax = std::min<size_t>(nOrbitCountMax, vsFileList.size());
 
 		size_t nPointOnOrbitStep;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitpointStep()), nPointOnOrbitStep))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(GL::RenderMars::sOrbitpointStep()), nPointOnOrbitStep))
 			nPointOnOrbitStep = 1;
 
 		for (size_t i = nOrbitCountMin; i < nOrbitCountMax; ++i)
@@ -105,7 +105,7 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_mPerspective = glm::perspective(glm::radians(60.0f), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.1f, 1000.0f);
+		m_mPerspective = glm::perspective(glm::radians(60.0f), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.01f, 1000.0f);
 		m_pMarsPlayProgram->setUniformMat4f("m_mPerspective", &m_mPerspective[0][0]);
 
 		m_mTrunslate = glm::translate(m_mTrunslate, glm::vec3(0.0f, 0.0f, 0.0f));
