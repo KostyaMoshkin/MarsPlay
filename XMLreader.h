@@ -12,6 +12,7 @@ namespace lib {
 
 	using XMLnode = TiXmlNode;
 	using XMLnodePtr = TiXmlNode*;
+	using XMLattributePtr = TiXmlAttribute*;
 
 	class XMLreader;
 	using XMLreaderPtr = std::shared_ptr<XMLreader>;
@@ -32,14 +33,25 @@ namespace lib {
 
 	public:
 		XMLnodePtr getRoot();
-		bool changeCurrentNode(const char* sNode_);
-		bool getIntAttribute(const char* sAttributeName_, int& sValue_);
-		std::string getText();
-		int getChildNoteCount(const char* sNode_);
+		bool changeCurrentNode(const char* sNode_ = nullptr);
+
+		XMLnodePtr getNode(const char* sNode_);
 		XMLnodePtr getCurrentNode();
 		bool getNextCurrentNode();
 
-		XMLnodePtr getNode(const char* sNode_);
+		static bool getInt(XMLnodePtr xNode_, int& nValue_);
+		static bool getUInt(XMLnodePtr xNode_, unsigned& nValue_);
+		static bool getSInt(XMLnodePtr xNode_, size_t& nValue_);
+
+		static bool getInt(XMLnodePtr xNode_, const char* sNode_, int& nValue_);
+		static bool getUInt(XMLnodePtr xNode_, const char* sNode_, unsigned& nValue_);
+		static bool getSInt(XMLnodePtr xNode_, const char* sNode_, size_t& nValue_);
+
+		static bool getSting(XMLnodePtr xNode_, std::string& sValue_);
+
+
+
+
 	};
 }
 

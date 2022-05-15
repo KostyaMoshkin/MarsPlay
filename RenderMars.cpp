@@ -16,7 +16,9 @@ namespace GL {
 	{
 		vPosition_.clear();
 
-		std::string sPEDRbinPath(pConfigRoot_->FirstChild("PedrDirectory")->FirstChild()->Value());
+		std::string sPEDRbinPath;
+		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild("PedrDirectory"), sPEDRbinPath))
+			return;
 
 		std::vector<std::string> vsFileList = lib::create_file_list(sPEDRbinPath.c_str());
 
@@ -27,11 +29,21 @@ namespace GL {
 
 		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild("OrbitStart")->FirstChild();
 
-		unsigned nOrbitCountMin = std::min<unsigned>(std::stoi(pConfigRoot_->FirstChild("OrbitStart")->FirstChild()->Value()), (unsigned)vsFileList.size());
-		unsigned nOrbitCountMax = std::min<unsigned>(std::stoi(pConfigRoot_->FirstChild("OrbitEnd")->FirstChild()->Value()), (unsigned)vsFileList.size());
-		unsigned nPointOnOrbitStep = std::stoi(pConfigRoot_->FirstChild("OrbitpointStep")->FirstChild()->Value());
+		size_t nOrbitCountMin;
+		if (!lib::XMLreader::getSInt(pConfigRoot_->FirstChild("OrbitStart"), nOrbitCountMin))
+			nOrbitCountMin = 0;
 
-		for (unsigned i = nOrbitCountMin; i < nOrbitCountMax; ++i)
+		size_t nOrbitCountMax;
+		if (!lib::XMLreader::getSInt(pConfigRoot_->FirstChild("OrbitEnd"), nOrbitCountMax))
+			nOrbitCountMax = vsFileList.size();
+		else
+			nOrbitCountMax = std::min<size_t>(nOrbitCountMax, vsFileList.size());
+
+		size_t nPointOnOrbitStep;
+		if (!lib::XMLreader::getSInt(pConfigRoot_->FirstChild("OrbitpointStep"), nPointOnOrbitStep))
+			nPointOnOrbitStep = 1;
+
+		for (size_t i = nOrbitCountMin; i < nOrbitCountMax; ++i)
 		{
 			pPedrReader->read_bin(vsFileList[i].c_str());
 
@@ -39,8 +51,8 @@ namespace GL {
 
 			for (size_t j = 0; j < nPointOnOrbit; j += nPointOnOrbitStep)
 			{
-				pedr::SPedr pedr = (*pPedrReader)[j];
-				vPosition_.push_back({ pedr.fLatitude * 3.1415926f / 180, pedr.fLongitude * 3.1415926f / 180, pedr.fPlanetaryRadius, pedr.fTopo });
+				const pedr::SPedr *pedr = &(*pPedrReader)[j];
+				vPosition_.push_back({ glm::radians(pedr->fLatitude), glm::radians(pedr->fLongitude), pedr->fPlanetaryRadius, pedr->fTopo });
 			}
 		}
 	}

@@ -33,25 +33,12 @@ namespace lib {
 
 	bool XMLreader::changeCurrentNode(const char* sNode_)
 	{
-		m_xCurrentNode = m_xCurrentNode->FirstChild(sNode_);
-		return false;
-	}
+		if (!sNode_)
+			m_xCurrentNode = m_xRoot;
+		else
+			m_xCurrentNode = m_xCurrentNode->FirstChild(sNode_);
 
-	bool XMLreader::getIntAttribute(const char* sAttributeName_, int& sValue_)
-	{
-		int result = m_xCurrentNode->ToElement()->QueryIntAttribute(sAttributeName_, &sValue_);
-
-		return result != TIXML_NO_ATTRIBUTE;
-	}
-
-	std::string XMLreader::getText()
-	{
-		return std::string(m_xCurrentNode->FirstChild()->Value());
-	}
-
-	int XMLreader::getChildNoteCount(const char* sNode_)
-	{
-		return 0;
+		return !!m_xCurrentNode;
 	}
 
 	XMLnodePtr XMLreader::getCurrentNode()
@@ -63,6 +50,133 @@ namespace lib {
 	{
 		m_xCurrentNode = m_xCurrentNode->NextSiblingElement();
 		return !m_xCurrentNode;
+	}
+
+	bool XMLreader::getInt(XMLnodePtr xNode_, int& nValue_)
+	{
+		const char* sValue = xNode_->FirstChild()->Value();
+
+		if (!sValue)
+			return false;
+
+		try
+		{
+			nValue_ = (int)std::atol(sValue);
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool XMLreader::getUInt(XMLnodePtr xNode_, unsigned& nValue_)
+	{
+		const char* sValue = xNode_->FirstChild()->Value();
+
+		if (!sValue)
+			return false;
+
+		try
+		{
+			nValue_ = (unsigned)std::atol(sValue);
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+
+	bool XMLreader::getSInt(XMLnodePtr xNode_, size_t& nValue_)
+	{
+		const char* sValue = xNode_->FirstChild()->Value();
+
+		if (!sValue)
+			return false;
+
+		try
+		{
+			nValue_ = (size_t)std::atol(sValue);
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool XMLreader::getUInt(XMLnodePtr xNode_, const char* sNode_, unsigned& nValue_)
+	{
+		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
+
+		if (!sValue)
+			return false;
+
+		try
+		{
+			nValue_ = (unsigned)std::atol(sValue);
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool XMLreader::getSInt(XMLnodePtr xNode_, const char* sNode_, size_t& nValue_)
+	{
+		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
+
+		if (!sValue)
+			return false;
+
+		try
+		{
+			nValue_ = (size_t)std::atol(sValue);
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool XMLreader::getInt(XMLnodePtr xNode_, const char* sNode_, int& nValue_)
+	{
+		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
+
+		if (!sValue)
+			return false;
+
+		try
+		{
+			nValue_ = (int)std::atol(sValue);
+		}
+		catch (const std::exception&)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool XMLreader::getSting(XMLnodePtr xNode_, std::string& sValue_)
+	{
+		const char* sValue = xNode_->FirstChild()->Value();
+
+		if (!sValue)
+			return false;
+
+		sValue_ = std::string(xNode_->FirstChild()->Value());
+
+		return true;
 	}
 
 	XMLnodePtr XMLreader::getNode(const char* sNode_)
