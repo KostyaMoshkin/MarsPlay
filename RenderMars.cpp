@@ -11,7 +11,6 @@
 
 namespace GL {
 
-
 	static void fillVertex(std::vector<SMarsVertex>& vPosition_, lib::XMLnodePtr pConfigRoot_)
 	{
 		vPosition_.clear();
@@ -30,7 +29,7 @@ namespace GL {
 		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild(RenderMars::sOrbitStart())->FirstChild();
 
 		size_t nOrbitCountMin;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(sOrbitStart()), nOrbitCountMin))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitStart()), nOrbitCountMin))
 			nOrbitCountMin = 0;
 
 		size_t nOrbitCountMax;
