@@ -34,7 +34,7 @@ int main()
 
 	//------------------------------------------------------------------------------------------
 
-	lib::XMLreaderPtr pXMLconfig = lib::XMLreader::Create("D:\\VisualStudioProjects\\MarsPlay\\MarsPlay.config");
+	lib::XMLreaderPtr pXMLconfig = lib::XMLreader::Create("MarsPlay.config");
 
 	GL::RenderMarsPtr pRenderMars = GL::RenderMars::Create();
 	pRenderMars->setConfig(pXMLconfig->getRoot());
