@@ -20,13 +20,12 @@ namespace lib {
 	class XMLreader
 	{
 		TiXmlDocument m_xDOC;
-		XMLnodePtr m_xCurrentNode;
-		XMLnodePtr m_xRoot;
+		XMLnodePtr m_xCurrentNode = nullptr;
+		XMLnodePtr m_xRoot = nullptr;
 
 	public:
 		XMLreader(const char *sXMLpath_);
 		~XMLreader();
-
 
 	public:
 		static XMLreaderPtr Create(const char* sXMLpath_) { return std::make_shared<XMLreader>(sXMLpath_); }
