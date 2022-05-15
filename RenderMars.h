@@ -38,6 +38,8 @@ namespace GL {
 	public:
 		RenderMars();
 
+		static RenderMarsPtr Create() { return std::make_shared<RenderMars>(); }
+
 	public:
 		// Унаследовано через Render
 		bool init(lib::iPoint2D ptScreenSize_) override;

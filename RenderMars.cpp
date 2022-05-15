@@ -23,7 +23,7 @@ namespace GL {
 		if (vsFileList.empty())
 			return;
 
-		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::create();
+		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::Create();
 
 		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild("OrbitStart")->FirstChild();
 
@@ -53,7 +53,7 @@ namespace GL {
 
 	bool RenderMars::init(lib::iPoint2D ptScreenSize_)
 	{
-		ShaderProgramPtr pMarsPlayProgram = std::make_shared<ShaderProgram>();
+		ShaderProgramPtr pMarsPlayProgram = GL::ShaderProgram::Create();
 
 			pMarsPlayProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
 			pMarsPlayProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
@@ -77,7 +77,7 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_pVertex = std::make_shared<VertexBuffer>();
+		m_pVertex = GL::VertexBuffer::Create();
 		m_pVertex->setUsage(GL_STATIC_DRAW);
 
 		BufferBounder<VertexBuffer> positionBounder(m_pVertex);
@@ -107,7 +107,7 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_pPalette = std::make_shared<Palette>();
+		m_pPalette = GL::Palette::Create();
 		m_pPalette->init();
 
 		float fDataMin;
@@ -123,7 +123,7 @@ namespace GL {
 		for (size_t i = 0; i < nPaletteSize; ++i)
 			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);
 
-		m_pPeletteTexture = std::make_shared<TextureBuffer>(GL_TEXTURE_1D);
+		m_pPeletteTexture = GL::TextureBuffer::Create(GL_TEXTURE_1D);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 
 		if (!m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))

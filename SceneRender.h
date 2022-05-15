@@ -29,6 +29,8 @@ namespace GL {
 		SceneRender();
 		~SceneRender();
 
+		static SceneRenderPtr Create() { return std::make_shared<SceneRender>(); }
+
 	private:
 		virtual void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) override;
 		virtual void mouseMoveCallback(GLFWwindow* window, double fPosX, double fPosY) override;

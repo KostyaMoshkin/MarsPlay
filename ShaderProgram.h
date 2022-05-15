@@ -9,7 +9,7 @@
 namespace GL {
 
 	class ShaderProgram;
-	typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
+	using ShaderProgramPtr = std::shared_ptr<ShaderProgram>;
 
     // Обеспечивает загрузку шейдеров, передачу параметров в шейдеры
     class ShaderProgram
@@ -36,6 +36,8 @@ namespace GL {
     public:
         ShaderProgram();
         ~ShaderProgram();
+
+        static ShaderProgramPtr Create() { return std::make_shared<ShaderProgram>(); }
 
     public:
         bool init();

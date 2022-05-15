@@ -16,6 +16,9 @@ namespace GL {
         TextureBuffer(unsigned int nBufferTarget_, int nTexture_ = GL_TEXTURE0, int nTexParametr_ = GL_NEAREST);
         ~TextureBuffer();
 
+        static TextureBufferPtr Create(unsigned int nBufferTarget_, int nTexture_ = GL_TEXTURE0, int nTexParametr_ = GL_NEAREST) { return std::make_shared<TextureBuffer>(nBufferTarget_, nTexture_, nTexParametr_); }
+
+      public:
         bool isInit();
 
         bool fillBuffer1D(int nInternalFormat_, size_t size_, int nFormat_, int nType_, const void * data_);

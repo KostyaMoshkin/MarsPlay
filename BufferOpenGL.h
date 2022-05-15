@@ -5,7 +5,7 @@
   namespace GL {
 
     class BufferOpenGL;
-    using Buffer3DPtr = std::shared_ptr<BufferOpenGL>;
+    using BufferOpenGLPtr = std::shared_ptr<BufferOpenGL>;
 
     //  Базовый класс для буферов OpenGL
     class BufferOpenGL
@@ -15,6 +15,7 @@
       BufferOpenGL(unsigned int bufferTarget_, unsigned int bufferUsage_);
       virtual ~BufferOpenGL();
 
+    public:
       virtual bool bookSpace(int size_);
 
       virtual bool isInit() const;

@@ -20,6 +20,9 @@ namespace GL {
 		Palette();
 		~Palette();
 
+		static PalettePtr Create() { return std::make_shared<Palette>(); }
+
+
 		void init();
 
 	protected:

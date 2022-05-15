@@ -18,9 +18,7 @@ int main()
 {
 	//static_assert(index < count, "index larger than array size");
 
-	lib::XMLreaderPtr pXMLconfig = lib::XMLreader::Create("D:\\VisualStudioProjects\\MarsPlay\\MarsPlay.config");
-
-	GL::SceneRenderPtr pSceneRender = std::make_shared<GL::SceneRender>();
+	GL::SceneRenderPtr pSceneRender = GL::SceneRender::Create();
 
 	if (!pSceneRender->init())
 	{
@@ -36,7 +34,9 @@ int main()
 
 	//------------------------------------------------------------------------------------------
 
-	GL::RenderMarsPtr pRenderMars = std::make_shared<GL::RenderMars>();
+	lib::XMLreaderPtr pXMLconfig = lib::XMLreader::Create("D:\\VisualStudioProjects\\MarsPlay\\MarsPlay.config");
+
+	GL::RenderMarsPtr pRenderMars = GL::RenderMars::Create();
 	pRenderMars->setConfig(pXMLconfig->getRoot());
 
 	lib::iPoint2D ptScreenSize = pSceneRender->getScreenSize();

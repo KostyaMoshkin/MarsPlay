@@ -52,9 +52,4 @@ namespace pedr
 	{
 		return m_vPedr[index];
 	}
-
-	PedrReaderPtr PedrReader::create()
-	{
-		return std::make_shared<PedrReader>();
-	}
 }

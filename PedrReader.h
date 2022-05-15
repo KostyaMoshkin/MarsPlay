@@ -28,6 +28,9 @@ namespace pedr
 		PedrReader();
 		~PedrReader();
 
+		static PedrReaderPtr Create() { return std::make_shared<PedrReader>(); }
+
+	public:
 		size_t getPedrCount();
 		std::vector<SPedr> gerVPedr();
 
