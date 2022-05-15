@@ -17,7 +17,7 @@ namespace GL {
 		vPosition_.clear();
 
 		std::string sPEDRbinPath;
-		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild("PedrDirectory"), sPEDRbinPath))
+		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMars::sPedrDirectory()), sPEDRbinPath))
 			return;
 
 		std::vector<std::string> vsFileList = lib::create_file_list(sPEDRbinPath.c_str());
@@ -27,20 +27,20 @@ namespace GL {
 
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::Create();
 
-		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild("OrbitStart")->FirstChild();
+		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild(RenderMars::sOrbitStart())->FirstChild();
 
 		size_t nOrbitCountMin;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild("OrbitStart"), nOrbitCountMin))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(sOrbitStart()), nOrbitCountMin))
 			nOrbitCountMin = 0;
 
 		size_t nOrbitCountMax;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild("OrbitEnd"), nOrbitCountMax))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitEnd()), nOrbitCountMax))
 			nOrbitCountMax = vsFileList.size();
 		else
 			nOrbitCountMax = std::min<size_t>(nOrbitCountMax, vsFileList.size());
 
 		size_t nPointOnOrbitStep;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild("OrbitpointStep"), nPointOnOrbitStep))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitpointStep()), nPointOnOrbitStep))
 			nPointOnOrbitStep = 1;
 
 		for (size_t i = nOrbitCountMin; i < nOrbitCountMax; ++i)

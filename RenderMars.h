@@ -16,6 +16,14 @@ namespace GL {
 
 	class RenderMars : public Render
 	{
+	public:
+		const char* sPedrDirectory()	{ return "PedrDirectory";	}
+		const char* sOrbitStart()		{ return "OrbitStart";		}
+		const char* sOrbitStart()		{ return "OrbitStart";		}
+		const char* sOrbitEnd()			{ return "OrbitEnd";		}
+		const char* sOrbitpointStep()	{ return "OrbitpointStep";	}
+
+	private:
 		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
 		VertexBufferPtr m_pVertex = nullptr;
 		PalettePtr m_pPalette = nullptr;

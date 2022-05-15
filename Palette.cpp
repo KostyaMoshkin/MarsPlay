@@ -12,36 +12,34 @@ namespace GL {
 	{
 		m_vPalette.clear();
 
-		lib::XMLnodePtr xmlPaletteDefault = lib::XMLreader::getNode(getConfig(), "PaletteDefault");
+		lib::XMLnodePtr xmlPaletteDefault = lib::XMLreader::getNode(getConfig(), sPaletteDefault());
 
 		int nDefaultPaletteId = 1;
 
 		if (!!xmlPaletteDefault && !lib::XMLreader::getInt(xmlPaletteDefault, nDefaultPaletteId))
 			nDefaultPaletteId = 1;
 
-		const char* sPalette = "Palette";
-		lib::XMLnodePtr xmlPalette = lib::XMLreader::getNode(getConfig(), sPalette);
+		lib::XMLnodePtr xmlPalette = lib::XMLreader::getNode(getConfig(), sPalette());
 		while (!!xmlPalette)
 		{
 			int nId = -1;
-			if (lib::XMLreader::getInt(xmlPalette, "id", nId))
+			if (lib::XMLreader::getInt(xmlPalette, sId(), nId))
 				if (nId == nDefaultPaletteId)
 					break;
 
-			xmlPalette = xmlPalette->NextSibling(sPalette);
+			xmlPalette = xmlPalette->NextSibling(sPalette());
 		}
 
-		const char* sColor = "Color";
-		lib::XMLnodePtr xmlColor = lib::XMLreader::getNode(xmlPalette, sColor);
+		lib::XMLnodePtr xmlColor = lib::XMLreader::getNode(xmlPalette, sColor());
 		while (!!xmlColor)
 		{
 			unsigned nColor = 0;
 			int nHeight = 0;
 
-			if (lib::XMLreader::getInt(xmlColor, nColor) && lib::XMLreader::getInt(xmlColor, "Height", nHeight))
+			if (lib::XMLreader::getInt(xmlColor, nColor) && lib::XMLreader::getInt(xmlColor, sHeight(), nHeight))
 				add(nHeight, { nColor  >> 16, (nColor & 0x00FF00) >> 8, nColor & 0x0000FF });
 
-			xmlColor = xmlColor->NextSibling(sColor);
+			xmlColor = xmlColor->NextSibling(sColor());
 		}
 	}
 

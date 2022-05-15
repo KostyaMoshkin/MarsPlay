@@ -12,6 +12,14 @@ namespace GL {
 
 	class Palette : public lib::CConfig
 	{
+	public:
+		const char* sPalette()			{ return "Palette";			}
+		const char* sPaletteDefault()	{ return "PaletteDefault";	}
+		const char* sId()				{ return "id";				}
+		const char* sHeight()			{ return "Height";			}
+		const char* sColor()			{ return "Color";			}
+
+	private:
 		std::vector<std::pair<int, lib::iPoint3D>> m_vPalette;
 
 		int m_nMinValue = 0;
