@@ -73,14 +73,20 @@ namespace lib {
 
 	bool XMLreader::getInt(XMLnodePtr xNode_, unsigned& nValue_)
 	{
-		const char* sValue = xNode_->FirstChild()->Value();
+		std::string sValue = std::string(xNode_->FirstChild()->Value());
 
-		if (!sValue)
+		if (sValue.empty())
 			return false;
+
+		int nBase = 10;
+
+		int nXpos = sValue.find('x');
+		if (nXpos > 0)
+			nBase = 16;
 
 		try
 		{
-			nValue_ = (unsigned)std::atol(sValue);
+			nValue_ = (unsigned)std::stol(sValue, 0, nBase);
 		}
 		catch (const std::exception&)
 		{
@@ -93,14 +99,20 @@ namespace lib {
 
 	bool XMLreader::getInt(XMLnodePtr xNode_, size_t& nValue_)
 	{
-		const char* sValue = xNode_->FirstChild()->Value();
+		std::string sValue = std::string(xNode_->FirstChild()->Value());
 
-		if (!sValue)
+		if (sValue.empty())
 			return false;
+
+		int nBase = 10;
+
+		int nXpos = sValue.find('x');
+		if (nXpos > 0)
+			nBase = 16;
 
 		try
 		{
-			nValue_ = (size_t)std::atol(sValue);
+			nValue_ = (size_t)std::stol(sValue, 0, nBase);
 		}
 		catch (const std::exception&)
 		{
@@ -112,14 +124,19 @@ namespace lib {
 
 	bool XMLreader::getInt(XMLnodePtr xNode_, const char* sNode_, unsigned& nValue_)
 	{
-		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
+		std::string sValue = std::string(xNode_->FirstChild()->Value());
 
-		if (!sValue)
+		if (sValue.empty())
 			return false;
+		int nBase = 10;
+
+		int nXpos = sValue.find('x');
+		if (nXpos > 0)
+			nBase = 16;
 
 		try
 		{
-			nValue_ = (unsigned)std::atol(sValue);
+			nValue_ = (unsigned)std::stol(sValue, 0, nBase);
 		}
 		catch (const std::exception&)
 		{
@@ -179,8 +196,14 @@ namespace lib {
 		return true;
 	}
 
-	XMLnodePtr XMLreader::getNode(const char* sNode_)
+	XMLnodePtr XMLreader::getNode(XMLnodePtr xNode_, const char* sNode_)
 	{
-		return m_xDOC.FirstChild(sNode_);
+		XMLnodePtr pNode = xNode_->FirstChild(sNode_);
+		return pNode;
 	}
+
+	//XMLnodePtr XMLreader::getNode(const char* sNode_)
+	//{
+	//	return m_xDOC.FirstChild(sNode_);
+	//}
 }

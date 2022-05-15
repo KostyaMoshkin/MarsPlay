@@ -120,6 +120,7 @@ namespace GL {
 		//-------------------------------------------------------------------------------------------------
 
 		m_pPalette = GL::Palette::Create();
+		m_pPalette->setConfig(getConfig());
 		m_pPalette->init();
 
 		float fDataMin;

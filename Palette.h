@@ -3,13 +3,14 @@
 #include <vector>
 
 #include "lib.h"
+#include "CConfig.h"
 
 namespace GL {
 	
 	class Palette;
 	using PalettePtr = std::shared_ptr<Palette>;
 
-	class Palette
+	class Palette : public lib::CConfig
 	{
 		std::vector<std::pair<int, lib::iPoint3D>> m_vPalette;
 

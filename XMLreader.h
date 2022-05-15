@@ -35,7 +35,7 @@ namespace lib {
 		XMLnodePtr getRoot();
 		bool changeCurrentNode(const char* sNode_ = nullptr);
 
-		XMLnodePtr getNode(const char* sNode_);
+		//XMLnodePtr getNode(const char* sNode_);
 		XMLnodePtr getCurrentNode();
 		bool getNextCurrentNode();
 
@@ -49,7 +49,7 @@ namespace lib {
 
 		static bool getSting(XMLnodePtr xNode_, std::string& sValue_);
 
-
+		static XMLnodePtr getNode(XMLnodePtr xNode_, const char* sNode_);
 
 
 	};
