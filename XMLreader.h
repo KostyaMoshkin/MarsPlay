@@ -40,12 +40,12 @@ namespace lib {
 		bool getNextCurrentNode();
 
 		static bool getInt(XMLnodePtr xNode_, int& nValue_);
-		static bool getUInt(XMLnodePtr xNode_, unsigned& nValue_);
-		static bool getSInt(XMLnodePtr xNode_, size_t& nValue_);
+		static bool getInt(XMLnodePtr xNode_, unsigned& nValue_);
+		static bool getInt(XMLnodePtr xNode_, size_t& nValue_);
 
 		static bool getInt(XMLnodePtr xNode_, const char* sNode_, int& nValue_);
-		static bool getUInt(XMLnodePtr xNode_, const char* sNode_, unsigned& nValue_);
-		static bool getSInt(XMLnodePtr xNode_, const char* sNode_, size_t& nValue_);
+		static bool getInt(XMLnodePtr xNode_, const char* sNode_, unsigned& nValue_);
+		static bool getInt(XMLnodePtr xNode_, const char* sNode_, size_t& nValue_);
 
 		static bool getSting(XMLnodePtr xNode_, std::string& sValue_);
 

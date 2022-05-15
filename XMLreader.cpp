@@ -71,7 +71,7 @@ namespace lib {
 		return true;
 	}
 
-	bool XMLreader::getUInt(XMLnodePtr xNode_, unsigned& nValue_)
+	bool XMLreader::getInt(XMLnodePtr xNode_, unsigned& nValue_)
 	{
 		const char* sValue = xNode_->FirstChild()->Value();
 
@@ -91,7 +91,7 @@ namespace lib {
 	}
 
 
-	bool XMLreader::getSInt(XMLnodePtr xNode_, size_t& nValue_)
+	bool XMLreader::getInt(XMLnodePtr xNode_, size_t& nValue_)
 	{
 		const char* sValue = xNode_->FirstChild()->Value();
 
@@ -110,7 +110,7 @@ namespace lib {
 		return true;
 	}
 
-	bool XMLreader::getUInt(XMLnodePtr xNode_, const char* sNode_, unsigned& nValue_)
+	bool XMLreader::getInt(XMLnodePtr xNode_, const char* sNode_, unsigned& nValue_)
 	{
 		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
 
@@ -129,7 +129,7 @@ namespace lib {
 		return true;
 	}
 
-	bool XMLreader::getSInt(XMLnodePtr xNode_, const char* sNode_, size_t& nValue_)
+	bool XMLreader::getInt(XMLnodePtr xNode_, const char* sNode_, size_t& nValue_)
 	{
 		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
 
