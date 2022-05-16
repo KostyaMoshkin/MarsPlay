@@ -83,6 +83,10 @@ int main()
 			pRenderMars->keyPress(GL::EKeyPress::key_1);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_2))
 			pRenderMars->keyPress(GL::EKeyPress::key_2);
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_3))
+			pRenderMars->keyPress(GL::EKeyPress::key_3);
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_4))
+			pRenderMars->keyPress(GL::EKeyPress::key_4);
 
 		lib::fPoint2D ptCursorMove = pSceneRender->getCursorMove();
 

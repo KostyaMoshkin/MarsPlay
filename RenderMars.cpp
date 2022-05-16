@@ -139,24 +139,13 @@ namespace GL {
 		m_pPalette->setConfig(getConfig());
 		m_pPalette->init();
 
+		if (!fillPalette())
+			return false;
+
 		float fDataMin;
 		float fDataMax;
 
 		m_pPalette->getMinMax(fDataMin, fDataMax);
-
-		lib::XMLnodePtr pPaletteConfig = getConfig()->FirstChild("PalettSize")->FirstChild();
-		const char * sPalettSize = pPaletteConfig->Value();
-
-		const unsigned nPaletteSize = std::stoi(sPalettSize);
-		std::vector<lib::fPoint3D> vColorText(nPaletteSize);
-		for (size_t i = 0; i < nPaletteSize; ++i)
-			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);
-
-		m_pPeletteTexture = GL::TextureBuffer::Create(GL_TEXTURE_1D);
-		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
-
-		if (!m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))
-			return false;
 
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
@@ -167,10 +156,8 @@ namespace GL {
 
 		m_fCamPosition.y = 0.0f;
 
-
 		glPointSize(5);
 		glLineWidth(5);
-
 
 		renderBounder.unbound();
 		return true;
@@ -206,15 +193,47 @@ namespace GL {
 
 	void RenderMars::keyPress(GL::EKeyPress nKey_)
 	{
-		if ((nKey_ != GL::EKeyPress::key_1) && (nKey_ != GL::EKeyPress::key_2))
-			return;
-
 		if (nKey_ == GL::EKeyPress::key_1)
 			m_fScale *= 0.8f;
 		else if (nKey_ == GL::EKeyPress::key_2)
 			m_fScale *= 1.2f;
+		else if (nKey_ == GL::EKeyPress::key_3)
+		{
+			m_pPalette->changePalette(false);
+			fillPalette();
+			Sleep(300);
+		}
+		else if (nKey_ == GL::EKeyPress::key_4)
+		{
+			m_pPalette->changePalette();
+			fillPalette();
+			Sleep(300);
+		}
 
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
+	}
+
+	bool RenderMars::fillPalette()
+	{
+		float fDataMin;
+		float fDataMax;
+
+		m_pPalette->getMinMax(fDataMin, fDataMax);
+		const unsigned nPaletteSize = m_pPalette->getInterpolate();
+		std::vector<lib::fPoint3D> vColorText(nPaletteSize);
+		for (size_t i = 0; i < nPaletteSize; ++i)
+			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);
+
+		m_pPeletteTexture = GL::TextureBuffer::Create(GL_TEXTURE_1D);
+		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
+
+		if (!m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))
+		{
+			lib::logger::outLine("ERROR    m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))");
+			return false;
+		}
+
+		return true;
 	}
 }

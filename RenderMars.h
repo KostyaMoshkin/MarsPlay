@@ -57,6 +57,8 @@ namespace GL {
 
 		// Унаследовано через Render
 		virtual void keyPress(GL::EKeyPress nKey_) override;
+
+		bool fillPalette();
 	};
 }
 

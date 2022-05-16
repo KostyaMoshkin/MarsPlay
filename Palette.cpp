@@ -1,4 +1,6 @@
 #include "Palette.h"
+#include "LOG\logger.h"
+
 namespace GL {
 	Palette::Palette()
 	{
@@ -14,33 +16,83 @@ namespace GL {
 
 		lib::XMLnodePtr xmlPaletteDefault = lib::XMLreader::getNode(getConfig(), sPaletteDefault());
 
-		int nDefaultPaletteId = 1;
+		if (!!xmlPaletteDefault && !lib::XMLreader::getInt(xmlPaletteDefault, m_nActivePaletteID))
+			m_nActivePaletteID = 1;
 
-		if (!!xmlPaletteDefault && !lib::XMLreader::getInt(xmlPaletteDefault, nDefaultPaletteId))
-			nDefaultPaletteId = 1;
+		//---------------------------------------------------------------------------------------
+
+		m_vPalette.clear();
 
 		lib::XMLnodePtr xmlPalette = lib::XMLreader::getNode(getConfig(), sPalette());
 		while (!!xmlPalette)
 		{
 			int nId = -1;
-			if (lib::XMLreader::getInt(xmlPalette, sId(), nId))
-				if (nId == nDefaultPaletteId)
-					break;
+			if (!lib::XMLreader::getInt(xmlPalette, sId(), nId))
+			{
+				lib::logger::outLine("Config should contain id attribut for: <Palette id=\"2\" interpolate=\"1600\">");
+				nId = -1;
+			}
+
+			m_vPaletteMap[nId] = xmlPalette;
 
 			xmlPalette = xmlPalette->NextSibling(sPalette());
 		}
 
-		lib::XMLnodePtr xmlColor = lib::XMLreader::getNode(xmlPalette, sColor());
+		//---------------------------------------------------------------------------------------
+
+		fillPalette(m_nActivePaletteID);
+	}
+
+	void Palette::fillPalette(unsigned nPaletteID_)
+	{
+		m_vPalette.clear();
+
+		lib::XMLnodePtr xmlActivePalette = nullptr;
+
+		if (m_vPaletteMap.contains(nPaletteID_))
+			xmlActivePalette = m_vPaletteMap[nPaletteID_];
+		else
+			xmlActivePalette = lib::XMLreader::getNode(getConfig(), sPalette());
+
+		lib::XMLnodePtr xmlColor = lib::XMLreader::getNode(xmlActivePalette, sColor());
 		while (!!xmlColor)
 		{
 			unsigned nColor = 0;
 			int nHeight = 0;
 
 			if (lib::XMLreader::getInt(xmlColor, nColor) && lib::XMLreader::getInt(xmlColor, sHeight(), nHeight))
-				add(nHeight, { nColor  >> 16, (nColor & 0x00FF00) >> 8, nColor & 0x0000FF });
+				add(nHeight, { nColor >> 16, (nColor & 0x00FF00) >> 8, nColor & 0x0000FF });
 
 			xmlColor = xmlColor->NextSibling(sColor());
 		}
+
+		if (!lib::XMLreader::getInt(xmlActivePalette, sInterpolate(), m_nPaletteInterpolate))
+		{
+			lib::logger::outLine("Config should contain interpolate attribut for: <Palette id=\"2\" interpolate=\"1600\">");
+			m_nPaletteInterpolate = 16;
+		}
+	}
+
+	void Palette::changePalette(bool bDirection_)
+	{
+		auto iterPalette = m_vPaletteMap.find(m_nActivePaletteID);
+		
+		if(bDirection_)
+		{
+			++iterPalette;
+			if (iterPalette == m_vPaletteMap.end())
+				iterPalette = m_vPaletteMap.begin();
+		}
+		else
+		{
+			if (iterPalette == m_vPaletteMap.begin())
+				iterPalette = m_vPaletteMap.end();
+
+			--iterPalette;
+		}
+
+		m_nActivePaletteID = iterPalette->first;
+		fillPalette(m_nActivePaletteID);
 	}
 
 	void Palette::arrange()
@@ -99,6 +151,11 @@ namespace GL {
 	{
 		fMin_ = (float)m_nMinValue;
 		fMax_ = (float)m_nMaxValue;
+	}
+
+	unsigned Palette::getInterpolate()
+	{
+		return m_nPaletteInterpolate;
 	}
 
 }

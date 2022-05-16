@@ -188,6 +188,10 @@ namespace GL {
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_2])
 			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_3])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_4])
+			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_left])
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_right])

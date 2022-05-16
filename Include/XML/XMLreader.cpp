@@ -137,14 +137,13 @@ namespace lib {
 		if (!xNode_)
 			return false;
 
-		std::string sValue = std::string(xNode_->FirstChild()->Value());
+		std::string sValue = xNode_->ToElement()->Attribute(sNode_);
 
 		if (sValue.empty())
 			return false;
 		int nBase = 10;
 
-		size_t nXpos = sValue.find('x');
-		if (nXpos > 0)
+		if (sValue.find('x') != std::string::npos)
 			nBase = 16;
 
 		try
@@ -164,14 +163,18 @@ namespace lib {
 		if (!xNode_)
 			return false;
 
-		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
+		std::string sValue = xNode_->ToElement()->Attribute(sNode_);
 
-		if (!sValue)
+		if (sValue.empty())
 			return false;
+		int nBase = 10;
+
+		if (sValue.find('x') != std::string::npos)
+			nBase = 16;
 
 		try
 		{
-			nValue_ = (size_t)std::atol(sValue);
+			nValue_ = (size_t)std::stol(sValue, 0, nBase);
 		}
 		catch (const std::exception&)
 		{
@@ -186,14 +189,18 @@ namespace lib {
 		if (!xNode_)
 			return false;
 
-		const char* sValue = xNode_->ToElement()->Attribute(sNode_);
+		std::string sValue = xNode_->ToElement()->Attribute(sNode_);
 
-		if (!sValue)
+		if (sValue.empty())
 			return false;
+		int nBase = 10;
+
+		if (sValue.find('x') != std::string::npos)
+			nBase = 16;
 
 		try
 		{
-			nValue_ = (int)std::atol(sValue);
+			nValue_ = (int)std::stol(sValue, 0, nBase);
 		}
 		catch (const std::exception&)
 		{
@@ -220,7 +227,6 @@ namespace lib {
 		if (!xNode_)
 			return nullptr;
 
-		XMLnodePtr pNode = xNode_->FirstChild(sNode_);
-		return pNode;
+		return xNode_->FirstChild(sNode_);
 	}
 }
