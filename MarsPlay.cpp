@@ -12,11 +12,19 @@
 #include "Vocabulary.h"
 #include "Utils.h"
 
-#include "XMLreader.h"
+#include "XML\XMLreader.h"
+#include "LOG\logger.h"
 
 int main()
 {
-	//static_assert(index < count, "index larger than array size");
+	lib::XMLreaderPtr pXMLconfig = lib::XMLreader::Create("MarsPlay.config");
+
+	lib::LoggerSetup(lib::XMLreader::getNode(pXMLconfig->getRoot(), "Logger"));
+
+	lib::logger::putSeparator();
+	lib::logger::putTimeStamp();
+	lib::logger::outLine("");
+
 
 	GL::SceneRenderPtr pSceneRender = GL::SceneRender::Create();
 
@@ -34,7 +42,6 @@ int main()
 
 	//------------------------------------------------------------------------------------------
 
-	lib::XMLreaderPtr pXMLconfig = lib::XMLreader::Create("MarsPlay.config");
 
 	GL::RenderMarsPtr pRenderMars = GL::RenderMars::Create();
 	pRenderMars->setConfig(pXMLconfig->getRoot());

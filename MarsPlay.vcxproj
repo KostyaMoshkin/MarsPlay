@@ -187,12 +187,12 @@
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="TextureBuffer.cpp" />
-    <ClCompile Include="tinystr.cpp" />
-    <ClCompile Include="tinyxml.cpp" />
-    <ClCompile Include="tinyxmlerror.cpp" />
-    <ClCompile Include="tinyxmlparser.cpp" />
+    <ClCompile Include="Include\XML\tinystr.cpp" />
+    <ClCompile Include="Include\XML\tinyxml.cpp" />
+    <ClCompile Include="Include\XML\tinyxmlerror.cpp" />
+    <ClCompile Include="Include\XML\tinyxmlparser.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
-    <ClCompile Include="XMLreader.cpp" />
+    <ClCompile Include="Include\XML\XMLreader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MarsPlay.config" />
@@ -203,6 +203,7 @@
     <ClInclude Include="BufferBounder.h" />
     <ClInclude Include="BufferOpenGL.h" />
     <ClInclude Include="CConfig.h" />
+    <ClInclude Include="Include\LOG\logger.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="MarsPlay.h" />
@@ -216,12 +217,12 @@
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="TextureBuffer.h" />
-    <ClInclude Include="tinystr.h" />
-    <ClInclude Include="tinyxml.h" />
+    <ClInclude Include="Include\XML\tinystr.h" />
+    <ClInclude Include="Include\XML\tinyxml.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Vocabulary.h" />
-    <ClInclude Include="XMLreader.h" />
+    <ClInclude Include="Include\XML\XMLreader.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Shader.rc" />

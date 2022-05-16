@@ -25,8 +25,11 @@
     <Filter Include="Lib">
       <UniqueIdentifier>{c0fbfc68-2be2-4910-a55d-a421713a5865}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\TinyXML">
+    <Filter Include="Lib\XML">
       <UniqueIdentifier>{599fea5b-7935-4da1-84c7-3b5202d58159}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\LOG">
+      <UniqueIdentifier>{e40cbf95-d97e-42b6-9487-eb8e1d4016f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,20 +72,20 @@
     <ClCompile Include="TextureBuffer.cpp">
       <Filter>GL</Filter>
     </ClCompile>
-    <ClCompile Include="XMLreader.cpp">
-      <Filter>Lib</Filter>
+    <ClCompile Include="Include\XML\tinystr.cpp">
+      <Filter>Lib\XML</Filter>
     </ClCompile>
-    <ClCompile Include="tinystr.cpp">
-      <Filter>Lib\TinyXML</Filter>
+    <ClCompile Include="Include\XML\tinyxml.cpp">
+      <Filter>Lib\XML</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxml.cpp">
-      <Filter>Lib\TinyXML</Filter>
+    <ClCompile Include="Include\XML\tinyxmlerror.cpp">
+      <Filter>Lib\XML</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxmlerror.cpp">
-      <Filter>Lib\TinyXML</Filter>
+    <ClCompile Include="Include\XML\tinyxmlparser.cpp">
+      <Filter>Lib\XML</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxmlparser.cpp">
-      <Filter>Lib\TinyXML</Filter>
+    <ClCompile Include="Include\XML\XMLreader.cpp">
+      <Filter>Lib\XML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,17 +152,20 @@
     <ClInclude Include="MarsPlay.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="XMLreader.h">
-      <Filter>Lib</Filter>
+    <ClInclude Include="Include\XML\tinystr.h">
+      <Filter>Lib\XML</Filter>
     </ClInclude>
-    <ClInclude Include="tinystr.h">
-      <Filter>Lib\TinyXML</Filter>
-    </ClInclude>
-    <ClInclude Include="tinyxml.h">
-      <Filter>Lib\TinyXML</Filter>
+    <ClInclude Include="Include\XML\tinyxml.h">
+      <Filter>Lib\XML</Filter>
     </ClInclude>
     <ClInclude Include="CConfig.h">
       <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\XML\XMLreader.h">
+      <Filter>Lib\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\LOG\logger.h">
+      <Filter>Lib\LOG</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

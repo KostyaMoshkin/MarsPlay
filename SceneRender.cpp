@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <LOG/logger.h>
+
 namespace GL {
 
 	SceneRender::SceneRender()
@@ -27,7 +29,10 @@ namespace GL {
 #endif // __DEBUG
 
 		if (m_pWindow == nullptr)
+		{
+			lib::logger::out("no window");
 			return false;
+		}
 
 		glfwMakeContextCurrent(m_pWindow);
 

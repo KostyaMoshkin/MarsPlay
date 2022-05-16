@@ -5,7 +5,8 @@
 #include "Vocabulary.h"
 
 #include "PedrReader.h"
-#include "XMLreader.h"
+#include "XML\XMLreader.h"
+#include "LOG\logger.h"
 
 #include <memory>
 
@@ -22,7 +23,11 @@ namespace GL {
 		std::vector<std::string> vsFileList = lib::create_file_list(sPEDRbinPath.c_str());
 
 		if (vsFileList.empty())
+		{
+			lib::logger::outLine("No orbit found!");
 			return;
+		}
+
 
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::Create();
 
@@ -54,6 +59,11 @@ namespace GL {
 				vPosition_.push_back({ glm::radians(pedr->fLatitude), glm::radians(pedr->fLongitude), pedr->fPlanetaryRadius, pedr->fTopo });
 			}
 		}
+
+		lib::logger::out("Orbit found: ");
+		lib::logger::out(std::to_string(vsFileList.size()).c_str());
+		lib::logger::out(". Point count: ");
+		lib::logger::outLine(std::to_string(vPosition_.size()).c_str());
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -84,7 +94,14 @@ namespace GL {
 
 		//  Координаты вершин
 		std::vector<SMarsVertex> vPosition;
+
+		lib::logger::out("start load ");
+		lib::logger::putTimeStamp();
+		lib::logger::outLine("");
 		fillVertex(vPosition, getConfig());
+		lib::logger::out("stop load  ");
+		lib::logger::putTimeStamp();
+		lib::logger::outLine("");
 
 		//-------------------------------------------------------------------------------------------------
 
