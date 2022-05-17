@@ -2,7 +2,6 @@
 #include "Render.h"
 #include "ShaderProgram.h"
 #include "VertexBuffer.h"
-#include "IndexBuffer.h"
 #include "Palette.h"
 #include "TextureBuffer.h"
 
@@ -10,6 +9,14 @@
 #include "Vocabulary.h"
 
 namespace GL {
+
+	struct SPedrVertex
+	{
+		float fLatitude;
+		float fLongitude;
+		float fDistance;
+		float fTopology;
+	};
 
 	class RenderPedr;
 	using RenderPedrPtr = std::shared_ptr<RenderPedr>;

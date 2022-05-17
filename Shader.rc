@@ -58,5 +58,7 @@ END
 /////////////////////////////////////////////////////////////////////////////
 #endif    // не APSTUDIO_INVOKED
 
-IDR_DATA1 TEXTFILE "Shader\\mars_vertex.shader"
-IDR_DATA2 TEXTFILE "Shader\\mars_fragment.shader"
+IDR_DATA1 TEXTFILE "Shader\\pedr_vertex.shader"
+IDR_DATA2 TEXTFILE "Shader\\pedr_fragment.shader"
+IDR_DATA3 TEXTFILE "Shader\\megdr_vertex.shader"
+IDR_DATA4 TEXTFILE "Shader\\megdr_fragment.shader"

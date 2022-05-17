@@ -92,13 +92,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\mars_fragment.shader">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\mars_vertex.shader">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="MarsPlay.config" />
+    <None Include="Shader\megdr_fragment.shader">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\megdr_vertex.shader">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\pedr_fragment.shader">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\pedr_vertex.shader">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Render.h">

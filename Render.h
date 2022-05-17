@@ -10,27 +10,23 @@
 
      struct ShaderName
      {
-         static const int mars_vertex = IDR_DATA1;
-         static const int mars_fragment = IDR_DATA2;
+         static const int pedr_vertex       = IDR_DATA1;
+         static const int pedr_fragment     = IDR_DATA2;
+         static const int megdr_vertex      = IDR_DATA3;
+         static const int megdr_fragment    = IDR_DATA4;
 
          static const char* getName(int ID_)
          {
              switch (ID_)
              {
-             case mars_vertex: return "mars_vertex";
-             case mars_fragment: return "mars_fragment";
+             case pedr_vertex:      return "pedr_vertex";
+             case pedr_fragment:    return "pedr_fragment";
+             case megdr_vertex:     return "megdr_vertex";
+             case megdr_fragment:   return "megdr_fragment";
              default: return "";
              }
          }
      };
-
-      struct SMarsVertex
-      {
-          float fLatitude;
-          float fLongitude;
-          float fDistance;
-          float fTopology;
-      };
 
       class Render;
       using RenderPtr = std::shared_ptr<Render>;

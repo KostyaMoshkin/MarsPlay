@@ -13,57 +13,75 @@
 
 namespace GL {
 
-	static void fillVertex(std::vector<SMarsVertex>& vPosition_, lib::XMLnodePtr pConfigRoot_)
+	static void fillVertex(std::vector<short>& vRadius_, std::vector<short>& vAreoid_, lib::XMLnodePtr pConfigRoot_)
 	{
-		vPosition_.clear();
-
-		std::string sMegdrBinPath;
-		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMegdr::sMegdrDirectory()), sMegdrBinPath))
+		unsigned nLines;
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLines()), nLines))
 			return;
 
-		std::vector<std::string> vsFileList = lib::create_file_list(sMegdrBinPath.c_str());
+		unsigned nLineSamples;
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLineSamples()), nLineSamples))
+			return;
 
-		if (vsFileList.empty())
+		//---------------------------------------------------------------------------------------------
+
+		std::string sRadiusFile;
+		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMegdr::sRadiusFile()), sRadiusFile))
+			return;
+
+		FILE* pMegdrRadius;
+		errno_t errRadius;
+
+		if ((errRadius = fopen_s(&pMegdrRadius, sRadiusFile.c_str(), "rb")) != 0)
+			return;
+
+		_fseeki64(pMegdrRadius, 0, SEEK_END);
+		long m_nRadiusFileSize = ftell(pMegdrRadius);
+		_fseeki64(pMegdrRadius, 0, SEEK_SET);
+
+		//---------------------------------------------------------------------------------------------
+
+		std::string sAreoidFile;
+		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMegdr::sAreoidFile()), sAreoidFile))
+			return;
+
+		FILE* pMegdrAreoid;
+		errno_t errAreoid;
+
+		if ((errAreoid = fopen_s(&pMegdrAreoid, sRadiusFile.c_str(), "rb")) != 0)
+			return;
+
+		_fseeki64(pMegdrAreoid, 0, SEEK_END);
+		long m_nAreoidFileSize = ftell(pMegdrAreoid);
+		_fseeki64(pMegdrAreoid, 0, SEEK_SET);
+
+		//---------------------------------------------------------------------------------------------
+
+		if (m_nRadiusFileSize != m_nAreoidFileSize)
 		{
-			lib::logger::outLine("No orbit found!");
 			return;
 		}
 
-		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::Create();
-
-		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild(RenderMegdr::sOrbitStart())->FirstChild();
-
-		size_t nOrbitCountMin;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::sOrbitStart()), nOrbitCountMin))
-			nOrbitCountMin = 0;
-
-		size_t nOrbitCountMax;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::sOrbitEnd()), nOrbitCountMax))
-			nOrbitCountMax = vsFileList.size();
-		else
-			nOrbitCountMax = std::min<size_t>(nOrbitCountMax, vsFileList.size());
-
-		size_t nPointOnOrbitStep;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::sOrbitpointStep()), nPointOnOrbitStep))
-			nPointOnOrbitStep = 1;
-
-		for (size_t i = nOrbitCountMin; i < nOrbitCountMax; ++i)
+		if (m_nAreoidFileSize != (long)nLines * (long)nLineSamples * (long)sizeof(short))
 		{
-			pPedrReader->read_bin(vsFileList[i].c_str());
-
-			rsize_t nPointOnOrbit = pPedrReader->getPedrCount();
-
-			for (size_t j = 0; j < nPointOnOrbit; j += nPointOnOrbitStep)
-			{
-				const pedr::SPedr* pedr = &(*pPedrReader)[j];
-				vPosition_.push_back({ glm::radians(pedr->fLatitude), glm::radians(pedr->fLongitude), pedr->fPlanetaryRadius, pedr->fTopo });
-			}
+			return;
 		}
 
-		lib::logger::out("Orbit found: ");
-		lib::logger::out(std::to_string(vsFileList.size()).c_str());
-		lib::logger::out(". Point count: ");
-		lib::logger::outLine(std::to_string(vPosition_.size()).c_str());
+		//---------------------------------------------------------------------------------------------
+
+		vRadius_.resize(nLines * nLineSamples);
+
+		if (fread(vRadius_.data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
+		{
+			return;
+		}
+
+		vAreoid_.clear();
+
+		if (fread(vAreoid_.data(), m_nAreoidFileSize, 1, pMegdrAreoid) != 1)
+		{
+			return;
+		}
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -76,8 +94,8 @@ namespace GL {
 	{
 		ShaderProgramPtr pMarsPlayProgram = ShaderProgram::Create();
 
-		pMarsPlayProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
-		pMarsPlayProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
+		pMarsPlayProgram->addShader(ShaderName::megdr_vertex, ShaderProgram::ShaderType::Vertex());
+		pMarsPlayProgram->addShader(ShaderName::megdr_fragment, ShaderProgram::ShaderType::Fragment());
 
 		bool bProgramCompile = pMarsPlayProgram->init();
 		if (!bProgramCompile)
@@ -93,32 +111,38 @@ namespace GL {
 		//-------------------------------------------------------------------------------------
 
 		//  Координаты вершин
-		std::vector<SMarsVertex> vPosition;
+		std::vector<short> vRadius;
+		std::vector<short> vAreoid;
 
-		lib::logger::out("start load ");
-		lib::logger::putTimeStamp();
-		lib::logger::outLine("");
-		fillVertex(vPosition, getConfig());
-		lib::logger::out("stop load  ");
-		lib::logger::putTimeStamp();
-		lib::logger::outLine("");
+		fillVertex(vRadius, vAreoid, getConfig());
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_pVertex = GL::VertexBuffer::Create();
-		m_pVertex->setUsage(GL_STATIC_DRAW);
+		m_pRadiusVertex = GL::VertexBuffer::Create();
+		m_pRadiusVertex->setUsage(GL_STATIC_DRAW);
 
-		BufferBounder<VertexBuffer> positionBounder(m_pVertex);
+		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
 
-		m_nElementCount = vPosition.size();
-
-		if (!m_pVertex->fillBuffer(sizeof(SMarsVertex) * m_nElementCount, vPosition.data()))
+		if (!m_pRadiusVertex->fillBuffer(sizeof(short) * vRadius.size(), vRadius.data()))
 			return false;
 
-		m_pVertex->attribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(0 * sizeof(float)));
-		m_pVertex->attribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(1 * sizeof(float)));
-		m_pVertex->attribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-		m_pVertex->attribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
+		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
+
+		m_pRadiusVertex = GL::VertexBuffer::Create();
+		m_pRadiusVertex->setUsage(GL_STATIC_DRAW);
+
+		//-------------------------------------------------------------------------------------------------
+
+		m_pAreoidVertex = GL::VertexBuffer::Create();
+		m_pAreoidVertex->setUsage(GL_STATIC_DRAW);
+
+		BufferBounder<VertexBuffer> positionBounder(m_pAreoidVertex);
+
+		if (!m_pAreoidVertex->fillBuffer(sizeof(short) * vAreoid.size(), vAreoid.data()))
+			return false;
+
+
+		m_pAreoidVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -167,7 +191,8 @@ namespace GL {
 	{
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		BufferBounder<RenderMegdr> renderBounder(this);
-		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);
+		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
+		BufferBounder<VertexBuffer> areoidBounder(m_pAreoidVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 
 		glDrawArrays(GL_POINTS, 0, (GLsizei)m_nElementCount); //GL_POINTS //GL_LINE_STRIP

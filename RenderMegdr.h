@@ -17,14 +17,17 @@ namespace GL {
 	class RenderMegdr : public Render
 	{
 	public:
-		static const char* sMegdrDirectory()	{ return "MegdrDirectory"; }
-		static const char* sOrbitStart()		{ return "OrbitStart"; }
-		static const char* sOrbitEnd()			{ return "OrbitEnd"; }
-		static const char* sOrbitpointStep()	{ return "OrbitpointStep"; }
+		static const char* sRadiusFile()		{ return "RadiusFile";		}
+		static const char* sAreoidFile()		{ return "AreoidFile";		}
+		static const char* nBaseHeight()		{ return "BaseHeight";		}
+		static const char* nLines()				{ return "Lines";			}
+		static const char* nLineSamples()		{ return "LineSamples";		}
 
 	private:
 		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
-		VertexBufferPtr m_pVertex = nullptr;
+		VertexBufferPtr m_pRadiusVertex = nullptr;
+		VertexBufferPtr m_pAreoidVertex = nullptr;
+		IndexBufferPtr m_pIndex = nullptr;
 		PalettePtr m_pPalette = nullptr;
 		TextureBufferPtr m_pPeletteTexture = nullptr;
 

@@ -31,4 +31,6 @@
 
 #define IDR_DATA1 250
 #define IDR_DATA2 251
+#define IDR_DATA3 252
+#define IDR_DATA4 253
 

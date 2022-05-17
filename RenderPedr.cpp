@@ -12,7 +12,7 @@
 
 namespace GL {
 
-	static void fillVertex(std::vector<SMarsVertex>& vPosition_, lib::XMLnodePtr pConfigRoot_)
+	static void fillVertex(std::vector<SPedrVertex>& vPosition_, lib::XMLnodePtr pConfigRoot_)
 	{
 		vPosition_.clear();
 
@@ -76,8 +76,8 @@ namespace GL {
 	{
 		ShaderProgramPtr pMarsPlayProgram = ShaderProgram::Create();
 
-		pMarsPlayProgram->addShader(ShaderName::mars_vertex, ShaderProgram::ShaderType::Vertex());
-		pMarsPlayProgram->addShader(ShaderName::mars_fragment, ShaderProgram::ShaderType::Fragment());
+		pMarsPlayProgram->addShader(ShaderName::pedr_vertex, ShaderProgram::ShaderType::Vertex());
+		pMarsPlayProgram->addShader(ShaderName::pedr_fragment, ShaderProgram::ShaderType::Fragment());
 
 		bool bProgramCompile = pMarsPlayProgram->init();
 		if (!bProgramCompile)
@@ -93,7 +93,7 @@ namespace GL {
 		//-------------------------------------------------------------------------------------
 
 		//  Координаты вершин
-		std::vector<SMarsVertex> vPosition;
+		std::vector<SPedrVertex> vPosition;
 
 		lib::logger::out("start load ");
 		lib::logger::putTimeStamp();
@@ -112,7 +112,7 @@ namespace GL {
 
 		m_nElementCount = vPosition.size();
 
-		if (!m_pVertex->fillBuffer(sizeof(SMarsVertex) * m_nElementCount, vPosition.data()))
+		if (!m_pVertex->fillBuffer(sizeof(SPedrVertex) * m_nElementCount, vPosition.data()))
 			return false;
 
 		m_pVertex->attribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(0 * sizeof(float)));
