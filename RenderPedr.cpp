@@ -165,6 +165,9 @@ namespace GL {
 
 	void RenderPedr::draw()
 	{
+		if (!isVisible())
+			return;
+
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		BufferBounder<RenderPedr> renderBounder(this);
 		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);

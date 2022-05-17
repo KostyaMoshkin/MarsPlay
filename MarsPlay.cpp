@@ -40,13 +40,12 @@ int main()
 
 	std::cout << "OpenGL version: " << nVersionFull << std::endl;
 
-	//------------------------------------------------------------------------------------------
+	lib::iPoint2D ptScreenSize = pSceneRender->getScreenSize();
 
+	//------------------------------------------------------------------------------------------
 
 	GL::RenderPedrPtr pRenderPedr = GL::RenderPedr::Create();
 	pRenderPedr->setConfig(pXMLconfig->getRoot());
-
-	lib::iPoint2D ptScreenSize = pSceneRender->getScreenSize();
 
 	if (!pRenderPedr->init(ptScreenSize))
 	{
@@ -55,7 +54,21 @@ int main()
 		wait_return();
 	}
 
+	pRenderPedr->setVisible(true);
 	pSceneRender->addElement(pRenderPedr);
+	//------------------------------------------------------------------------------------------
+
+	GL::RenderPedrPtr pRenderMegdr = GL::RenderPedr::Create();
+	pRenderMegdr->setConfig(pXMLconfig->getRoot());
+
+	if (!pRenderMegdr->init(ptScreenSize))
+	{
+		pSceneRender.reset();
+		message("OpenGL CUBE init ERROR");
+		wait_return();
+	}
+
+	pSceneRender->addElement(pRenderMegdr);
 
 	//------------------------------------------------------------------------------------------
 
@@ -66,6 +79,7 @@ int main()
 	float fRoteteAngle = 1.0f;
 
 	pRenderPedr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+	pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 	pSceneRender->draw();
 
 	while (!pSceneRender->WindowShouldClose())
@@ -109,6 +123,7 @@ int main()
 		vCamPosition3D = qMove * qRotate * vCamPosition3D;
 
 		pRenderPedr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+		pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 		pSceneRender->draw();
 	}
 

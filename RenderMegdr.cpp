@@ -225,6 +225,9 @@ namespace GL {
 
 	void RenderMegdr::draw()
 	{
+		if (!isVisible())
+			return;
+
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		BufferBounder<RenderMegdr> renderBounder(this);
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);

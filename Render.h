@@ -34,6 +34,8 @@
       // Класс интерфейс рисования. Для каждой версии OpenGL и для каждой графической сущности свой наследник
       class Render : public lib::CConfig
       {
+          bool m_bVisible = true;
+
       public:
           Render() = default;
           virtual ~Render() = default;
@@ -47,6 +49,10 @@
 
             virtual void bound() = 0;
             virtual void unbound() = 0;
+
+      public:
+          void setVisible(bool bVisible_) { m_bVisible = bVisible_; }
+          bool isVisible() { return m_bVisible; }
       };
 
 }
