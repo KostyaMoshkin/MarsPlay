@@ -181,6 +181,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="PedrReader.cpp" />
+    <ClCompile Include="RenderMegdr.cpp" />
     <ClCompile Include="RenderPedr.cpp" />
     <ClCompile Include="SceneRender.cpp" />
     <ClCompile Include="SceneRenderBase.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Palette.h" />
     <ClInclude Include="PedrReader.h" />
     <ClInclude Include="Render.h" />
+    <ClInclude Include="RenderMegdr.h" />
     <ClInclude Include="RenderPedr.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneRender.h" />

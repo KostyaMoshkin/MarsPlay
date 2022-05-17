@@ -87,6 +87,9 @@
     <ClCompile Include="Include\XML\XMLreader.cpp">
       <Filter>Lib\XML</Filter>
     </ClCompile>
+    <ClCompile Include="RenderMegdr.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\mars_fragment.shader">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="Include\LOG\logger.h">
       <Filter>Lib\LOG</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMegdr.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

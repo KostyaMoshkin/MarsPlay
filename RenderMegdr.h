@@ -11,16 +11,16 @@
 
 namespace GL {
 
-	class RenderPedr;
-	using RenderPedrPtr = std::shared_ptr<RenderPedr>;
+	class RenderMegdr;
+	using RenderMegdrPtr = std::shared_ptr<RenderMegdr>;
 
-	class RenderPedr : public Render
+	class RenderMegdr : public Render
 	{
 	public:
-		static const char* sPedrDirectory()		{ return "PedrDirectory";	}
-		static const char* sOrbitStart()		{ return "OrbitStart";		}
-		static const char* sOrbitEnd()			{ return "OrbitEnd";		}
-		static const char* sOrbitpointStep()	{ return "OrbitpointStep";	}
+		static const char* sMegdrDirectory()	{ return "MegdrDirectory"; }
+		static const char* sOrbitStart()		{ return "OrbitStart"; }
+		static const char* sOrbitEnd()			{ return "OrbitEnd"; }
+		static const char* sOrbitpointStep()	{ return "OrbitpointStep"; }
 
 	private:
 		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
@@ -28,10 +28,10 @@ namespace GL {
 		PalettePtr m_pPalette = nullptr;
 		TextureBufferPtr m_pPeletteTexture = nullptr;
 
-		lib::Matrix4 m_mTrunslate	= lib::Matrix4(1.0f);
-		lib::Matrix4 m_mRotate		= lib::Matrix4(1.0f);
+		lib::Matrix4 m_mTrunslate = lib::Matrix4(1.0f);
+		lib::Matrix4 m_mRotate = lib::Matrix4(1.0f);
 		lib::Matrix4 m_mPerspective = lib::Matrix4(1.0f);
-		lib::Matrix4 m_mTransform	= lib::Matrix4(1.0f);
+		lib::Matrix4 m_mTransform = lib::Matrix4(1.0f);
 
 		lib::fPoint2D m_fCamPosition;
 
@@ -43,9 +43,9 @@ namespace GL {
 		GLuint m_nVAO = 0;
 
 	public:
-		RenderPedr();
+		RenderMegdr();
 
-		static RenderPedrPtr Create() { return std::make_shared<RenderPedr>(); }
+		static RenderMegdrPtr Create() { return std::make_shared<RenderMegdr>(); }
 
 	public:
 		// Унаследовано через Render
@@ -59,6 +59,7 @@ namespace GL {
 		virtual void keyPress(GL::EKeyPress nKey_) override;
 
 		bool fillPalette();
+
 	};
 }
 
