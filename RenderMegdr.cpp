@@ -13,18 +13,19 @@
 
 namespace GL {
 
+	static bool getDimention(int& nLines_, int& nLineSamples_, lib::XMLnodePtr pConfigRoot_)
+	{
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLines()), nLines_))
+			return false;
+
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLineSamples()), nLineSamples_))
+			return false;
+
+		return true;
+	}
+
 	static void fillVertex(std::vector<short>& vRadius_, std::vector<short>& vAreoid_, lib::XMLnodePtr pConfigRoot_)
 	{
-		unsigned nLines;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLines()), nLines))
-			return;
-
-		unsigned nLineSamples;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLineSamples()), nLineSamples))
-			return;
-
-		//---------------------------------------------------------------------------------------------
-
 		std::string sRadiusFile;
 		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMegdr::sRadiusFile()), sRadiusFile))
 			return;
@@ -62,21 +63,17 @@ namespace GL {
 			return;
 		}
 
-		if (m_nAreoidFileSize != (long)nLines * (long)nLineSamples * (long)sizeof(short))
+		if (m_nAreoidFileSize != (long)vRadius_.size() * (long)sizeof(short))
 		{
 			return;
 		}
 
 		//---------------------------------------------------------------------------------------------
 
-		vRadius_.resize(nLines * nLineSamples);
-
 		if (fread(vRadius_.data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
 		{
 			return;
 		}
-
-		vAreoid_.clear();
 
 		if (fread(vAreoid_.data(), m_nAreoidFileSize, 1, pMegdrAreoid) != 1)
 		{
@@ -111,8 +108,20 @@ namespace GL {
 		//-------------------------------------------------------------------------------------
 
 		//  Координаты вершин
-		std::vector<short> vRadius;
-		std::vector<short> vAreoid;
+		int nLines;
+		int nLineSamples;
+
+		if (!getDimention(nLines, nLineSamples, getConfig()))
+		{
+			return false;
+		}
+
+		m_pMarsPlayProgram->setUniform1i("m_nLines", &nLines);
+		m_pMarsPlayProgram->setUniform1i("m_nLineSampless", &nLineSamples);
+
+
+		std::vector<short> vRadius(nLines * nLineSamples);
+		std::vector<short> vAreoid(nLines * nLineSamples);
 
 		fillVertex(vRadius, vAreoid, getConfig());
 
@@ -146,6 +155,26 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
+		//  Индексы
+
+		m_nElementCount = nLines * 2;
+		std::vector<short> vIndeces(m_nElementCount);
+
+		for (unsigned i = 0; i < nLines; ++i)
+		{
+			vIndeces[2 * i		] = i;
+			vIndeces[2 * i + 1	] = i + nLines;
+		}
+
+		m_pIndex = GL::IndexBuffer::Create();
+		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
+
+		if (!m_pIndex->fillBuffer(sizeof(short) * m_nElementCount, vIndeces.data()))
+			return false;
+
+
+		//-------------------------------------------------------------------------------------------------
+
 		m_mPerspective = glm::perspective(glm::radians(60.0f), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.01f, 1000.0f);
 		m_pMarsPlayProgram->setUniformMat4f("m_mPerspective", &m_mPerspective[0][0]);
 
@@ -156,6 +185,13 @@ namespace GL {
 
 		lib::Matrix4 mView = lib::Matrix4(1.0f);
 		m_pMarsPlayProgram->setUniformMat4f("m_mView", &mView[0][0]);
+
+		int nBaseHeight;
+		if (!lib::XMLreader::getInt(getConfig()->FirstChild(RenderMegdr::nBaseHeight()), nBaseHeight))
+			return false;
+
+		float fBaseHeight = (float)nBaseHeight;
+		m_pMarsPlayProgram->setUniform1f("m_fBaseHeight", &fBaseHeight);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -194,8 +230,9 @@ namespace GL {
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
 		BufferBounder<VertexBuffer> areoidBounder(m_pAreoidVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
+		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 
-		glDrawArrays(GL_POINTS, 0, (GLsizei)m_nElementCount); //GL_POINTS //GL_LINE_STRIP
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, (GLsizei)m_nElementCount); //GL_POINTS //GL_LINE_STRIP
 	}
 
 	void RenderMegdr::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)
