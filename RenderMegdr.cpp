@@ -137,9 +137,6 @@ namespace GL {
 
 		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
 
-		m_pRadiusVertex = GL::VertexBuffer::Create();
-		m_pRadiusVertex->setUsage(GL_STATIC_DRAW);
-
 		//-------------------------------------------------------------------------------------------------
 
 		m_pAreoidVertex = GL::VertexBuffer::Create();
@@ -150,7 +147,6 @@ namespace GL {
 		if (!m_pAreoidVertex->fillBuffer(sizeof(short) * vAreoid.size(), vAreoid.data()))
 			return false;
 
-
 		m_pAreoidVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
 
 		//-------------------------------------------------------------------------------------------------
@@ -160,7 +156,7 @@ namespace GL {
 		m_nElementCount = nLines * 2;
 		std::vector<short> vIndeces(m_nElementCount);
 
-		for (unsigned i = 0; i < nLines; ++i)
+		for (int i = 0; i < nLines; ++i)
 		{
 			vIndeces[2 * i		] = i;
 			vIndeces[2 * i + 1	] = i + nLines;
@@ -171,7 +167,6 @@ namespace GL {
 
 		if (!m_pIndex->fillBuffer(sizeof(short) * m_nElementCount, vIndeces.data()))
 			return false;
-
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -211,7 +206,6 @@ namespace GL {
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
 		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
 
-
 		//-------------------------------------------------------------------------------------------------
 
 		m_fCamPosition.y = 0.0f;
@@ -220,6 +214,8 @@ namespace GL {
 		glLineWidth(5);
 
 		renderBounder.unbound();
+
+		setVisible(true);
 		return true;
 	}
 

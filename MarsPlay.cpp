@@ -1,6 +1,7 @@
 #include "SceneRender.h"
 #include "ShaderProgram.h"
 #include "RenderPedr.h"
+#include "RenderMegdr.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -58,7 +59,7 @@ int main()
 	pSceneRender->addElement(pRenderPedr);
 	//------------------------------------------------------------------------------------------
 
-	GL::RenderPedrPtr pRenderMegdr = GL::RenderPedr::Create();
+	GL::RenderMegdrPtr pRenderMegdr = GL::RenderMegdr::Create();
 	pRenderMegdr->setConfig(pXMLconfig->getRoot());
 
 	if (!pRenderMegdr->init(ptScreenSize))

@@ -19,12 +19,12 @@ smooth out float fPaletteIndex;
 void main()
 {
 
-	float fLongitude = float((gl_VertexID / 2) % m_nLines) / (float)m_nLines;
-	float fLatitude = float((gl_VertexID / 2) / m_nLines) / (float)m_nLineSampless;
+	float fLongitude = float((gl_VertexID / 2) % m_nLines) / float(m_nLines);
+	float fLatitude = float((gl_VertexID / 2) / m_nLines) / float(m_nLineSampless);
 
 	float fTopology = m_nRadius - m_nAreoid;
 
-	float fDistance = (m_fRadius + m_fBaseHeight + m_fScale * fTopology) / m_fBaseHeight;
+	float fDistance = (float(m_nRadius + m_fBaseHeight) + m_fScale * fTopology) / m_fBaseHeight;
 
 	vec3 position;
 
