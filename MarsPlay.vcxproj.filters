@@ -36,7 +36,7 @@
     <ClCompile Include="MarsPlay.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="RenderMars.cpp">
+    <ClCompile Include="RenderPedr.cpp">
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="SceneRender.cpp">
@@ -101,7 +101,7 @@
     <ClInclude Include="Render.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="RenderMars.h">
+    <ClInclude Include="RenderPedr.h">
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="SceneRender.h">

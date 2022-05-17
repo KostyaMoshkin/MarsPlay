@@ -1,4 +1,4 @@
-#include "RenderMars.h"
+#include "RenderPedr.h"
 #include "BufferBounder.h"
 
 #include "lib.h"
@@ -17,7 +17,7 @@ namespace GL {
 		vPosition_.clear();
 
 		std::string sPEDRbinPath;
-		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMars::sPedrDirectory()), sPEDRbinPath))
+		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderPedr::sPedrDirectory()), sPEDRbinPath))
 			return;
 
 		std::vector<std::string> vsFileList = lib::create_file_list(sPEDRbinPath.c_str());
@@ -31,20 +31,20 @@ namespace GL {
 
 		pedr::PedrReaderPtr pPedrReader = pedr::PedrReader::Create();
 
-		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild(RenderMars::sOrbitStart())->FirstChild();
+		lib::XMLnodePtr pOrbitStart = pConfigRoot_->FirstChild(RenderPedr::sOrbitStart())->FirstChild();
 
 		size_t nOrbitCountMin;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitStart()), nOrbitCountMin))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderPedr::sOrbitStart()), nOrbitCountMin))
 			nOrbitCountMin = 0;
 
 		size_t nOrbitCountMax;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitEnd()), nOrbitCountMax))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderPedr::sOrbitEnd()), nOrbitCountMax))
 			nOrbitCountMax = vsFileList.size();
 		else
 			nOrbitCountMax = std::min<size_t>(nOrbitCountMax, vsFileList.size());
 
 		size_t nPointOnOrbitStep;
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMars::sOrbitpointStep()), nPointOnOrbitStep))
+		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderPedr::sOrbitpointStep()), nPointOnOrbitStep))
 			nPointOnOrbitStep = 1;
 
 		for (size_t i = nOrbitCountMin; i < nOrbitCountMax; ++i)
@@ -68,11 +68,11 @@ namespace GL {
 
 	//-------------------------------------------------------------------------------------
 
-	RenderMars::RenderMars()
+	RenderPedr::RenderPedr()
 	{
 	}
 
-	bool RenderMars::init(lib::iPoint2D ptScreenSize_)
+	bool RenderPedr::init(lib::iPoint2D ptScreenSize_)
 	{
 		ShaderProgramPtr pMarsPlayProgram = ShaderProgram::Create();
 
@@ -88,7 +88,7 @@ namespace GL {
 		glGenVertexArrays(1, &m_nVAO);
 
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
-		BufferBounder<RenderMars> renderBounder(this);
+		BufferBounder<RenderPedr> renderBounder(this);
 
 		//-------------------------------------------------------------------------------------
 
@@ -163,17 +163,17 @@ namespace GL {
 		return true;
 	}
 
-	void RenderMars::draw()
+	void RenderPedr::draw()
 	{
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
-		BufferBounder<RenderMars> renderBounder(this);
+		BufferBounder<RenderPedr> renderBounder(this);
 		BufferBounder<VertexBuffer> vertexBounder(m_pVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 
 		glDrawArrays(GL_POINTS, 0, (GLsizei)m_nElementCount); //GL_POINTS //GL_LINE_STRIP
 	}
 
-	void RenderMars::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)
+	void RenderPedr::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)
 	{
 		lib::Matrix4 mView = glm::lookAt(fCamPosition_, vCamUp3D_, vCamUp3D_);  //  eye, center, up
 
@@ -181,17 +181,17 @@ namespace GL {
 		m_pMarsPlayProgram->setUniformMat4f("m_mView", &mView[0][0]);
 	}
 
-	void RenderMars::bound()
+	void RenderPedr::bound()
 	{
 		glBindVertexArray(m_nVAO);
 	}
 
-	void RenderMars::unbound()
+	void RenderPedr::unbound()
 	{
 		glBindVertexArray(0);
 	}
 
-	void RenderMars::keyPress(GL::EKeyPress nKey_)
+	void RenderPedr::keyPress(GL::EKeyPress nKey_)
 	{
 		if (nKey_ == GL::EKeyPress::key_1)
 			m_fScale *= 0.8f;
@@ -214,7 +214,7 @@ namespace GL {
 		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
 	}
 
-	bool RenderMars::fillPalette()
+	bool RenderPedr::fillPalette()
 	{
 		float fDataMin;
 		float fDataMax;

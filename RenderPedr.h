@@ -11,10 +11,10 @@
 
 namespace GL {
 
-	class RenderMars;
-	using RenderMarsPtr = std::shared_ptr<RenderMars>;
+	class RenderPedr;
+	using RenderPedrPtr = std::shared_ptr<RenderPedr>;
 
-	class RenderMars : public Render
+	class RenderPedr : public Render
 	{
 	public:
 		static const char* sPedrDirectory()	{ return "PedrDirectory";	}
@@ -43,9 +43,9 @@ namespace GL {
 		GLuint m_nVAO = 0;
 
 	public:
-		RenderMars();
+		RenderPedr();
 
-		static RenderMarsPtr Create() { return std::make_shared<RenderMars>(); }
+		static RenderPedrPtr Create() { return std::make_shared<RenderPedr>(); }
 
 	public:
 		// Унаследовано через Render

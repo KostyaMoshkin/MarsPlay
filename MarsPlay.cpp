@@ -1,6 +1,6 @@
 #include "SceneRender.h"
 #include "ShaderProgram.h"
-#include "RenderMars.h"
+#include "RenderPedr.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -43,19 +43,19 @@ int main()
 	//------------------------------------------------------------------------------------------
 
 
-	GL::RenderMarsPtr pRenderMars = GL::RenderMars::Create();
-	pRenderMars->setConfig(pXMLconfig->getRoot());
+	GL::RenderPedrPtr pRenderPedr = GL::RenderPedr::Create();
+	pRenderPedr->setConfig(pXMLconfig->getRoot());
 
 	lib::iPoint2D ptScreenSize = pSceneRender->getScreenSize();
 
-	if (!pRenderMars->init(ptScreenSize))
+	if (!pRenderPedr->init(ptScreenSize))
 	{
 		pSceneRender.reset();
 		message("OpenGL CUBE init ERROR");
 		wait_return();
 	}
 
-	pSceneRender->addElement(pRenderMars);
+	pSceneRender->addElement(pRenderPedr);
 
 	//------------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ int main()
 	float fStepForward = 1.0f;
 	float fRoteteAngle = 1.0f;
 
-	pRenderMars->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+	pRenderPedr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 	pSceneRender->draw();
 
 	while (!pSceneRender->WindowShouldClose())
@@ -80,13 +80,13 @@ int main()
 			break;
 
 		if (pSceneRender->isKeyPress(GL::EKeyPress::key_1))
-			pRenderMars->keyPress(GL::EKeyPress::key_1);
+			pRenderPedr->keyPress(GL::EKeyPress::key_1);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_2))
-			pRenderMars->keyPress(GL::EKeyPress::key_2);
+			pRenderPedr->keyPress(GL::EKeyPress::key_2);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_3))
-			pRenderMars->keyPress(GL::EKeyPress::key_3);
+			pRenderPedr->keyPress(GL::EKeyPress::key_3);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_4))
-			pRenderMars->keyPress(GL::EKeyPress::key_4);
+			pRenderPedr->keyPress(GL::EKeyPress::key_4);
 
 		lib::fPoint2D ptCursorMove = pSceneRender->getCursorMove();
 
@@ -108,7 +108,7 @@ int main()
 		//  Применение поворота
 		vCamPosition3D = qMove * qRotate * vCamPosition3D;
 
-		pRenderMars->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+		pRenderPedr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 		pSceneRender->draw();
 	}
 
