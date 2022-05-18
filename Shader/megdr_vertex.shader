@@ -22,9 +22,9 @@ void main()
 	float fLatitude = float(gl_VertexID % m_nLines) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
 	float fLongitude = float(gl_VertexID / m_nLines) / float(m_nLineSamples) * 3.1415926 * 2.0;
 
-	float fTopology = m_nRadius - m_nAreoid;
+	float fTopology = 1.0 * m_nRadius - m_nAreoid;
 
-	float fDistance = (float(m_nAreoid + m_fBaseHeight) + m_fScale * fTopology) / m_fBaseHeight;
+	float fDistance = (float(m_nAreoid) + m_fBaseHeight + m_fScale * fTopology) / m_fBaseHeight;
 	//fDistance = 1.0f;
 
 	vec3 position;

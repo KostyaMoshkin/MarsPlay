@@ -15,7 +15,9 @@
 
 namespace GL {
 
-	static void swapInt16(unsigned short* a) {
+	using MSB_INTEGER = short;
+
+	static void swapInt16(MSB_INTEGER* a) {
 		unsigned char b[2], c[2];
 		memcpy(b, a, 2);
 		c[0] = b[1];
@@ -34,7 +36,7 @@ namespace GL {
 		return true;
 	}
 
-	static void fillVertex(std::vector<short>& vRadius_, std::vector<short>& vAreoid_, lib::XMLnodePtr pConfigRoot_)
+	static void fillVertex(std::vector<MSB_INTEGER>& vRadius_, std::vector<MSB_INTEGER>& vAreoid_, lib::XMLnodePtr pConfigRoot_)
 	{
 		std::string sRadiusFile;
 		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMegdr::sRadiusFile()), sRadiusFile))
@@ -83,16 +85,16 @@ namespace GL {
 			return;
 		}
 
-		//for (unsigned short& value : vRadius_)
-		//	swapInt16(&value);
+		for (MSB_INTEGER& value : vRadius_)
+			swapInt16(&value);
 
 		if (fread(vAreoid_.data(), m_nAreoidFileSize, 1, pMegdrAreoid) != 1)
 		{
 			return;
 		}
 
-		//for (short& value : vAreoid_)
-		//	value = 200;
+		for (MSB_INTEGER& value : vAreoid_)
+			swapInt16(&value);
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -140,8 +142,8 @@ namespace GL {
 		m_pMarsPlayProgram->setUniform1i("m_nLines", &nLines);
 		m_pMarsPlayProgram->setUniform1i("m_nLineSamples", &nLineSamples);
 
-		std::vector<short> vRadius(nLines * nLineSamples);
-		std::vector<short> vAreoid(nLines * nLineSamples);
+		std::vector<MSB_INTEGER> vRadius(nLines * nLineSamples);
+		std::vector<MSB_INTEGER> vAreoid(nLines * nLineSamples);
 
 		fillVertex(vRadius, vAreoid, getConfig());
 
@@ -163,7 +165,7 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
 
-		if (!m_pRadiusVertex->fillBuffer(sizeof(short) * vRadius.size(), vRadius.data()))
+		if (!m_pRadiusVertex->fillBuffer(sizeof(MSB_INTEGER) * vRadius.size(), vRadius.data()))
 			return false;
 
 		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
@@ -175,7 +177,7 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> areoidnBounder(m_pAreoidVertex);
 
-		if (!m_pAreoidVertex->fillBuffer(sizeof(short) * vAreoid.size(), vAreoid.data()))
+		if (!m_pAreoidVertex->fillBuffer(sizeof(MSB_INTEGER) * vAreoid.size(), vAreoid.data()))
 			return false;
 
 		m_pAreoidVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
