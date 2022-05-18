@@ -15,7 +15,7 @@
 
 namespace GL {
 
-	static void swapInt16(short* a) {
+	static void swapInt16(unsigned short* a) {
 		unsigned char b[2], c[2];
 		memcpy(b, a, 2);
 		c[0] = b[1];
@@ -41,9 +41,8 @@ namespace GL {
 			return;
 
 		FILE* pMegdrRadius;
-		errno_t errRadius;
 
-		if ((errRadius = fopen_s(&pMegdrRadius, sRadiusFile.c_str(), "rb")) != 0)
+		if (fopen_s(&pMegdrRadius, sRadiusFile.c_str(), "rb") != 0)
 			return;
 
 		_fseeki64(pMegdrRadius, 0, SEEK_END);
@@ -57,9 +56,8 @@ namespace GL {
 			return;
 
 		FILE* pMegdrAreoid;
-		errno_t errAreoid;
 
-		if ((errAreoid = fopen_s(&pMegdrAreoid, sAreoidFile.c_str(), "rb")) != 0)
+		if (fopen_s(&pMegdrAreoid, sAreoidFile.c_str(), "rb")!= 0)
 			return;
 
 		_fseeki64(pMegdrAreoid, 0, SEEK_END);
@@ -78,9 +76,6 @@ namespace GL {
 			return;
 		}
 
-		//for (short& value : vRadius_)
-		//	swapInt16(&value);
-
 		//---------------------------------------------------------------------------------------------
 
 		if (fread(vRadius_.data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
@@ -88,13 +83,16 @@ namespace GL {
 			return;
 		}
 
+		//for (unsigned short& value : vRadius_)
+		//	swapInt16(&value);
+
 		if (fread(vAreoid_.data(), m_nAreoidFileSize, 1, pMegdrAreoid) != 1)
 		{
 			return;
 		}
 
 		//for (short& value : vAreoid_)
-		//	swapInt16(&value);
+		//	value = 200;
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -142,19 +140,17 @@ namespace GL {
 		m_pMarsPlayProgram->setUniform1i("m_nLines", &nLines);
 		m_pMarsPlayProgram->setUniform1i("m_nLineSamples", &nLineSamples);
 
-
 		std::vector<short> vRadius(nLines * nLineSamples);
 		std::vector<short> vAreoid(nLines * nLineSamples);
 
 		fillVertex(vRadius, vAreoid, getConfig());
 
+		//for (int i = 0; i < vRadius.size(); ++i)
+		//	vRadius[i] = i / nLines;
+
 		std::vector<short> vTopology(nLines * nLineSamples);
 		for (int i = 0; i < vTopology.size(); ++i)
 			vTopology[i] = vRadius[i] - vAreoid[i];
-
-		//std::vector<double> vDistance(nLines * nLineSamples);
-		//for (int i = 0; i < vDistance.size(); ++i)
-		//	vDistance[i] = 1.0 * (vAreoid[i] + nBaseHeight + vTopology[i]) / nBaseHeight;
 
 		bmp::CBitmap::SaveBitmapToFile((BYTE*)vTopology.data(), nLineSamples, nLines, 16, L"E:\\topo.bmp");
 		bmp::CBitmap::SaveBitmapToFile((BYTE*)vRadius.data(), nLineSamples, nLines, 16, L"E:\\radius.bmp");
@@ -191,9 +187,6 @@ namespace GL {
 		m_nElementCount = (nLines * nLineSamples - nLineSamples) * 6;
 		std::vector<unsigned> vIndeces(m_nElementCount);
 
-		std::vector<float> vLongitude(nLines * nLineSamples);
-		std::vector<float> vLatitude(nLines * nLineSamples);
-
 
 		for (int i = 0; i < nLines * nLineSamples - nLineSamples; ++i)
 		{
@@ -206,34 +199,11 @@ namespace GL {
 			vIndeces[6 * i + 5	] = i;
 		}
 
-		for (int i = 0; i < nLines * nLineSamples; ++i)
-		{
-			vLatitude[i] = float(i % nLines) / float(nLines) * 3.1415926f - 3.1415926f / 2.0f;
-			vLongitude[i] = float(i / nLines) / float(nLineSamples) * 3.1415926f * 2.0f;
-		}
-
 		m_pIndex = GL::IndexBuffer::Create();
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 
 		if (!m_pIndex->fillBuffer(sizeof(unsigned) * m_nElementCount, vIndeces.data()))
 			return false;
-
-		m_pLongitudeVertex = GL::VertexBuffer::Create();
-		BufferBounder<VertexBuffer> longitudeBounder(m_pLongitudeVertex);
-
-		if (!m_pLongitudeVertex->fillBuffer(sizeof(float) * nLines * nLineSamples, vLongitude.data()))
-			return false;
-
-		m_pLongitudeVertex->attribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
-
-		m_pLatitudeVertex = GL::VertexBuffer::Create();
-		BufferBounder<VertexBuffer> latitudeBounder(m_pLatitudeVertex);
-
-		if (!m_pLatitudeVertex->fillBuffer(sizeof(float) * nLines * nLineSamples, vLatitude.data()))
-			return false;
-
-		m_pLatitudeVertex->attribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
-
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -290,8 +260,8 @@ namespace GL {
 		BufferBounder<VertexBuffer> areoidBounder(m_pAreoidVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
-		BufferBounder<VertexBuffer> longitudeBounder(m_pLongitudeVertex);
-		BufferBounder<VertexBuffer> latitudeBounder(m_pLatitudeVertex);
+		//BufferBounder<VertexBuffer> longitudeBounder(m_pLongitudeVertex);
+		//BufferBounder<VertexBuffer> latitudeBounder(m_pLatitudeVertex);
 
 		glDrawElements(GL_TRIANGLES,(GLsizei)m_nElementCount, GL_UNSIGNED_INT, 0); //GL_POINTS //GL_LINE_STRIP //GL_TRIANGLE_STRIP //m_nElementCount
 

@@ -27,8 +27,6 @@ namespace GL {
 		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
 		VertexBufferPtr m_pAreoidVertex = nullptr;
-		VertexBufferPtr m_pLongitudeVertex = nullptr;
-		VertexBufferPtr m_pLatitudeVertex = nullptr;
 		IndexBufferPtr m_pIndex = nullptr;
 		PalettePtr m_pPalette = nullptr;
 		TextureBufferPtr m_pPeletteTexture = nullptr;
