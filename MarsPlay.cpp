@@ -55,7 +55,7 @@ int main()
 		wait_return();
 	}
 
-	pRenderPedr->setVisible(true);
+	pRenderPedr->setVisible(false);
 	pSceneRender->addElement(pRenderPedr);
 	//------------------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ int main()
 		message("OpenGL CUBE init ERROR");
 		wait_return();
 	}
-
+	pRenderMegdr->setVisible(true);
 	pSceneRender->addElement(pRenderMegdr);
 
 	//------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ int main()
 	lib::Vector3 vCamPosition3D(0, 0, -1.2);
 	lib::Vector3 vCamRight3D(1, 0, 0);
 
-	float fStepForward = 1.0f;
+	float fStepForward = 3.0f;
 	float fRoteteAngle = 1.0f;
 
 	pRenderPedr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));

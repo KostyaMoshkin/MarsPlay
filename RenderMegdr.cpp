@@ -8,10 +8,20 @@
 #include "XML\XMLreader.h"
 #include "LOG\logger.h"
 
+#include "CBitmap.h"
+
 #include <memory>
 
 
 namespace GL {
+
+	static void swapInt16(short* a) {
+		unsigned char b[2], c[2];
+		memcpy(b, a, 2);
+		c[0] = b[1];
+		c[1] = b[0];
+		memcpy(a, c, 2);
+	}
 
 	static bool getDimention(int& nLines_, int& nLineSamples_, lib::XMLnodePtr pConfigRoot_)
 	{
@@ -49,7 +59,7 @@ namespace GL {
 		FILE* pMegdrAreoid;
 		errno_t errAreoid;
 
-		if ((errAreoid = fopen_s(&pMegdrAreoid, sRadiusFile.c_str(), "rb")) != 0)
+		if ((errAreoid = fopen_s(&pMegdrAreoid, sAreoidFile.c_str(), "rb")) != 0)
 			return;
 
 		_fseeki64(pMegdrAreoid, 0, SEEK_END);
@@ -68,6 +78,9 @@ namespace GL {
 			return;
 		}
 
+		//for (short& value : vRadius_)
+		//	swapInt16(&value);
+
 		//---------------------------------------------------------------------------------------------
 
 		if (fread(vRadius_.data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
@@ -79,6 +92,9 @@ namespace GL {
 		{
 			return;
 		}
+
+		//for (short& value : vAreoid_)
+		//	swapInt16(&value);
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -107,6 +123,13 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------
 
+		int nBaseHeight;
+		if (!lib::XMLreader::getInt(getConfig()->FirstChild(RenderMegdr::nBaseHeight()), nBaseHeight))
+			return false;
+
+		float fBaseHeight = (float)nBaseHeight;
+		m_pMarsPlayProgram->setUniform1f("m_fBaseHeight", &fBaseHeight);
+
 		//  Координаты вершин
 		int nLines;
 		int nLineSamples;
@@ -117,13 +140,25 @@ namespace GL {
 		}
 
 		m_pMarsPlayProgram->setUniform1i("m_nLines", &nLines);
-		m_pMarsPlayProgram->setUniform1i("m_nLineSampless", &nLineSamples);
+		m_pMarsPlayProgram->setUniform1i("m_nLineSamples", &nLineSamples);
 
 
 		std::vector<short> vRadius(nLines * nLineSamples);
 		std::vector<short> vAreoid(nLines * nLineSamples);
 
 		fillVertex(vRadius, vAreoid, getConfig());
+
+		std::vector<short> vTopology(nLines * nLineSamples);
+		for (int i = 0; i < vTopology.size(); ++i)
+			vTopology[i] = vRadius[i] - vAreoid[i];
+
+		//std::vector<double> vDistance(nLines * nLineSamples);
+		//for (int i = 0; i < vDistance.size(); ++i)
+		//	vDistance[i] = 1.0 * (vAreoid[i] + nBaseHeight + vTopology[i]) / nBaseHeight;
+
+		bmp::CBitmap::SaveBitmapToFile((BYTE*)vTopology.data(), nLineSamples, nLines, 16, L"E:\\topo.bmp");
+		bmp::CBitmap::SaveBitmapToFile((BYTE*)vRadius.data(), nLineSamples, nLines, 16, L"E:\\radius.bmp");
+		bmp::CBitmap::SaveBitmapToFile((BYTE*)vAreoid.data(), nLineSamples, nLines, 16, L"E:\\areoid.bmp");
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -142,7 +177,7 @@ namespace GL {
 		m_pAreoidVertex = GL::VertexBuffer::Create();
 		m_pAreoidVertex->setUsage(GL_STATIC_DRAW);
 
-		BufferBounder<VertexBuffer> positionBounder(m_pAreoidVertex);
+		BufferBounder<VertexBuffer> areoidnBounder(m_pAreoidVertex);
 
 		if (!m_pAreoidVertex->fillBuffer(sizeof(short) * vAreoid.size(), vAreoid.data()))
 			return false;
@@ -153,20 +188,52 @@ namespace GL {
 
 		//  Индексы
 
-		m_nElementCount = nLines * 2;
-		std::vector<short> vIndeces(m_nElementCount);
+		m_nElementCount = (nLines * nLineSamples - nLineSamples) * 6;
+		std::vector<unsigned> vIndeces(m_nElementCount);
 
-		for (int i = 0; i < nLines; ++i)
+		std::vector<float> vLongitude(nLines * nLineSamples);
+		std::vector<float> vLatitude(nLines * nLineSamples);
+
+
+		for (int i = 0; i < nLines * nLineSamples - nLineSamples; ++i)
 		{
-			vIndeces[2 * i		] = i;
-			vIndeces[2 * i + 1	] = i + nLines;
+			vIndeces[6 * i + 0	] = i;
+			vIndeces[6 * i + 1	] = i + nLines;
+			vIndeces[6 * i + 2	] = i + nLines + 1;
+
+			vIndeces[6 * i + 3	] = i + nLines + 1;
+			vIndeces[6 * i + 4	] = i + 1;
+			vIndeces[6 * i + 5	] = i;
+		}
+
+		for (int i = 0; i < nLines * nLineSamples; ++i)
+		{
+			vLatitude[i] = float(i % nLines) / float(nLines) * 3.1415926f - 3.1415926f / 2.0f;
+			vLongitude[i] = float(i / nLines) / float(nLineSamples) * 3.1415926f * 2.0f;
 		}
 
 		m_pIndex = GL::IndexBuffer::Create();
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 
-		if (!m_pIndex->fillBuffer(sizeof(short) * m_nElementCount, vIndeces.data()))
+		if (!m_pIndex->fillBuffer(sizeof(unsigned) * m_nElementCount, vIndeces.data()))
 			return false;
+
+		m_pLongitudeVertex = GL::VertexBuffer::Create();
+		BufferBounder<VertexBuffer> longitudeBounder(m_pLongitudeVertex);
+
+		if (!m_pLongitudeVertex->fillBuffer(sizeof(float) * nLines * nLineSamples, vLongitude.data()))
+			return false;
+
+		m_pLongitudeVertex->attribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
+		m_pLatitudeVertex = GL::VertexBuffer::Create();
+		BufferBounder<VertexBuffer> latitudeBounder(m_pLatitudeVertex);
+
+		if (!m_pLatitudeVertex->fillBuffer(sizeof(float) * nLines * nLineSamples, vLatitude.data()))
+			return false;
+
+		m_pLatitudeVertex->attribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -180,13 +247,6 @@ namespace GL {
 
 		lib::Matrix4 mView = lib::Matrix4(1.0f);
 		m_pMarsPlayProgram->setUniformMat4f("m_mView", &mView[0][0]);
-
-		int nBaseHeight;
-		if (!lib::XMLreader::getInt(getConfig()->FirstChild(RenderMegdr::nBaseHeight()), nBaseHeight))
-			return false;
-
-		float fBaseHeight = (float)nBaseHeight;
-		m_pMarsPlayProgram->setUniform1f("m_fBaseHeight", &fBaseHeight);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -230,8 +290,12 @@ namespace GL {
 		BufferBounder<VertexBuffer> areoidBounder(m_pAreoidVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
+		BufferBounder<VertexBuffer> longitudeBounder(m_pLongitudeVertex);
+		BufferBounder<VertexBuffer> latitudeBounder(m_pLatitudeVertex);
 
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, (GLsizei)m_nElementCount); //GL_POINTS //GL_LINE_STRIP
+		glDrawElements(GL_TRIANGLES,(GLsizei)m_nElementCount, GL_UNSIGNED_INT, 0); //GL_POINTS //GL_LINE_STRIP //GL_TRIANGLE_STRIP //m_nElementCount
+
+		renderBounder.unbound();
 	}
 
 	void RenderMegdr::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)

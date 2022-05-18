@@ -176,6 +176,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BufferOpenGL.cpp" />
+    <ClCompile Include="CBitmap.cpp" />
     <ClCompile Include="lib.cpp" />
     <ClCompile Include="MarsPlay.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -205,6 +206,7 @@
   <ItemGroup>
     <ClInclude Include="BufferBounder.h" />
     <ClInclude Include="BufferOpenGL.h" />
+    <ClInclude Include="CBitmap.h" />
     <ClInclude Include="CConfig.h" />
     <ClInclude Include="Include\LOG\logger.h" />
     <ClInclude Include="IndexBuffer.h" />
