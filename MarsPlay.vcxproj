@@ -182,9 +182,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="MegdrReader.cpp" />
     <ClCompile Include="Palette.cpp" />
-    <ClCompile Include="PedrReader.cpp" />
     <ClCompile Include="RenderMegdr.cpp" />
-    <ClCompile Include="RenderPedr.cpp" />
     <ClCompile Include="SceneRender.cpp" />
     <ClCompile Include="SceneRenderBase.cpp" />
     <ClCompile Include="ShaderLoader.cpp" />
@@ -201,8 +199,6 @@
     <None Include="MarsPlay.config" />
     <None Include="Shader\megdr_fragment.shader" />
     <None Include="Shader\megdr_vertex.shader" />
-    <None Include="Shader\pedr_fragment.shader" />
-    <None Include="Shader\pedr_vertex.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BufferBounder.h" />
@@ -212,13 +208,10 @@
     <ClInclude Include="Include\LOG\logger.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="lib.h" />
-    <ClInclude Include="MarsPlay.h" />
     <ClInclude Include="MegdrReader.h" />
     <ClInclude Include="Palette.h" />
-    <ClInclude Include="PedrReader.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="RenderMegdr.h" />
-    <ClInclude Include="RenderPedr.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneRender.h" />
     <ClInclude Include="SceneRenderBase.h" />

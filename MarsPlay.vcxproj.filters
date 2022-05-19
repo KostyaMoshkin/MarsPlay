@@ -36,9 +36,6 @@
     <ClCompile Include="MarsPlay.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="RenderPedr.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="SceneRender.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -59,9 +56,6 @@
     </ClCompile>
     <ClCompile Include="VertexBuffer.cpp">
       <Filter>GL</Filter>
-    </ClCompile>
-    <ClCompile Include="PedrReader.cpp">
-      <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="lib.cpp">
       <Filter>Lib</Filter>
@@ -105,18 +99,9 @@
     <None Include="Shader\megdr_vertex.shader">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shader\pedr_fragment.shader">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\pedr_vertex.shader">
-      <Filter>Shader</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Render.h">
-      <Filter>Render</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderPedr.h">
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="SceneRender.h">
@@ -155,17 +140,11 @@
     <ClInclude Include="Utils.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="PedrReader.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="Palette.h">
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="TextureBuffer.h">
       <Filter>GL</Filter>
-    </ClInclude>
-    <ClInclude Include="MarsPlay.h">
-      <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Include\XML\tinystr.h">
       <Filter>Lib\XML</Filter>

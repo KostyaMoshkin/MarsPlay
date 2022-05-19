@@ -10,8 +10,6 @@
 
      struct ShaderName
      {
-         static const int pedr_vertex       = IDR_DATA1;
-         static const int pedr_fragment     = IDR_DATA2;
          static const int megdr_vertex      = IDR_DATA3;
          static const int megdr_fragment    = IDR_DATA4;
 
@@ -19,8 +17,6 @@
          {
              switch (ID_)
              {
-             case pedr_vertex:      return "pedr_vertex";
-             case pedr_fragment:    return "pedr_fragment";
              case megdr_vertex:     return "megdr_vertex";
              case megdr_fragment:   return "megdr_fragment";
              default: return "";

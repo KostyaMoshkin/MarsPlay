@@ -15,6 +15,7 @@ namespace GL {
 
 	SceneRender::~SceneRender()
 	{
+		glfwDestroyWindow(m_pWindow);
 		glfwTerminate();
 	}
 

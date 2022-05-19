@@ -43,7 +43,8 @@ namespace GL {
 		//  Координаты вершин
 		m_pMegdr = megdr::MegdrReader::Create();
 		m_pMegdr->setConfig(getConfig());
-		m_pMegdr->init();
+		if (!m_pMegdr->init())
+			return false;;
 
 
 		m_pRadiusVertex = GL::VertexBuffer::Create();
@@ -64,7 +65,8 @@ namespace GL {
 
 		m_pPalette = GL::Palette::Create();
 		m_pPalette->setConfig(getConfig());
-		m_pPalette->init();
+		if (!m_pPalette->init())
+			return false;
 
 		//-------------------------------------------------------------------------------------------------
 

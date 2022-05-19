@@ -41,7 +41,7 @@ namespace GL {
 		static PalettePtr Create() { return std::make_shared<Palette>(); }
 
 
-		void init();
+		bool init();
 
 	protected:
 		void arrange();
@@ -51,7 +51,7 @@ namespace GL {
 		lib::iPoint3D get(int value_);
 		void getMinMax(float& fMin_, float& fMax_);
 		unsigned getInterpolate();
-		void fillPalette(unsigned nPaletteID_);
+		bool fillPalette(unsigned nPaletteID_);
 		void changePalette(bool bDirection_ = true);
 	};
 }

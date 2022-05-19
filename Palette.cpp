@@ -10,7 +10,7 @@ namespace GL {
 	{
 	}
 
-	void Palette::init()
+	bool Palette::init()
 	{
 		lib::XMLnodePtr xmlPaletteDefault = lib::XMLreader::getNode(getConfig(), sPaletteDefault());
 
@@ -26,7 +26,7 @@ namespace GL {
 			if (!lib::XMLreader::getInt(xmlPalette, sId(), nId))
 			{
 				messageLn("Config should contain id attribut for: <Palette id=\"2\" interpolate=\"1600\">");
-				nId = -1;
+				return false;
 			}
 
 			m_vPaletteMap[nId] = xmlPalette;
@@ -36,10 +36,13 @@ namespace GL {
 
 		//---------------------------------------------------------------------------------------
 
-		fillPalette(m_nActivePaletteID);
+		if (!fillPalette(m_nActivePaletteID))
+			return false;
+
+		return true;
 	}
 
-	void Palette::fillPalette(unsigned nPaletteID_)
+	bool Palette::fillPalette(unsigned nPaletteID_)
 	{
 		m_vPalette.clear();
 
@@ -69,6 +72,8 @@ namespace GL {
 		}
 
 		m_nPaletteInterpolate = std::min<unsigned>(std::max<unsigned>(m_nPaletteInterpolate, 16), 4096);
+
+		return true;
 	}
 
 	void Palette::changePalette(bool bDirection_)
