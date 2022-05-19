@@ -177,6 +177,7 @@
   <ItemGroup>
     <ClCompile Include="BufferOpenGL.cpp" />
     <ClCompile Include="CBitmap.cpp" />
+    <ClCompile Include="IndirectBuffer.cpp" />
     <ClCompile Include="lib.cpp" />
     <ClCompile Include="MarsPlay.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="CConfig.h" />
     <ClInclude Include="Include\LOG\logger.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="IndirectBuffer.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="MegdrReader.h" />
     <ClInclude Include="Palette.h" />

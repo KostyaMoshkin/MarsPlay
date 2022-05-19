@@ -90,6 +90,9 @@
     <ClCompile Include="MegdrReader.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="IndirectBuffer.cpp">
+      <Filter>GL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MarsPlay.config" />
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="MegdrReader.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="IndirectBuffer.h">
+      <Filter>GL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
