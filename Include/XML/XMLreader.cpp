@@ -58,14 +58,19 @@ namespace lib {
 		if (!xNode_)
 			return false;
 
-		const char* sValue = xNode_->FirstChild()->Value();
+		std::string sValue = std::string(xNode_->FirstChild()->Value());
 
-		if (!sValue)
+		if (sValue.empty())
 			return false;
+
+		int nBase = 10;
+
+		if (sValue.find('x') != std::string::npos)
+			nBase = 16;
 
 		try
 		{
-			nValue_ = (int)std::atol(sValue);
+			nValue_ = (int)std::stol(sValue, 0, nBase);
 		}
 		catch (const std::exception&)
 		{
@@ -87,8 +92,7 @@ namespace lib {
 
 		int nBase = 10;
 
-		size_t nXpos = sValue.find('x');
-		if (nXpos > 0)
+		if (sValue.find('x') != std::string::npos)
 			nBase = 16;
 
 		try
@@ -116,8 +120,7 @@ namespace lib {
 
 		int nBase = 10;
 
-		size_t nXpos = sValue.find('x');
-		if (nXpos > 0)
+		if (sValue.find('x') != std::string::npos)
 			nBase = 16;
 
 		try
