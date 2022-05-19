@@ -121,13 +121,6 @@ namespace GL {
 		if (!fillPalette())
 			return false;
 
-		//float fDataMin;
-		//float fDataMax;
-
-		//m_pPalette->getMinMax(fDataMin, fDataMax);
-
-		//m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
-		//m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
 		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
 
 		//-------------------------------------------------------------------------------------------------
