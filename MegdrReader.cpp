@@ -42,6 +42,9 @@ namespace megdr
 
 		//--------------------------------------------------------------------------------------
 
+		if (m_mvIndeces.contains(nId_))
+			return true;
+
 		std::string sRadiusPath;
 		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, sRadiusFile()), sRadiusPath))
 			return false;
@@ -85,25 +88,41 @@ namespace megdr
 
 		//---------------------------------------------------------------------------------------------
 
-		m_vRadius.resize(m_nTopographyFileSize / sizeof(megdr::MSB_INTEGER));
+		m_mvRadius[nId_].resize(m_nTopographyFileSize / sizeof(megdr::MSB_INTEGER));
 
-		if (fread(m_vRadius.data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
+		if (fread(m_mvRadius[nId_].data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
 		{
 			return false;
 		}
 
-		for (megdr::MSB_INTEGER& value : m_vRadius)
+		for (megdr::MSB_INTEGER& value : m_mvRadius[nId_])
 			swapInt16(&value);
 
-		m_vTopography.resize(m_nTopographyFileSize / sizeof(megdr::MSB_INTEGER));
+		m_mvTopography[nId_].resize(m_nTopographyFileSize / sizeof(megdr::MSB_INTEGER));
 
-		if (fread(m_vTopography.data(), m_nTopographyFileSize, 1, pMegdrTopography) != 1)
+		if (fread(m_mvTopography[nId_].data(), m_nTopographyFileSize, 1, pMegdrTopography) != 1)
 		{
 			return false;
 		}
 
-		for (megdr::MSB_INTEGER& value : m_vTopography)
+		for (megdr::MSB_INTEGER& value : m_mvTopography[nId_])
 			swapInt16(&value);
+
+		//----------------------------------------------------------------------------------------
+
+				//  Индексы
+		m_mvIndeces[nId_].resize((m_nLines * m_nLineSamples - m_nLines) * 6);
+
+		for (int i = 0; i < m_nLines * m_nLineSamples - m_nLines; ++i)
+		{
+			m_mvIndeces[nId_][6 * i + 0] = i;
+			m_mvIndeces[nId_][6 * i + 1] = i + m_nLineSamples;
+			m_mvIndeces[nId_][6 * i + 2] = i + m_nLineSamples + 1;
+
+			m_mvIndeces[nId_][6 * i + 3] = i + m_nLineSamples + 1;
+			m_mvIndeces[nId_][6 * i + 4] = i + 1;
+			m_mvIndeces[nId_][6 * i + 5] = i;
+		}
 
 		return true;
 	}
@@ -156,19 +175,29 @@ namespace megdr
 		if(!fillMegdr(nActive_ == -1 ? m_nActiveID : nActive_))
 			return false;
 
-		m_nActiveID = nActive_;
+		m_nActiveID = nActive_ == -1 ? m_nActiveID : nActive_;
 
 		return true;
 	}
 
 	void* MegdrReader::getRadius()
 	{
-		return m_vRadius.data();
+		return m_mvRadius[m_nActiveID].data();
 	}
 
 	void* MegdrReader::getTopography()
 	{
-		return m_vTopography.data();
+		return m_mvTopography[m_nActiveID].data();
+	}
+
+	void* MegdrReader::getIndeces()
+	{
+		return m_mvIndeces[m_nActiveID].data();
+	}
+
+	unsigned MegdrReader::getIndecesCount()
+	{
+		return (unsigned)m_mvIndeces[m_nActiveID].size();
 	}
 
 	unsigned MegdrReader::getLinesCount()

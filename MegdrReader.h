@@ -30,8 +30,9 @@ namespace megdr
 	private:
 		std::map<unsigned, lib::XMLnodePtr> m_vMegdrNode;
 
-		std::vector<MSB_INTEGER> m_vRadius;
-		std::vector<MSB_INTEGER> m_vTopography;
+		std::map<unsigned, std::vector<MSB_INTEGER>> m_mvRadius;
+		std::map<unsigned, std::vector<MSB_INTEGER>> m_mvTopography;
+		std::map<unsigned, std::vector<unsigned>> m_mvIndeces;
 
 		unsigned m_nActiveID = 0;
 		unsigned m_nLines = 0;
@@ -54,7 +55,9 @@ namespace megdr
 
 		void* getRadius();
 		void* getTopography();
+		void* getIndeces();
 
+		unsigned getIndecesCount();
 		unsigned getLinesCount();
 		unsigned getLineSamplesCount();
 		unsigned getBaseHeight();

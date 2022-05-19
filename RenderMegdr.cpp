@@ -114,7 +114,7 @@ namespace GL {
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPaletteTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 
-		glDrawElements(GL_TRIANGLES,(GLsizei)m_nElementCount, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES,(GLsizei)m_pMegdr->getIndecesCount(), GL_UNSIGNED_INT, 0);
 
 		renderBounder.unbound();
 	}
@@ -212,37 +212,31 @@ namespace GL {
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
 
 		if (!m_pRadiusVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getRadius()))
+		{
+			messageLn("Error m_pRadiusVertex->fillBuffer()");
 			return false;
+		}
 
 		BufferBounder<VertexBuffer> areoidBounder(m_pTopographyVertex);
 
 		if (!m_pTopographyVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getTopography()))
+		{
+			messageLn("Error m_pTopographyVertex->fillBuffer()");
 			return false;
+		}
 
 		m_pTopographyVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
 		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
 
 		//-------------------------------------------------------------------------------------------------
 
-		//  Индексы
-		m_nElementCount = (nLines * nLineSamples - nLines) * 6;
-		std::vector<unsigned> vIndeces(m_nElementCount);
-
-		for (int i = 0; i < nLines * nLineSamples - nLines; ++i)
-		{
-			vIndeces[6 * i + 0] = i;
-			vIndeces[6 * i + 1] = i + nLineSamples;
-			vIndeces[6 * i + 2] = i + nLineSamples + 1;
-
-			vIndeces[6 * i + 3] = i + nLineSamples + 1;
-			vIndeces[6 * i + 4] = i + 1;
-			vIndeces[6 * i + 5] = i;
-		}
-
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 
-		if (!m_pIndex->fillBuffer(sizeof(unsigned) * m_nElementCount, vIndeces.data()))
+		if (!m_pIndex->fillBuffer(sizeof(unsigned) * m_pMegdr->getIndecesCount(), m_pMegdr->getIndeces()))
+		{
+			messageLn("Error m_pIndex->fillBuffer()");
 			return false;
+		}
 
 		renderBounder.unbound();
 
