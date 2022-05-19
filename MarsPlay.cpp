@@ -51,12 +51,12 @@ int main()
 	if (!pRenderPedr->init(ptScreenSize))
 	{
 		pSceneRender.reset();
-		message("OpenGL CUBE init ERROR");
+		message("OpenGL RenderPedr init ERROR");
 		wait_return();
 	}
 
 	pRenderPedr->setVisible(false);
-	pSceneRender->addElement(pRenderPedr);
+	//pSceneRender->addElement(pRenderPedr);
 	//------------------------------------------------------------------------------------------
 
 	GL::RenderMegdrPtr pRenderMegdr = GL::RenderMegdr::Create();
@@ -65,7 +65,7 @@ int main()
 	if (!pRenderMegdr->init(ptScreenSize))
 	{
 		pSceneRender.reset();
-		message("OpenGL CUBE init ERROR");
+		message("OpenGL RenderMegdr init ERROR");
 		wait_return();
 	}
 	pRenderMegdr->setVisible(true);
@@ -76,10 +76,9 @@ int main()
 	lib::Vector3 vCamPosition3D(0, 0, -1.2);
 	lib::Vector3 vCamRight3D(1, 0, 0);
 
-	float fStepForward = 3.0f;
+	float fStepForward = 1.0f;
 	float fRoteteAngle = 1.0f;
 
-	pRenderPedr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 	pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 	pSceneRender->draw();
 
@@ -95,13 +94,18 @@ int main()
 			break;
 
 		if (pSceneRender->isKeyPress(GL::EKeyPress::key_1))
-			pRenderPedr->keyPress(GL::EKeyPress::key_1);
+			pRenderMegdr->keyPress(GL::EKeyPress::key_1);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_2))
-			pRenderPedr->keyPress(GL::EKeyPress::key_2);
+			pRenderMegdr->keyPress(GL::EKeyPress::key_2);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_3))
-			pRenderPedr->keyPress(GL::EKeyPress::key_3);
+			pRenderMegdr->keyPress(GL::EKeyPress::key_3);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_4))
-			pRenderPedr->keyPress(GL::EKeyPress::key_4);
+			pRenderMegdr->keyPress(GL::EKeyPress::key_4);
+
+		if (pSceneRender->isKeyPress(GL::EKeyPress::key_minus))
+			fStepForward /= 1.5f;
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_equal))
+			fStepForward *= 1.5f;
 
 		lib::fPoint2D ptCursorMove = pSceneRender->getCursorMove();
 
@@ -116,14 +120,18 @@ int main()
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_down))
 			qMove = lib::makeQuat(-fStepForward, vCamRight3D);
 
-		// Поворот мышью влево - вправо
+		// Поворот влево - вправо
+		if (pSceneRender->isKeyPress(GL::EKeyPress::key_left))
+			ptCursorMove.x = +3.0;
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_right))
+			ptCursorMove.x = -3.0;
+
 		lib::Quat qRotate = lib::makeQuat(fRoteteAngle * ptCursorMove.x, vCamPosition3D);
 		vCamRight3D = qRotate * vCamRight3D;
 
 		//  Применение поворота
 		vCamPosition3D = qMove * qRotate * vCamPosition3D;
 
-		pRenderPedr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 		pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 		pSceneRender->draw();
 	}

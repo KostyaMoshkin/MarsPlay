@@ -23,6 +23,8 @@ namespace GL {
 		key_pagedown,
 		key_home,
 		key_end,
+		key_minus,
+		key_equal,
 
 
 	};

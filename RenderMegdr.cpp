@@ -8,8 +8,6 @@
 #include "XML\XMLreader.h"
 #include "LOG\logger.h"
 
-#include "CBitmap.h"
-
 #include <memory>
 
 
@@ -147,17 +145,6 @@ namespace GL {
 
 		fillVertex(vRadius, vAreoid, getConfig());
 
-		//for (int i = 0; i < vRadius.size(); ++i)
-		//	vRadius[i] = i / nLines;
-
-		std::vector<short> vTopology(nLines * nLineSamples);
-		for (int i = 0; i < vTopology.size(); ++i)
-			vTopology[i] = vRadius[i] - vAreoid[i];
-
-		bmp::CBitmap::SaveBitmapToFile((BYTE*)vTopology.data(), nLineSamples, nLines, 16, L"E:\\topo.bmp");
-		bmp::CBitmap::SaveBitmapToFile((BYTE*)vRadius.data(), nLineSamples, nLines, 16, L"E:\\radius.bmp");
-		bmp::CBitmap::SaveBitmapToFile((BYTE*)vAreoid.data(), nLineSamples, nLines, 16, L"E:\\areoid.bmp");
-
 		//-------------------------------------------------------------------------------------------------
 
 		m_pRadiusVertex = GL::VertexBuffer::Create();
@@ -185,7 +172,6 @@ namespace GL {
 		//-------------------------------------------------------------------------------------------------
 
 		//  Индексы
-
 		m_nElementCount = (nLines * nLineSamples - nLines) * 6;
 		std::vector<unsigned> vIndeces(m_nElementCount);
 
@@ -242,9 +228,6 @@ namespace GL {
 
 		m_fCamPosition.y = 0.0f;
 
-		glPointSize(5);
-		glLineWidth(5);
-
 		renderBounder.unbound();
 
 		setVisible(true);
@@ -262,10 +245,8 @@ namespace GL {
 		BufferBounder<VertexBuffer> areoidBounder(m_pAreoidVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
-		//BufferBounder<VertexBuffer> longitudeBounder(m_pLongitudeVertex);
-		//BufferBounder<VertexBuffer> latitudeBounder(m_pLatitudeVertex);
 
-		glDrawElements(GL_TRIANGLES,(GLsizei)m_nElementCount, GL_UNSIGNED_INT, 0); //GL_POINTS //GL_LINE_STRIP //GL_TRIANGLE_STRIP //m_nElementCount
+		glDrawElements(GL_TRIANGLES,(GLsizei)m_nElementCount, GL_UNSIGNED_INT, 0);
 
 		renderBounder.unbound();
 	}
@@ -276,16 +257,6 @@ namespace GL {
 
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		m_pMarsPlayProgram->setUniformMat4f("m_mView", &mView[0][0]);
-	}
-
-	void RenderMegdr::bound()
-	{
-		glBindVertexArray(m_nVAO);
-	}
-
-	void RenderMegdr::unbound()
-	{
-		glBindVertexArray(0);
 	}
 
 	void RenderMegdr::keyPress(GL::EKeyPress nKey_)
@@ -332,6 +303,16 @@ namespace GL {
 		}
 
 		return true;
+	}
+
+	void RenderMegdr::bound()
+	{
+		glBindVertexArray(m_nVAO);
+	}
+
+	void RenderMegdr::unbound()
+	{
+		glBindVertexArray(0);
 	}
 
 }

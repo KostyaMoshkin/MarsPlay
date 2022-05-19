@@ -118,7 +118,7 @@ namespace GL {
 
 	void SceneRender::addElement(RenderPtr pRender_)
 	{
-		m_vElementRendr.push_back(pRender_);
+		m_vElementRendr.emplace_back(pRender_);
 	}
 
 	lib::fPoint2D SceneRender::getCursorMove()
@@ -162,6 +162,8 @@ namespace GL {
 			m_vKeyPress[(int)EKeyPress::key_3] = bPress;
 		else if (nKey_ == GLFW_KEY_4)
 			m_vKeyPress[(int)EKeyPress::key_4] = bPress;
+		else if (nKey_ == GLFW_KEY_5)
+			m_vKeyPress[(int)EKeyPress::key_5] = bPress;
 		else if (nKey_ == GLFW_KEY_LEFT)
 			m_vKeyPress[(int)EKeyPress::key_left] = bPress;
 		else if (nKey_ == GLFW_KEY_RIGHT)
@@ -178,6 +180,10 @@ namespace GL {
 			m_vKeyPress[(int)EKeyPress::key_home] = bPress;
 		else if (nKey_ == GLFW_KEY_END)
 			m_vKeyPress[(int)EKeyPress::key_end] = bPress;
+		else if (nKey_ == GLFW_KEY_MINUS)
+			m_vKeyPress[(int)EKeyPress::key_minus] = bPress;
+		else if (nKey_ == GLFW_KEY_EQUAL)
+			m_vKeyPress[(int)EKeyPress::key_equal] = bPress;
 	}
 
 	bool SceneRender::isInteraction()
@@ -192,6 +198,8 @@ namespace GL {
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_4])
 			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_5])
+			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_left])
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_right])
@@ -199,6 +207,10 @@ namespace GL {
 		else if (m_vKeyPress[(int)EKeyPress::key_up])
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_down])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_minus])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_equal])
 			return true;
 		else if (isCursoreMove())
 			return true;
