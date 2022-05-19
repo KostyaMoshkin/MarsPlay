@@ -21,7 +21,7 @@ namespace megdr
 		static const char* nMegdrDefault()		{ return "MegdrDefault";	}
 		static const char* sMegdr()				{ return "Megdr";			}
 		static const char* sRadiusFile()		{ return "RadiusFile";		}
-		static const char* sAreoidFile()		{ return "AreoidFile";		}
+		static const char* sTopographyFile()	{ return "TopographyFile";	}
 		static const char* nBaseHeight()		{ return "BaseHeight";		}
 		static const char* nLines()				{ return "Lines";			}
 		static const char* nLineSamples()		{ return "LineSamples";		}
@@ -31,7 +31,7 @@ namespace megdr
 		std::map<unsigned, lib::XMLnodePtr> m_vMegdrNode;
 
 		std::vector<MSB_INTEGER> m_vRadius;
-		std::vector<MSB_INTEGER> m_vAreoid;
+		std::vector<MSB_INTEGER> m_vTopography;
 
 		unsigned m_nActiveID = 0;
 		unsigned m_nLines = 0;
@@ -53,7 +53,7 @@ namespace megdr
 		bool changeMrdgr(unsigned nActive_ = -1);
 
 		void* getRadius();
-		void* getAreoid();
+		void* getTopography();
 
 		unsigned getLinesCount();
 		unsigned getLineSamplesCount();

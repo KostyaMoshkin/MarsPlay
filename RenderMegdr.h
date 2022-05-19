@@ -17,19 +17,9 @@ namespace GL {
 
 	class RenderMegdr : public Render
 	{
-	public:
-		static const char* nMegdrDefault()		{ return "MegdrDefault";	}
-		static const char* sRadiusFile()		{ return "RadiusFile";		}
-		static const char* sAreoidFile()		{ return "AreoidFile";		}
-		static const char* nBaseHeight()		{ return "BaseHeight";		}
-		static const char* nLines()				{ return "Lines";			}
-		static const char* nLineSamples()		{ return "LineSamples";		}
-		static const char* nId()				{ return "id";				}
-
-	private:
 		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
-		VertexBufferPtr m_pAreoidVertex = nullptr;
+		VertexBufferPtr m_pTopographyVertex = nullptr;
 		IndexBufferPtr m_pIndex = nullptr;
 		TextureBufferPtr m_pPeletteTexture = nullptr;
 
@@ -67,8 +57,6 @@ namespace GL {
 		virtual void keyPress(GL::EKeyPress nKey_) override;
 
 		bool fillPalette();
-
-		//bool fillMegdr();
 
 	};
 }

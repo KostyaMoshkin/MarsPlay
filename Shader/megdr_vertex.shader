@@ -1,7 +1,7 @@
 #version 330 core
 
 layout(location = 0) in int m_nRadius;
-layout(location = 1) in int m_nAreoid;
+layout(location = 1) in int m_nTopography;
 
 uniform float m_fPaletteValueMin;
 uniform float m_fPaletteValueMax;
@@ -21,9 +21,9 @@ void main()
 	float fLatitude = float(gl_VertexID / m_nLineSamples) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
 	float fLongitude = float(gl_VertexID % m_nLineSamples) / float(m_nLineSamples) * 3.1415926 * 2.0;
 
-	float fTopology = 1.0 * m_nRadius - m_nAreoid;
+	float fAreoid = 1.0 * m_nRadius - m_nTopography;
 
-	float fDistance = (m_fScale * fTopology + 1.0 * m_nAreoid + m_fBaseHeight) / m_fBaseHeight;
+	float fDistance = (m_fScale * m_nTopography + fAreoid + m_fBaseHeight) / m_fBaseHeight;
 
 	vec3 vPosition = vec3(
 		fDistance * cos(fLatitude) * sin(fLongitude),
@@ -32,7 +32,7 @@ void main()
 
 	gl_Position = m_mPerspective * m_mView * m_mModel * vec4(vPosition, 1.0);
 
-	fPaletteIndex = (fTopology - m_fPaletteValueMin) / (m_fPaletteValueMax - m_fPaletteValueMin);
+	fPaletteIndex = (1.0f * m_nTopography - m_fPaletteValueMin) / (m_fPaletteValueMax - m_fPaletteValueMin);
 
 	fPaletteIndex = min(max(fPaletteIndex, 0.0), 1.0);
 }

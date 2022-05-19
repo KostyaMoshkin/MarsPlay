@@ -67,6 +67,8 @@ namespace GL {
 			messageLn("Config should contain interpolate attribut for: <Palette id=\"2\" interpolate=\"1600\">");
 			m_nPaletteInterpolate = 16;
 		}
+
+		m_nPaletteInterpolate = std::min<unsigned>(std::max<unsigned>(m_nPaletteInterpolate, 16), 4096);
 	}
 
 	void Palette::changePalette(bool bDirection_)

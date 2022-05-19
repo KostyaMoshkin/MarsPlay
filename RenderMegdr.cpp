@@ -65,15 +65,15 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_pAreoidVertex = GL::VertexBuffer::Create();
-		m_pAreoidVertex->setUsage(GL_STATIC_DRAW);
+		m_pTopographyVertex = GL::VertexBuffer::Create();
+		m_pTopographyVertex->setUsage(GL_STATIC_DRAW);
 
-		BufferBounder<VertexBuffer> areoidnBounder(m_pAreoidVertex);
+		BufferBounder<VertexBuffer> areoidnBounder(m_pTopographyVertex);
 
-		if (!m_pAreoidVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getAreoid()))
+		if (!m_pTopographyVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getTopography()))
 			return false;
 
-		m_pAreoidVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
+		m_pTopographyVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -141,7 +141,7 @@ namespace GL {
 		BufferBounder<ShaderProgram> programBounder(m_pMarsPlayProgram);
 		BufferBounder<RenderMegdr> renderBounder(this);
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
-		BufferBounder<VertexBuffer> areoidBounder(m_pAreoidVertex);
+		BufferBounder<VertexBuffer> areoidBounder(m_pTopographyVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPeletteTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 

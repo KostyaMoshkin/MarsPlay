@@ -49,7 +49,10 @@ namespace megdr
 		FILE* pMegdrRadius;
 
 		if (fopen_s(&pMegdrRadius, sRadiusPath.c_str(), "rb") != 0)
+		{
+			messageLn(std::string(std::string("Radius File not found: ") + sRadiusPath).c_str());
 			return false;
+		}
 
 		_fseeki64(pMegdrRadius, 0, SEEK_END);
 		long m_nRadiusFileSize = ftell(pMegdrRadius);
@@ -57,29 +60,32 @@ namespace megdr
 
 		//---------------------------------------------------------------------------------------------
 
-		std::string sAreoidPath;
-		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, sAreoidFile()), sAreoidPath))
+		std::string sTopographyPath;
+		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, sTopographyFile()), sTopographyPath))
 			return false;
 
-		FILE* pMegdrAreoid;
+		FILE* pMegdrTopography;
 
-		if (fopen_s(&pMegdrAreoid, sAreoidPath.c_str(), "rb") != 0)
+		if (fopen_s(&pMegdrTopography, sTopographyPath.c_str(), "rb") != 0)
+		{
+			messageLn(std::string(std::string("Topography File not found: ") + sRadiusPath).c_str());
 			return false;
+		}
 
-		_fseeki64(pMegdrAreoid, 0, SEEK_END);
-		long m_nAreoidFileSize = ftell(pMegdrAreoid);
-		_fseeki64(pMegdrAreoid, 0, SEEK_SET);
+		_fseeki64(pMegdrTopography, 0, SEEK_END);
+		long m_nTopographyFileSize = ftell(pMegdrTopography);
+		_fseeki64(pMegdrTopography, 0, SEEK_SET);
 
 		//---------------------------------------------------------------------------------------------
 
-		if (m_nRadiusFileSize != m_nAreoidFileSize)
+		if (m_nRadiusFileSize != m_nTopographyFileSize)
 		{
 			return false;
 		}
 
 		//---------------------------------------------------------------------------------------------
 
-		m_vRadius.resize(m_nAreoidFileSize / sizeof(megdr::MSB_INTEGER));
+		m_vRadius.resize(m_nTopographyFileSize / sizeof(megdr::MSB_INTEGER));
 
 		if (fread(m_vRadius.data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
 		{
@@ -89,14 +95,14 @@ namespace megdr
 		for (megdr::MSB_INTEGER& value : m_vRadius)
 			swapInt16(&value);
 
-		m_vAreoid.resize(m_nAreoidFileSize / sizeof(megdr::MSB_INTEGER));
+		m_vTopography.resize(m_nTopographyFileSize / sizeof(megdr::MSB_INTEGER));
 
-		if (fread(m_vAreoid.data(), m_nAreoidFileSize, 1, pMegdrAreoid) != 1)
+		if (fread(m_vTopography.data(), m_nTopographyFileSize, 1, pMegdrTopography) != 1)
 		{
 			return false;
 		}
 
-		for (megdr::MSB_INTEGER& value : m_vAreoid)
+		for (megdr::MSB_INTEGER& value : m_vTopography)
 			swapInt16(&value);
 
 		return true;
@@ -158,9 +164,9 @@ namespace megdr
 		return m_vRadius.data();
 	}
 
-	void* MegdrReader::getAreoid()
+	void* MegdrReader::getTopography()
 	{
-		return m_vAreoid.data();
+		return m_vTopography.data();
 	}
 
 	unsigned MegdrReader::getLinesCount()
