@@ -7,7 +7,6 @@
 #include "CConfig.h"
 
 #include "XML\XMLReader.h"
-#include "XML\XMLReader.h"
 
 #include <GLEW/glew.h>
 

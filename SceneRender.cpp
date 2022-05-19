@@ -31,7 +31,7 @@ namespace GL {
 
 		if (m_pWindow == nullptr)
 		{
-			message("no window");
+			messageLn("no window");
 			return false;
 		}
 
@@ -43,7 +43,10 @@ namespace GL {
 		glewExperimental = true; // Флаг необходим в Core-режиме OpenGL
 
 		if( glewInit() != GLEW_OK )
+		{
+			messageLn("glewInit error");
 			return false;
+		}
 
 		int nWidth, nHeight;
 		glfwGetFramebufferSize(m_pWindow, &nWidth, &nHeight);
@@ -77,8 +80,6 @@ namespace GL {
 	int SceneRender::GetVersion()
 	{
 		int nVersionFull = -1;
-
-		//------------------------------------------------------------------------------------------
 
 		const GLubyte* pVersion = glGetString(GL_VERSION);
 		if (!pVersion)
@@ -242,7 +243,6 @@ namespace GL {
 		m_cursorMove = { m_cursorCurrentPos.x - float(fPosX_), m_cursorCurrentPos.y - float(fPosY_) };
 
 		m_cursorCurrentPos = { float(fPosX_), float(fPosY_) };
-
 	}
 
 
@@ -255,9 +255,7 @@ namespace GL {
 		while (((err = glGetError()) != GL_NO_ERROR) && ++nCount < 1000)
 		{
 			if (check_error_)
-			{
-
-			}
+				messageLn(std::string(std::string("OpenGL error: ") + std::to_string(err)).c_str());
 
 			result = false;
 		}

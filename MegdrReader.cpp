@@ -116,10 +116,9 @@ namespace megdr
 
 		//----------------------------------------------------------------------------------------
 
-		//  Индексы
-		
 		if (m_nVersionFull >= 43)
 		{
+			//  Индексы
 			m_mvIndeces[nId_].resize(m_nLines * 6);
 
 			for (unsigned i = 0; i < m_nLines; ++i)
@@ -146,6 +145,7 @@ namespace megdr
 		}
 		else
 		{
+			//  Индексы
 			m_mvIndeces[nId_].resize((m_nLines * m_nLineSamples - m_nLines) * 6);
 
 			for (unsigned i = 0; i < m_nLines * m_nLineSamples - m_nLines; ++i)
@@ -209,6 +209,9 @@ namespace megdr
 	{
 		auto iterMegdr = m_vMegdrNode.find(m_nActiveID);
 
+		if (iterMegdr == m_vMegdrNode.end())
+			iterMegdr = m_vMegdrNode.begin();
+
 		if (bDirection_)
 		{
 			++iterMegdr;
@@ -258,7 +261,7 @@ namespace megdr
 
 	unsigned MegdrReader::getIndirectCount()
 	{
-		return getIndecesCount() / 3 - 3;
+		return (getIndecesCount() - 1) / 3;
 	}
 
 	unsigned MegdrReader::getLinesCount()
