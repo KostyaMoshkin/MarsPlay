@@ -47,7 +47,7 @@ namespace megdr
 
 		if (bXMLmistake)
 		{
-			messageLn("Some nodes missed in log file. There should be: <BaseHeight> <Lines> <LineSamples> <RadiusFile> <TopographyFile>");
+			messageLn("Some nodes missed in config file. There should be: <BaseHeight> <Lines> <LineSamples> <RadiusFile> <TopographyFile>");
 			return false;
 		}
 
