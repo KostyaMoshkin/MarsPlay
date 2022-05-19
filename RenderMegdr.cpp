@@ -101,13 +101,14 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_mPerspective = glm::perspective(glm::radians(60.0f), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.01f, 1000.0f);
+		unsigned nLensFocus = 45;
+		if (!lib::XMLreader::getInt(lib::XMLreader::getNode(getConfig(), nLens()), nLensFocus))
+			nLensFocus = 45;
+
+		float fLens = (float)nLensFocus;
+
+		m_mPerspective = glm::perspective(glm::radians(fLens), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.001f, 5.0f);
 		m_pMarsPlayProgram->setUniformMat4f("m_mPerspective", &m_mPerspective[0][0]);
-
-		m_mTrunslate = glm::translate(m_mTrunslate, glm::vec3(0.0f, 0.0f, 0.0f));
-
-		lib::Matrix4 mModel = m_mTrunslate * m_mRotate;
-		m_pMarsPlayProgram->setUniformMat4f("m_mModel", &mModel[0][0]);
 
 		lib::Matrix4 mView = lib::Matrix4(1.0f);
 		m_pMarsPlayProgram->setUniformMat4f("m_mView", &mView[0][0]);
@@ -118,9 +119,6 @@ namespace GL {
 		m_pPalette->setConfig(getConfig());
 		m_pPalette->init();
 
-		if (!fillPalette())
-			return false;
-
 		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
 
 		//-------------------------------------------------------------------------------------------------
@@ -128,6 +126,9 @@ namespace GL {
 		m_fCamPosition.y = 0.0f;
 
 		renderBounder.unbound();
+
+		if (!fillPalette())
+			return false;
 
 		setVisible(true);
 		return true;
@@ -187,7 +188,9 @@ namespace GL {
 		float fDataMax;
 
 		m_pPalette->getMinMax(fDataMin, fDataMax);
+
 		const unsigned nPaletteSize = m_pPalette->getInterpolate();
+
 		std::vector<lib::fPoint3D> vColorText(nPaletteSize);
 		for (size_t i = 0; i < nPaletteSize; ++i)
 			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);
@@ -203,6 +206,13 @@ namespace GL {
 
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
 		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
+
+		return true;
+	}
+
+	bool RenderMegdr::fillVertex()
+	{
+
 
 		return true;
 	}

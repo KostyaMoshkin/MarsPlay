@@ -53,7 +53,6 @@ namespace GL {
 		unsigned getInterpolate();
 		void fillPalette(unsigned nPaletteID_);
 		void changePalette(bool bDirection_ = true);
-
 	};
 }
 

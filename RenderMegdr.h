@@ -17,6 +17,8 @@ namespace GL {
 
 	class RenderMegdr : public Render
 	{
+		static const char* nLens() { return "Lens"; }
+
 		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
 		VertexBufferPtr m_pTopographyVertex = nullptr;
@@ -26,7 +28,6 @@ namespace GL {
 		PalettePtr m_pPalette = nullptr;
 		megdr::MegdrReaderPtr m_pMegdr = nullptr;
 
-		lib::Matrix4 m_mTrunslate = lib::Matrix4(1.0f);
 		lib::Matrix4 m_mRotate = lib::Matrix4(1.0f);
 		lib::Matrix4 m_mPerspective = lib::Matrix4(1.0f);
 		lib::Matrix4 m_mTransform = lib::Matrix4(1.0f);
@@ -57,6 +58,7 @@ namespace GL {
 		virtual void keyPress(GL::EKeyPress nKey_) override;
 
 		bool fillPalette();
+		bool fillVertex();
 
 	};
 }
