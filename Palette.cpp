@@ -12,16 +12,12 @@ namespace GL {
 
 	void Palette::init()
 	{
-		m_vPalette.clear();
-
 		lib::XMLnodePtr xmlPaletteDefault = lib::XMLreader::getNode(getConfig(), sPaletteDefault());
 
 		if (!!xmlPaletteDefault && !lib::XMLreader::getInt(xmlPaletteDefault, m_nActivePaletteID))
 			m_nActivePaletteID = 1;
 
 		//---------------------------------------------------------------------------------------
-
-		m_vPalette.clear();
 
 		lib::XMLnodePtr xmlPalette = lib::XMLreader::getNode(getConfig(), sPalette());
 		while (!!xmlPalette)
