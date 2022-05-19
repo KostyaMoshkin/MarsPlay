@@ -99,7 +99,7 @@ int main()
 		lib::fPoint2D ptCursorMove = pSceneRender->getCursorMove();
 
 		//  Ближе - дальше
-		vCamPosition3D *= 1 - ptCursorMove.y / 300;
+		vCamPosition3D *= 1 - ptCursorMove.y / 500;
 
 		//  Полетет вперед - назад
 		lib::Quat qMove(0.0f, 0.0f, 0.0f, 0.0f);

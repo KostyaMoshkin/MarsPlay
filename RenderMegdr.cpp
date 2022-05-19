@@ -4,7 +4,7 @@
 #include "lib.h"
 #include "Vocabulary.h"
 
-#include "PedrReader.h"
+#include "MegdrReader.h"
 #include "XML\XMLreader.h"
 #include "LOG\logger.h"
 
@@ -12,90 +12,6 @@
 
 
 namespace GL {
-
-	using MSB_INTEGER = short;
-
-	static void swapInt16(MSB_INTEGER* a) {
-		unsigned char b[2], c[2];
-		memcpy(b, a, 2);
-		c[0] = b[1];
-		c[1] = b[0];
-		memcpy(a, c, 2);
-	}
-
-	static bool getDimention(int& nLines_, int& nLineSamples_, lib::XMLnodePtr pConfigRoot_)
-	{
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLines()), nLines_))
-			return false;
-
-		if (!lib::XMLreader::getInt(pConfigRoot_->FirstChild(RenderMegdr::nLineSamples()), nLineSamples_))
-			return false;
-
-		return true;
-	}
-
-	static void fillVertex(std::vector<MSB_INTEGER>& vRadius_, std::vector<MSB_INTEGER>& vAreoid_, lib::XMLnodePtr pConfigRoot_)
-	{
-		std::string sRadiusFile;
-		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMegdr::sRadiusFile()), sRadiusFile))
-			return;
-
-		FILE* pMegdrRadius;
-
-		if (fopen_s(&pMegdrRadius, sRadiusFile.c_str(), "rb") != 0)
-			return;
-
-		_fseeki64(pMegdrRadius, 0, SEEK_END);
-		long m_nRadiusFileSize = ftell(pMegdrRadius);
-		_fseeki64(pMegdrRadius, 0, SEEK_SET);
-
-		//---------------------------------------------------------------------------------------------
-
-		std::string sAreoidFile;
-		if (!lib::XMLreader::getSting(pConfigRoot_->FirstChild(RenderMegdr::sAreoidFile()), sAreoidFile))
-			return;
-
-		FILE* pMegdrAreoid;
-
-		if (fopen_s(&pMegdrAreoid, sAreoidFile.c_str(), "rb")!= 0)
-			return;
-
-		_fseeki64(pMegdrAreoid, 0, SEEK_END);
-		long m_nAreoidFileSize = ftell(pMegdrAreoid);
-		_fseeki64(pMegdrAreoid, 0, SEEK_SET);
-
-		//---------------------------------------------------------------------------------------------
-
-		if (m_nRadiusFileSize != m_nAreoidFileSize)
-		{
-			return;
-		}
-
-		if (m_nAreoidFileSize != (long)vRadius_.size() * (long)sizeof(short))
-		{
-			return;
-		}
-
-		//---------------------------------------------------------------------------------------------
-
-		if (fread(vRadius_.data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
-		{
-			return;
-		}
-
-		for (MSB_INTEGER& value : vRadius_)
-			swapInt16(&value);
-
-		if (fread(vAreoid_.data(), m_nAreoidFileSize, 1, pMegdrAreoid) != 1)
-		{
-			return;
-		}
-
-		for (MSB_INTEGER& value : vAreoid_)
-			swapInt16(&value);
-	}
-
-	//-------------------------------------------------------------------------------------
 
 	RenderMegdr::RenderMegdr()
 	{
@@ -121,29 +37,19 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------
 
-		int nBaseHeight;
-		if (!lib::XMLreader::getInt(getConfig()->FirstChild(RenderMegdr::nBaseHeight()), nBaseHeight))
-			return false;
-
-		float fBaseHeight = (float)nBaseHeight;
-		m_pMarsPlayProgram->setUniform1f("m_fBaseHeight", &fBaseHeight);
-
 		//  Координаты вершин
-		int nLines;
-		int nLineSamples;
+		m_pMegdr = megdr::MegdrReader::Create();
+		m_pMegdr->setConfig(getConfig());
+		m_pMegdr->init();
 
-		if (!getDimention(nLines, nLineSamples, getConfig()))
-		{
-			return false;
-		}
+		int nLines = m_pMegdr->getLinesCount();
+		int nLineSamples = m_pMegdr->getLineSamplesCount();
 
 		m_pMarsPlayProgram->setUniform1i("m_nLines", &nLines);
 		m_pMarsPlayProgram->setUniform1i("m_nLineSamples", &nLineSamples);
 
-		std::vector<MSB_INTEGER> vRadius(nLines * nLineSamples);
-		std::vector<MSB_INTEGER> vAreoid(nLines * nLineSamples);
-
-		fillVertex(vRadius, vAreoid, getConfig());
+		float fBaseHeight = (float)m_pMegdr->getBaseHeight();
+		m_pMarsPlayProgram->setUniform1f("m_fBaseHeight", &fBaseHeight);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -152,7 +58,7 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
 
-		if (!m_pRadiusVertex->fillBuffer(sizeof(MSB_INTEGER) * vRadius.size(), vRadius.data()))
+		if (!m_pRadiusVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getRadius()))
 			return false;
 
 		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
@@ -164,7 +70,7 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> areoidnBounder(m_pAreoidVertex);
 
-		if (!m_pAreoidVertex->fillBuffer(sizeof(MSB_INTEGER) * vAreoid.size(), vAreoid.data()))
+		if (!m_pAreoidVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getAreoid()))
 			return false;
 
 		m_pAreoidVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
@@ -215,13 +121,13 @@ namespace GL {
 		if (!fillPalette())
 			return false;
 
-		float fDataMin;
-		float fDataMax;
+		//float fDataMin;
+		//float fDataMax;
 
-		m_pPalette->getMinMax(fDataMin, fDataMax);
+		//m_pPalette->getMinMax(fDataMin, fDataMax);
 
-		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
-		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
+		//m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
+		//m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
 		m_pMarsPlayProgram->setUniform1f("m_fScale", &m_fScale);
 
 		//-------------------------------------------------------------------------------------------------
@@ -301,6 +207,9 @@ namespace GL {
 			messageLn("ERROR    m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))");
 			return false;
 		}
+
+		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
+		m_pMarsPlayProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
 
 		return true;
 	}

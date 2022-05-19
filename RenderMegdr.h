@@ -3,8 +3,9 @@
 #include "ShaderProgram.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include "Palette.h"
 #include "TextureBuffer.h"
+#include "Palette.h"
+#include "MegdrReader.h"
 
 #include "Lib.h"
 #include "Vocabulary.h"
@@ -17,19 +18,23 @@ namespace GL {
 	class RenderMegdr : public Render
 	{
 	public:
+		static const char* nMegdrDefault()		{ return "MegdrDefault";	}
 		static const char* sRadiusFile()		{ return "RadiusFile";		}
 		static const char* sAreoidFile()		{ return "AreoidFile";		}
 		static const char* nBaseHeight()		{ return "BaseHeight";		}
 		static const char* nLines()				{ return "Lines";			}
 		static const char* nLineSamples()		{ return "LineSamples";		}
+		static const char* nId()				{ return "id";				}
 
 	private:
 		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
 		VertexBufferPtr m_pAreoidVertex = nullptr;
 		IndexBufferPtr m_pIndex = nullptr;
-		PalettePtr m_pPalette = nullptr;
 		TextureBufferPtr m_pPeletteTexture = nullptr;
+
+		PalettePtr m_pPalette = nullptr;
+		megdr::MegdrReaderPtr m_pMegdr = nullptr;
 
 		lib::Matrix4 m_mTrunslate = lib::Matrix4(1.0f);
 		lib::Matrix4 m_mRotate = lib::Matrix4(1.0f);
@@ -40,7 +45,7 @@ namespace GL {
 
 		size_t m_nElementCount = 0;
 
-		float m_fScale = 1.0f;
+		float m_fScale = 5.0f;
 
 	public:
 		GLuint m_nVAO = 0;
@@ -62,6 +67,8 @@ namespace GL {
 		virtual void keyPress(GL::EKeyPress nKey_) override;
 
 		bool fillPalette();
+
+		//bool fillMegdr();
 
 	};
 }
