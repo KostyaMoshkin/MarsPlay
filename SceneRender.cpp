@@ -30,7 +30,7 @@ namespace GL {
 
 		if (m_pWindow == nullptr)
 		{
-			lib::logger::out("no window");
+			message("no window");
 			return false;
 		}
 

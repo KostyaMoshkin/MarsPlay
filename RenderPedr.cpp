@@ -24,7 +24,7 @@ namespace GL {
 
 		if (vsFileList.empty())
 		{
-			lib::logger::outLine("No orbit found!");
+			messageLn("No orbit found!");
 			return;
 		}
 
@@ -60,10 +60,10 @@ namespace GL {
 			}
 		}
 
-		lib::logger::out("Orbit found: ");
-		lib::logger::out(std::to_string(vsFileList.size()).c_str());
-		lib::logger::out(". Point count: ");
-		lib::logger::outLine(std::to_string(vPosition_.size()).c_str());
+		message("Orbit found: ");
+		message(std::to_string(vsFileList.size()).c_str());
+		message(". Point count: ");
+		messageLn(std::to_string(vPosition_.size()).c_str());
 	}
 
 	//-------------------------------------------------------------------------------------
@@ -95,13 +95,13 @@ namespace GL {
 		//  Координаты вершин
 		std::vector<SPedrVertex> vPosition;
 
-		lib::logger::out("start load ");
+		message("start load ");
 		lib::logger::putTimeStamp();
-		lib::logger::outLine("");
+		messageLn("");
 		fillVertex(vPosition, getConfig());
-		lib::logger::out("stop load  ");
+		message("stop load  ");
 		lib::logger::putTimeStamp();
-		lib::logger::outLine("");
+		messageLn("");
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -233,7 +233,7 @@ namespace GL {
 
 		if (!m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))
 		{
-			lib::logger::outLine("ERROR    m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))");
+			messageLn("ERROR    m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))");
 			return false;
 		}
 

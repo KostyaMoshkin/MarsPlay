@@ -24,7 +24,7 @@ int main()
 
 	lib::logger::putSeparator();
 	lib::logger::putTimeStamp();
-	lib::logger::outLine("");
+	messageLn("");
 
 
 	GL::SceneRenderPtr pSceneRender = GL::SceneRender::Create();

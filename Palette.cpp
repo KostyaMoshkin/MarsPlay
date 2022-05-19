@@ -29,7 +29,7 @@ namespace GL {
 			int nId = -1;
 			if (!lib::XMLreader::getInt(xmlPalette, sId(), nId))
 			{
-				lib::logger::outLine("Config should contain id attribut for: <Palette id=\"2\" interpolate=\"1600\">");
+				messageLn("Config should contain id attribut for: <Palette id=\"2\" interpolate=\"1600\">");
 				nId = -1;
 			}
 
@@ -68,7 +68,7 @@ namespace GL {
 
 		if (!lib::XMLreader::getInt(xmlActivePalette, sInterpolate(), m_nPaletteInterpolate))
 		{
-			lib::logger::outLine("Config should contain interpolate attribut for: <Palette id=\"2\" interpolate=\"1600\">");
+			messageLn("Config should contain interpolate attribut for: <Palette id=\"2\" interpolate=\"1600\">");
 			m_nPaletteInterpolate = 16;
 		}
 	}
