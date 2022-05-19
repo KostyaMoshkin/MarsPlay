@@ -1,6 +1,5 @@
 #include "SceneRender.h"
 #include "ShaderProgram.h"
-#include "RenderPedr.h"
 #include "RenderMegdr.h"
 
 #include <iostream>
@@ -45,20 +44,6 @@ int main()
 
 	//------------------------------------------------------------------------------------------
 
-	GL::RenderPedrPtr pRenderPedr = GL::RenderPedr::Create();
-	pRenderPedr->setConfig(pXMLconfig->getRoot());
-
-	if (!pRenderPedr->init(ptScreenSize))
-	{
-		pSceneRender.reset();
-		message("OpenGL RenderPedr init ERROR");
-		wait_return();
-	}
-
-	pRenderPedr->setVisible(false);
-	//pSceneRender->addElement(pRenderPedr);
-	//------------------------------------------------------------------------------------------
-
 	GL::RenderMegdrPtr pRenderMegdr = GL::RenderMegdr::Create();
 	pRenderMegdr->setConfig(pXMLconfig->getRoot());
 
@@ -76,7 +61,7 @@ int main()
 	lib::Vector3 vCamPosition3D(0, 0, -1.2);
 	lib::Vector3 vCamRight3D(1, 0, 0);
 
-	float fStepForward = 1.0f;
+	float fStepForward = 0.3f;
 	float fRoteteAngle = 1.0f;
 
 	pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
@@ -101,6 +86,10 @@ int main()
 			pRenderMegdr->keyPress(GL::EKeyPress::key_3);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_4))
 			pRenderMegdr->keyPress(GL::EKeyPress::key_4);
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_5))
+			pRenderMegdr->keyPress(GL::EKeyPress::key_5);
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_6))
+			pRenderMegdr->keyPress(GL::EKeyPress::key_6);
 
 		if (pSceneRender->isKeyPress(GL::EKeyPress::key_minus))
 			fStepForward /= 1.5f;
