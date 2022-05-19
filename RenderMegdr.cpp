@@ -186,17 +186,17 @@ namespace GL {
 
 		//  Индексы
 
-		m_nElementCount = (nLines * nLineSamples - nLineSamples) * 6;
+		m_nElementCount = (nLines * nLineSamples - nLines) * 6;
 		std::vector<unsigned> vIndeces(m_nElementCount);
 
 
-		for (int i = 0; i < nLines * nLineSamples - nLineSamples; ++i)
+		for (int i = 0; i < nLines * nLineSamples - nLines; ++i)
 		{
 			vIndeces[6 * i + 0	] = i;
-			vIndeces[6 * i + 1	] = i + nLines;
-			vIndeces[6 * i + 2	] = i + nLines + 1;
+			vIndeces[6 * i + 1	] = i + nLineSamples;
+			vIndeces[6 * i + 2	] = i + nLineSamples + 1;
 
-			vIndeces[6 * i + 3	] = i + nLines + 1;
+			vIndeces[6 * i + 3	] = i + nLineSamples + 1;
 			vIndeces[6 * i + 4	] = i + 1;
 			vIndeces[6 * i + 5	] = i;
 		}

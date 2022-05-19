@@ -19,8 +19,11 @@ smooth out float fPaletteIndex;
 void main()
 {
 
-	float fLatitude = float(gl_VertexID % m_nLines) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
-	float fLongitude = float(gl_VertexID / m_nLines) / float(m_nLineSamples) * 3.1415926 * 2.0;
+	//float fLatitude = float(gl_VertexID % m_nLines) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
+	//float fLongitude = float(gl_VertexID / m_nLines) / float(m_nLineSamples) * 3.1415926 * 2.0;
+
+	float fLatitude = float(gl_VertexID / m_nLineSamples) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
+	float fLongitude = float(gl_VertexID % m_nLineSamples) / float(m_nLineSamples) * 3.1415926 * 2.0;
 
 	float fTopology = 1.0 * m_nRadius - m_nAreoid;
 
