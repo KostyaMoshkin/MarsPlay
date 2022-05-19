@@ -18,25 +18,19 @@ smooth out float fPaletteIndex;
 
 void main()
 {
-
-	//float fLatitude = float(gl_VertexID % m_nLines) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
-	//float fLongitude = float(gl_VertexID / m_nLines) / float(m_nLineSamples) * 3.1415926 * 2.0;
-
 	float fLatitude = float(gl_VertexID / m_nLineSamples) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
 	float fLongitude = float(gl_VertexID % m_nLineSamples) / float(m_nLineSamples) * 3.1415926 * 2.0;
 
 	float fTopology = 1.0 * m_nRadius - m_nAreoid;
 
-	float fDistance = (float(m_nAreoid) + m_fBaseHeight + m_fScale * fTopology) / m_fBaseHeight;
-	//fDistance = 1.0f;
+	float fDistance = (m_fScale * fTopology + 1.0 * m_nAreoid + m_fBaseHeight) / m_fBaseHeight;
 
-	vec3 position;
+	vec3 vPosition = vec3(
+		fDistance * cos(fLatitude) * sin(fLongitude),
+		fDistance * sin(fLatitude),
+		fDistance * cos(fLatitude) * cos(fLongitude));
 
-	position.x = fDistance * cos(fLatitude) * sin(fLongitude);
-	position.y = fDistance * sin(fLatitude);
-	position.z = fDistance * cos(fLatitude) * cos(fLongitude);
-
-	gl_Position = m_mPerspective * m_mView * m_mModel * vec4(position, 1.0);
+	gl_Position = m_mPerspective * m_mView * m_mModel * vec4(vPosition, 1.0);
 
 	fPaletteIndex = (fTopology - m_fPaletteValueMin) / (m_fPaletteValueMax - m_fPaletteValueMin);
 

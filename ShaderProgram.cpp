@@ -3,6 +3,8 @@
 
 #include "Render.h"
 
+#include <LOG/logger.h>
+
 #include <iostream>
 
 namespace GL {
@@ -72,13 +74,13 @@ namespace GL {
 
         if (nCompileStatus == GL_FALSE)
         {
-            std::cout << "Shader compilation of file " << m_sShaderFile << std::endl;
+            messageLn(std::string(std::string("Shader compilation of file: ") + m_sShaderFile).c_str());
 
             GLsizei logLength;
             GLchar  log[1024];
             glGetShaderInfoLog(id, sizeof(log), &logLength, log);
 
-            std::cout << "Shader info log: " << std::endl << log << std::endl;
+            messageLn(std::string(std::string("Shader info log: ") + std::string(log)).c_str());
 
             glDeleteShader(id);
 
@@ -111,7 +113,7 @@ namespace GL {
             char buf[2048];
             glGetProgramInfoLog(m_nProgramId, nLog_length, &nLog_length, buf);
 
-            std::cout << std::endl << "ShaderProgram::compileProgram()" << std::endl << "The function 'glGetProgramiv' return an error:" << buf << std::endl << "In shader: " << m_sShaderFile.c_str() << std::endl << std::endl;
+            messageLn(std::string(std::string("ShaderProgram::compileProgram(). The function 'glGetProgramiv' return an error: ") + std::string(buf) + std::string(" in shader: ") + m_sShaderFile).c_str());
 
             for (size_t i = 0; i < m_vShader.size(); ++i)
             {
