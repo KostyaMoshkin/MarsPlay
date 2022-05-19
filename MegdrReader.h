@@ -66,7 +66,7 @@ namespace megdr
 	public:
 		bool init();
 
-		bool changeMrdgr(unsigned nActive_ = -1);
+		bool changeMedgr(bool bDirection_ = true);
 
 		void* getRadius();
 		void* getTopography();

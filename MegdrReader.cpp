@@ -199,20 +199,33 @@ namespace megdr
 
 		//---------------------------------------------------------------------------------------
 
-		if (!changeMrdgr())
+		if (!fillMegdr(m_nActiveID))
 			return false;
 
 		return true;
 	}
 
-	bool MegdrReader::changeMrdgr(unsigned nActive_)
+	bool MegdrReader::changeMedgr(bool bDirection_)
 	{
-		if (m_nActiveID == nActive_)
-			return false;
+		auto iterMegdr = m_vMegdrNode.find(m_nActiveID);
 
-		m_nActiveID = nActive_ == -1 ? m_nActiveID : nActive_;
+		if (bDirection_)
+		{
+			++iterMegdr;
+			if (iterMegdr == m_vMegdrNode.end())
+				iterMegdr = m_vMegdrNode.begin();
+		}
+		else
+		{
+			if (iterMegdr == m_vMegdrNode.begin())
+				iterMegdr = m_vMegdrNode.end();
 
-		if(!fillMegdr(m_nActiveID))
+			--iterMegdr;
+		}
+
+		m_nActiveID = iterMegdr->first;
+
+		if (!fillMegdr(m_nActiveID))
 			return false;
 
 		return true;

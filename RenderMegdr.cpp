@@ -149,23 +149,26 @@ namespace GL {
 		}
 		else if (nKey_ == GL::EKeyPress::key_4)
 		{
-			m_pPalette->changePalette();
+			m_pPalette->changePalette(true);
 			fillPalette();
 			Sleep(300);
 		}
 		else if (nKey_ == GL::EKeyPress::key_5)
 		{
-			changeResolution(1);
+			if (!m_pMegdr->changeMedgr(false))
+				return;
+
+			fillVertex();
+
 			Sleep(300);
 		}
 		else if (nKey_ == GL::EKeyPress::key_6)
 		{
-			changeResolution(2);
-			Sleep(300);
-		}
-		else if (nKey_ == GL::EKeyPress::key_7)
-		{
-			changeResolution(3);
+			if (!m_pMegdr->changeMedgr(true))
+				return;
+
+			fillVertex();
+
 			Sleep(300);
 		}
 
@@ -258,17 +261,6 @@ namespace GL {
 		}
 
 		renderBounder.unbound();
-
-		return true;
-	}
-
-	bool RenderMegdr::changeResolution(unsigned nMegdrDataID_)
-	{
-		if( !m_pMegdr->changeMrdgr(nMegdrDataID_))
-			return false;
-
-		if (!fillVertex())
-			return false;
 
 		return true;
 	}

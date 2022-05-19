@@ -60,8 +60,6 @@ namespace GL {
 		bool fillPalette();
 		bool fillVertex();
 
-		bool changeResolution(unsigned nMegdrDataID_ = 1);
-
 	};
 }
 
