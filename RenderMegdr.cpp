@@ -21,6 +21,7 @@ namespace GL {
 	{
 		m_pPaletteTexture = GL::TextureBuffer::Create(GL_TEXTURE_1D);
 		m_pIndex = GL::IndexBuffer::Create();
+		m_pIndirect = GL::IndirectBuffer::Create();
 
 		ShaderProgramPtr pMegdrProgram = ShaderProgram::Create();
 
@@ -43,6 +44,7 @@ namespace GL {
 		//  Координаты вершин
 		m_pMegdr = megdr::MegdrReader::Create();
 		m_pMegdr->setConfig(getConfig());
+		m_pMegdr->setVersionGl(getVersionGl());
 		if (!m_pMegdr->init())
 			return false;;
 
@@ -114,7 +116,13 @@ namespace GL {
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPaletteTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 
-		glDrawElements(GL_TRIANGLES,(GLsizei)m_pMegdr->getIndecesCount(), GL_UNSIGNED_INT, 0);
+		if (getVersionGl() >= 43)
+		{
+			BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
+			glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, (GLsizei)m_pMegdr->getIndirectCount(), 0);
+		}
+		else
+			glDrawElements(GL_TRIANGLES, (GLsizei)m_pMegdr->getIndecesCount(), GL_UNSIGNED_INT, 0);
 
 		renderBounder.unbound();
 	}
@@ -236,6 +244,17 @@ namespace GL {
 		{
 			messageLn("Error m_pIndex->fillBuffer()");
 			return false;
+		}
+
+		if (getVersionGl() >= 43)
+		{
+			BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
+
+			if (!m_pIndirect->fillBuffer(sizeof(megdr::DrawElementsIndirectCommand) * m_pMegdr->getIndirectCount(), m_pMegdr->getIndirect()))
+			{
+				messageLn("Error m_pIndirect->fillBuffer()");
+				return false;
+			}
 		}
 
 		renderBounder.unbound();

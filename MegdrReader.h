@@ -7,9 +7,21 @@
 #include "CConfig.h"
 
 #include "XML\XMLReader.h"
+#include "XML\XMLReader.h"
+
+#include <GLEW/glew.h>
 
 namespace megdr
 {
+	typedef  struct
+	{
+		GLuint  count;
+		GLuint  primCount;
+		GLuint  firstIndex;
+		GLint   baseVertex;
+		GLuint  baseInstance;
+	} DrawElementsIndirectCommand;
+
 	using MSB_INTEGER = short;
 
 	class MegdrReader;
@@ -17,6 +29,8 @@ namespace megdr
 
 	class MegdrReader : public lib::CConfig
 	{
+		int m_nVersionFull = 0;
+
 	public:
 		static const char* nMegdrDefault()		{ return "MegdrDefault";	}
 		static const char* sMegdr()				{ return "Megdr";			}
@@ -33,6 +47,7 @@ namespace megdr
 		std::map<unsigned, std::vector<MSB_INTEGER>> m_mvRadius;
 		std::map<unsigned, std::vector<MSB_INTEGER>> m_mvTopography;
 		std::map<unsigned, std::vector<unsigned>> m_mvIndeces;
+		std::map<unsigned, std::vector<DrawElementsIndirectCommand>> m_mvIndirect;
 
 		unsigned m_nActiveID = 0;
 		unsigned m_nLines = 0;
@@ -56,10 +71,14 @@ namespace megdr
 		void* getRadius();
 		void* getTopography();
 		void* getIndeces();
+		void* getIndirect();
 
 		unsigned getIndecesCount();
+		unsigned getIndirectCount();
 		unsigned getLinesCount();
 		unsigned getLineSamplesCount();
 		unsigned getBaseHeight();
+
+		void setVersionGl(int nVersionFull_) { m_nVersionFull = nVersionFull_; }
 	};
 }

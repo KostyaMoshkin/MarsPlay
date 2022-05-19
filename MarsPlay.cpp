@@ -30,6 +30,7 @@ int main()
 
 	if (!pSceneRender->init())
 	{
+		pSceneRender.reset();
 		message("OpenGL init ERROR");
 		wait_return();
 	}
@@ -39,6 +40,14 @@ int main()
 	int nVersionFull = pSceneRender->GetVersion();
 
 	std::cout << "OpenGL version: " << nVersionFull << std::endl;
+	messageLn(std::string(std::string("OpenGL version : ") + std::to_string(nVersionFull)).c_str());
+
+	if (nVersionFull < 40)
+	{
+		pSceneRender.reset();
+		messageLn("OpenGL version should be 40 or higher.");
+		wait_return();
+	}
 
 	lib::iPoint2D ptScreenSize = pSceneRender->getScreenSize();
 
@@ -46,11 +55,12 @@ int main()
 
 	GL::RenderMegdrPtr pRenderMegdr = GL::RenderMegdr::Create();
 	pRenderMegdr->setConfig(pXMLconfig->getRoot());
+	pRenderMegdr->setVersionGl(nVersionFull);
 
 	if (!pRenderMegdr->init(ptScreenSize))
 	{
 		pSceneRender.reset();
-		message("OpenGL RenderMegdr init ERROR");
+		messageLn("OpenGL RenderMegdr init ERROR");
 		wait_return();
 	}
 	pRenderMegdr->setVisible(true);
@@ -62,7 +72,7 @@ int main()
 	lib::Vector3 vCamRight3D(1, 0, 0);
 
 	float fStepForward = 0.3f;
-	float fRoteteAngle = 1.0f;
+	float fRoteteAngle = 0.4f;
 
 	pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
 	pSceneRender->draw();
@@ -98,10 +108,12 @@ int main()
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_equal))
 			fStepForward *= 1.5f;
 
+		fStepForward = std::max<float>(std::min<float>(fStepForward, 10.0f), 0.1f);
+
 		lib::fPoint2D ptCursorMove = pSceneRender->getCursorMove();
 
 		//  Ближе - дальше
-		vCamPosition3D *= 1 - ptCursorMove.y / 500;
+		vCamPosition3D *= 1 - ptCursorMove.y / 700;
 
 		//  Полетет вперед - назад
 		lib::Quat qMove(0.0f, 0.0f, 0.0f, 0.0f);

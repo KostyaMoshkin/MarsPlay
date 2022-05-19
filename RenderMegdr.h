@@ -3,6 +3,7 @@
 #include "ShaderProgram.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "IndirectBuffer.h"
 #include "TextureBuffer.h"
 #include "Palette.h"
 #include "MegdrReader.h"
@@ -23,6 +24,7 @@ namespace GL {
 		VertexBufferPtr m_pRadiusVertex = nullptr;
 		VertexBufferPtr m_pTopographyVertex = nullptr;
 		IndexBufferPtr m_pIndex = nullptr;
+		IndirectBufferPtr m_pIndirect = nullptr;
 		TextureBufferPtr m_pPaletteTexture = nullptr;
 
 		PalettePtr m_pPalette = nullptr;

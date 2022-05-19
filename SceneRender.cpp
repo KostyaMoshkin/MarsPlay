@@ -78,9 +78,6 @@ namespace GL {
 	{
 		int nVersionFull = -1;
 
-		if (nVersionFull != -1)
-			return nVersionFull;
-
 		//------------------------------------------------------------------------------------------
 
 		const GLubyte* pVersion = glGetString(GL_VERSION);

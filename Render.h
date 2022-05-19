@@ -31,6 +31,7 @@
       class Render : public lib::CConfig
       {
           bool m_bVisible = false;
+          int m_nVersionFull = 0;
 
       public:
           Render() = default;
@@ -49,6 +50,9 @@
       public:
           void setVisible(bool bVisible_) { m_bVisible = bVisible_; }
           bool isVisible() { return m_bVisible; }
+
+          void setVersionGl(int nVersionFull_) { m_nVersionFull = nVersionFull_; }
+          int getVersionGl() { return m_nVersionFull; }
       };
 
 }

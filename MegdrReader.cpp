@@ -117,18 +117,50 @@ namespace megdr
 		//----------------------------------------------------------------------------------------
 
 		//  Индексы
-		m_mvIndeces[nId_].resize((m_nLines * m_nLineSamples - m_nLines) * 6);
-
-		for (int i = 0; i < m_nLines * m_nLineSamples - m_nLines; ++i)
+		
+		if (m_nVersionFull >= 43)
 		{
-			m_mvIndeces[nId_][6 * i + 0] = i;
-			m_mvIndeces[nId_][6 * i + 1] = i + m_nLineSamples;
-			m_mvIndeces[nId_][6 * i + 2] = i + m_nLineSamples + 1;
+			m_mvIndeces[nId_].resize(m_nLines * 6);
 
-			m_mvIndeces[nId_][6 * i + 3] = i + m_nLineSamples + 1;
-			m_mvIndeces[nId_][6 * i + 4] = i + 1;
-			m_mvIndeces[nId_][6 * i + 5] = i;
+			for (unsigned i = 0; i < m_nLines; ++i)
+			{
+				m_mvIndeces[nId_][6 * i + 0] = i;
+				m_mvIndeces[nId_][6 * i + 1] = i + m_nLineSamples;
+				m_mvIndeces[nId_][6 * i + 2] = i + m_nLineSamples + 1;
+
+				m_mvIndeces[nId_][6 * i + 3] = i + m_nLineSamples + 1;
+				m_mvIndeces[nId_][6 * i + 4] = i + 1;
+				m_mvIndeces[nId_][6 * i + 5] = i;
+			}
+
+			// Inderect
+			m_mvIndirect[nId_].resize(m_nLineSamples - 1);
+			for (unsigned i = 0; i < m_nLineSamples - 1; ++i)
+			{
+				m_mvIndirect[m_nActiveID][i].count = m_nLines * 6;
+				m_mvIndirect[m_nActiveID][i].primCount = 1;
+				m_mvIndirect[m_nActiveID][i].firstIndex = 0;
+				m_mvIndirect[m_nActiveID][i].baseVertex = i * m_nLines;
+				m_mvIndirect[m_nActiveID][i].baseInstance = 0;
+			}
 		}
+		else
+		{
+			m_mvIndeces[nId_].resize((m_nLines * m_nLineSamples - m_nLines) * 6);
+
+			for (unsigned i = 0; i < m_nLines * m_nLineSamples - m_nLines; ++i)
+			{
+				m_mvIndeces[nId_][6 * i + 0] = i;
+				m_mvIndeces[nId_][6 * i + 1] = i + m_nLineSamples;
+				m_mvIndeces[nId_][6 * i + 2] = i + m_nLineSamples + 1;
+
+				m_mvIndeces[nId_][6 * i + 3] = i + m_nLineSamples + 1;
+				m_mvIndeces[nId_][6 * i + 4] = i + 1;
+				m_mvIndeces[nId_][6 * i + 5] = i;
+			}
+		}
+
+		//----------------------------------------------------------------------------------------
 
 		return true;
 	}
@@ -178,10 +210,10 @@ namespace megdr
 		if (m_nActiveID == nActive_)
 			return false;
 
-		if(!fillMegdr(nActive_ == -1 ? m_nActiveID : nActive_))
-			return false;
-
 		m_nActiveID = nActive_ == -1 ? m_nActiveID : nActive_;
+
+		if(!fillMegdr(m_nActiveID))
+			return false;
 
 		return true;
 	}
@@ -201,9 +233,19 @@ namespace megdr
 		return m_mvIndeces[m_nActiveID].data();
 	}
 
+	void* MegdrReader::getIndirect()
+	{
+		return m_mvIndirect[m_nActiveID].data();
+	}
+
 	unsigned MegdrReader::getIndecesCount()
 	{
 		return (unsigned)m_mvIndeces[m_nActiveID].size();
+	}
+
+	unsigned MegdrReader::getIndirectCount()
+	{
+		return getIndecesCount() / 3 - 3;
 	}
 
 	unsigned MegdrReader::getLinesCount()
