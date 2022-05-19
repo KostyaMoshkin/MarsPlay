@@ -180,6 +180,7 @@
     <ClCompile Include="lib.cpp" />
     <ClCompile Include="MarsPlay.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="MegdrReader.cpp" />
     <ClCompile Include="Palette.cpp" />
     <ClCompile Include="PedrReader.cpp" />
     <ClCompile Include="RenderMegdr.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="MarsPlay.h" />
+    <ClInclude Include="MegdrReader.h" />
     <ClInclude Include="Palette.h" />
     <ClInclude Include="PedrReader.h" />
     <ClInclude Include="Render.h" />

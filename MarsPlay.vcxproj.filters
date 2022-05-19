@@ -93,6 +93,9 @@
     <ClCompile Include="CBitmap.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
+    <ClCompile Include="MegdrReader.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MarsPlay.config" />
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="CBitmap.h">
       <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="MegdrReader.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
