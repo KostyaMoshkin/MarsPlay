@@ -90,6 +90,8 @@ int main()
 			pRenderMegdr->keyPress(GL::EKeyPress::key_5);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_6))
 			pRenderMegdr->keyPress(GL::EKeyPress::key_6);
+		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_7))
+			pRenderMegdr->keyPress(GL::EKeyPress::key_7);
 
 		if (pSceneRender->isKeyPress(GL::EKeyPress::key_minus))
 			fStepForward /= 1.5f;

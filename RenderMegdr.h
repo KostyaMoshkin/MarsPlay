@@ -19,11 +19,11 @@ namespace GL {
 	{
 		static const char* nLens() { return "Lens"; }
 
-		ShaderProgramPtr m_pMarsPlayProgram = nullptr;
+		ShaderProgramPtr m_pMegdrProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
 		VertexBufferPtr m_pTopographyVertex = nullptr;
 		IndexBufferPtr m_pIndex = nullptr;
-		TextureBufferPtr m_pPeletteTexture = nullptr;
+		TextureBufferPtr m_pPaletteTexture = nullptr;
 
 		PalettePtr m_pPalette = nullptr;
 		megdr::MegdrReaderPtr m_pMegdr = nullptr;
@@ -59,6 +59,8 @@ namespace GL {
 
 		bool fillPalette();
 		bool fillVertex();
+
+		bool changeResolution(unsigned nMegdrDataID_ = 1);
 
 	};
 }

@@ -151,10 +151,12 @@ namespace megdr
 	bool MegdrReader::changeMrdgr(unsigned nActive_)
 	{
 		if (m_nActiveID == nActive_)
-			return true;
+			return false;
 
 		if(!fillMegdr(nActive_ == -1 ? m_nActiveID : nActive_))
 			return false;
+
+		m_nActiveID = nActive_;
 
 		return true;
 	}

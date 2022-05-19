@@ -14,6 +14,10 @@ namespace GL {
 		key_4,
 		key_5,
 		key_6,
+		key_7,
+		key_8,
+		key_9,
+		key_0,
 
 		key_left,
 		key_right,

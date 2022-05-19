@@ -164,6 +164,16 @@ namespace GL {
 			m_vKeyPress[(int)EKeyPress::key_4] = bPress;
 		else if (nKey_ == GLFW_KEY_5)
 			m_vKeyPress[(int)EKeyPress::key_5] = bPress;
+		else if (nKey_ == GLFW_KEY_6)
+			m_vKeyPress[(int)EKeyPress::key_6] = bPress;
+		else if (nKey_ == GLFW_KEY_7)
+			m_vKeyPress[(int)EKeyPress::key_7] = bPress;
+		else if (nKey_ == GLFW_KEY_8)
+			m_vKeyPress[(int)EKeyPress::key_8] = bPress;
+		else if (nKey_ == GLFW_KEY_9)
+			m_vKeyPress[(int)EKeyPress::key_9] = bPress;
+		else if (nKey_ == GLFW_KEY_0)
+			m_vKeyPress[(int)EKeyPress::key_0] = bPress;
 		else if (nKey_ == GLFW_KEY_LEFT)
 			m_vKeyPress[(int)EKeyPress::key_left] = bPress;
 		else if (nKey_ == GLFW_KEY_RIGHT)
@@ -199,6 +209,16 @@ namespace GL {
 		else if (m_vKeyPress[(int)EKeyPress::key_4])
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_5])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_6])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_7])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_8])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_9])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_0])
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_left])
 			return true;
