@@ -31,23 +31,30 @@ namespace megdr
 
 		//--------------------------------------------------------------------------------------
 
-		if (!lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLines()), m_nLines))
-			return false;
+		bool bXMLmistake = false;
 
-		if (!lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLineSamples()), m_nLineSamples))
-			return false;
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLines()), m_nLines);
 
-		if (!lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nBaseHeight()), m_nBaseHeight))
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLineSamples()), m_nLineSamples);
+
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nBaseHeight()), m_nBaseHeight);
+
+		std::string sRadiusPath;
+		bXMLmistake |= !lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, sRadiusFile()), sRadiusPath);
+
+		std::string sTopographyPath;
+		bXMLmistake |= !lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, sTopographyFile()), sTopographyPath);
+
+		if (bXMLmistake)
+		{
+			messageLn("Some nodes missed in log file. There should be: <BaseHeight> <Lines> <LineSamples> <RadiusFile> <TopographyFile>");
 			return false;
+		}
 
 		//--------------------------------------------------------------------------------------
 
 		if (m_mvIndeces.contains(nId_))
 			return true;
-
-		std::string sRadiusPath;
-		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, sRadiusFile()), sRadiusPath))
-			return false;
 
 		FILE* pMegdrRadius;
 
@@ -62,10 +69,6 @@ namespace megdr
 		_fseeki64(pMegdrRadius, 0, SEEK_SET);
 
 		//---------------------------------------------------------------------------------------------
-
-		std::string sTopographyPath;
-		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, sTopographyFile()), sTopographyPath))
-			return false;
 
 		FILE* pMegdrTopography;
 
@@ -83,6 +86,7 @@ namespace megdr
 
 		if (m_nRadiusFileSize != m_nTopographyFileSize)
 		{
+			messageLn("Data file sizes differ.");
 			return false;
 		}
 
@@ -92,6 +96,7 @@ namespace megdr
 
 		if (fread(m_mvRadius[nId_].data(), m_nRadiusFileSize, 1, pMegdrRadius) != 1)
 		{
+			messageLn("Radius didn't read properly.");
 			return false;
 		}
 
@@ -102,6 +107,7 @@ namespace megdr
 
 		if (fread(m_mvTopography[nId_].data(), m_nTopographyFileSize, 1, pMegdrTopography) != 1)
 		{
+			messageLn("Topography didn't read properly.");
 			return false;
 		}
 
@@ -110,7 +116,7 @@ namespace megdr
 
 		//----------------------------------------------------------------------------------------
 
-				//  Индексы
+		//  Индексы
 		m_mvIndeces[nId_].resize((m_nLines * m_nLineSamples - m_nLines) * 6);
 
 		for (int i = 0; i < m_nLines * m_nLineSamples - m_nLines; ++i)
