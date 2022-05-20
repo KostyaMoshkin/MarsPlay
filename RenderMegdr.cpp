@@ -187,7 +187,7 @@ namespace GL {
 
 		std::vector<lib::fPoint3D> vColorText(nPaletteSize);
 		for (size_t i = 0; i < nPaletteSize; ++i)
-			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / nPaletteSize)), vColorText[i]);
+			lib::unpackColor(m_pPalette->get(int(fDataMin + (fDataMax - fDataMin) * i / (nPaletteSize - 1))), vColorText[i]);
 
 		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
 		BufferBounder<TextureBuffer> paletteTextureBounder(m_pPaletteTexture);

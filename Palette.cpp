@@ -71,7 +71,7 @@ namespace GL {
 			m_nPaletteInterpolate = 16;
 		}
 
-		m_nPaletteInterpolate = std::min<unsigned>(std::max<unsigned>(m_nPaletteInterpolate, 16), 4096);
+		m_nPaletteInterpolate = std::min<unsigned>(std::max<unsigned>(m_nPaletteInterpolate, 4), 4096);
 
 		return true;
 	}
