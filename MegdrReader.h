@@ -50,11 +50,11 @@ namespace megdr
 		std::map<unsigned, std::vector<MSB_INTEGER>> m_mvTopography;
 		std::map<unsigned, std::vector<unsigned>> m_mvIndeces;
 		std::map<unsigned, std::vector<DrawElementsIndirectCommand>> m_mvIndirect;
+		std::map<unsigned, unsigned> m_mnLines;
+		std::map<unsigned, unsigned> m_mnLineSamples;
+		std::map<unsigned, unsigned> m_mnBaseHeight;
 
 		unsigned m_nActiveID = 0;
-		unsigned m_nLines = 0;
-		unsigned m_nLineSamples = 0;
-		unsigned m_nBaseHeight = 0;
 
 	public:
 		MegdrReader();

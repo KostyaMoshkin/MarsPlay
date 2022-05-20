@@ -93,7 +93,7 @@ namespace megdr
 
 		unsigned nDataFileCountRaw = 1;
 
-		nDataFileCountRaw = sqrt(nDataFileCount);
+		nDataFileCountRaw = (unsigned)sqrt(nDataFileCount);
 		if (nDataFileCountRaw * nDataFileCountRaw != nDataFileCount)
 		{
 			messageLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
@@ -177,16 +177,19 @@ namespace megdr
 		else
 			xmlActiveMegdr = lib::XMLreader::getNode(getConfig(), sMegdr());
 
+		if (m_mvIndeces.contains(nId_))
+			return true;
+
 		//--------------------------------------------------------------------------------------
 
 		bool bXMLmistake = false;
 
 		//  эти параметры тоже в map
-		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLines()), m_nLines);
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLines()), m_mnLines[nId_]);
 
-		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLineSamples()), m_nLineSamples);
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLineSamples()), m_mnLineSamples[nId_]);
 
-		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nBaseHeight()), m_nBaseHeight);
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nBaseHeight()), m_mnBaseHeight[nId_]);
 
 		if (bXMLmistake)
 		{
@@ -196,17 +199,12 @@ namespace megdr
 
 		//--------------------------------------------------------------------------------------
 
-		if (m_mvIndeces.contains(nId_))
-			return true;
-
-		//--------------------------------------------------------------------------------------
-
 		unsigned nDataFileCount = 1;
 		bool bMultyData = lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, sCount()), nDataFileCount);
 
 		unsigned nDataFileCountRaw = 1;
 
-		nDataFileCountRaw = sqrt(nDataFileCount);
+		nDataFileCountRaw = (unsigned)sqrt(nDataFileCount);
 		if (nDataFileCountRaw * nDataFileCountRaw != nDataFileCount)
 		{
 			messageLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
@@ -215,8 +213,8 @@ namespace megdr
 
 		if (!bMultyData)
 		{
-			m_mvRadius[nId_].resize(m_nLines * m_nLineSamples);
-			m_mvTopography[nId_].resize(m_nLines * m_nLineSamples);
+			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
 
 			std::string sRadiusPath;
 			bXMLmistake |= !lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, MegdrReader::sRadiusFile()), sRadiusPath);
@@ -234,11 +232,11 @@ namespace megdr
 		}
 		else
 		{
-			m_nLines *= nDataFileCountRaw;
-			m_nLineSamples *= nDataFileCountRaw;
+			m_mnLines[nId_] *= nDataFileCountRaw;
+			m_mnLineSamples[nId_] *= nDataFileCountRaw;
 
-			m_mvRadius[nId_].resize(m_nLines * m_nLineSamples);
-			m_mvTopography[nId_].resize(m_nLines * m_nLineSamples);
+			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
 
 			readMultyFileData(m_mvRadius[nId_], m_mvTopography[nId_], xmlActiveMegdr);
 		}
@@ -257,42 +255,42 @@ namespace megdr
 		if (m_nVersionFull >= 43)
 		{
 			//  Индексы
-			m_mvIndeces[nId_].resize(m_nLines * 6);
+			m_mvIndeces[nId_].resize(m_mnLines[nId_] * 6);
 
-			for (unsigned i = 0; i < m_nLines; ++i)
+			for (unsigned i = 0; i < m_mnLines[nId_]; ++i)
 			{
 				m_mvIndeces[nId_][6 * i + 0] = i;
-				m_mvIndeces[nId_][6 * i + 1] = i + m_nLineSamples;
-				m_mvIndeces[nId_][6 * i + 2] = i + m_nLineSamples + 1;
+				m_mvIndeces[nId_][6 * i + 1] = i + m_mnLineSamples[nId_];
+				m_mvIndeces[nId_][6 * i + 2] = i + m_mnLineSamples[nId_] + 1;
 
-				m_mvIndeces[nId_][6 * i + 3] = i + m_nLineSamples + 1;
+				m_mvIndeces[nId_][6 * i + 3] = i + m_mnLineSamples[nId_] + 1;
 				m_mvIndeces[nId_][6 * i + 4] = i + 1;
 				m_mvIndeces[nId_][6 * i + 5] = i;
 			}
 
 			// Inderect
-			m_mvIndirect[nId_].resize(m_nLineSamples - 1);
-			for (unsigned i = 0; i < m_nLineSamples - 1; ++i)
+			m_mvIndirect[nId_].resize(m_mnLineSamples[nId_] - 1);
+			for (unsigned i = 0; i < m_mnLineSamples[nId_] - 1; ++i)
 			{
-				m_mvIndirect[m_nActiveID][i].count = m_nLines * 6;
+				m_mvIndirect[m_nActiveID][i].count = m_mnLines[nId_] * 6;
 				m_mvIndirect[m_nActiveID][i].primCount = 1;
 				m_mvIndirect[m_nActiveID][i].firstIndex = 0;
-				m_mvIndirect[m_nActiveID][i].baseVertex = i * m_nLines;
+				m_mvIndirect[m_nActiveID][i].baseVertex = i * m_mnLines[nId_];
 				m_mvIndirect[m_nActiveID][i].baseInstance = 0;
 			}
 		}
 		else
 		{
 			//  Индексы
-			m_mvIndeces[nId_].resize((m_nLines * m_nLineSamples - m_nLines) * 6 * nDataFileCountRaw);
+			m_mvIndeces[nId_].resize((m_mnLines[nId_] * m_mnLineSamples[nId_] - m_mnLines[nId_]) * 6 * nDataFileCountRaw);
 
-			for (unsigned i = 0; i < (m_nLines * m_nLineSamples - m_nLines) * nDataFileCountRaw; ++i)
+			for (unsigned i = 0; i < (m_mnLines[nId_] * m_mnLineSamples[nId_] - m_mnLines[nId_]) * nDataFileCountRaw; ++i)
 			{
 				m_mvIndeces[nId_][6 * i + 0] = i;
-				m_mvIndeces[nId_][6 * i + 1] = i + m_nLineSamples * nDataFileCountRaw;
-				m_mvIndeces[nId_][6 * i + 2] = i + m_nLineSamples * nDataFileCountRaw + 1;
+				m_mvIndeces[nId_][6 * i + 1] = i + m_mnLineSamples[nId_] * nDataFileCountRaw;
+				m_mvIndeces[nId_][6 * i + 2] = i + m_mnLineSamples[nId_] * nDataFileCountRaw + 1;
 
-				m_mvIndeces[nId_][6 * i + 3] = i + m_nLineSamples * nDataFileCountRaw + 1;
+				m_mvIndeces[nId_][6 * i + 3] = i + m_mnLineSamples[nId_] * nDataFileCountRaw + 1;
 				m_mvIndeces[nId_][6 * i + 4] = i + 1;
 				m_mvIndeces[nId_][6 * i + 5] = i;
 			}
@@ -404,17 +402,17 @@ namespace megdr
 
 	unsigned MegdrReader::getLinesCount()
 	{
-		return m_nLines;
+		return m_mnLines[m_nActiveID];
 	}
 
 	unsigned MegdrReader::getLineSamplesCount()
 	{
-		return m_nLineSamples;
+		return m_mnLineSamples[m_nActiveID];
 	}
 
 	unsigned MegdrReader::getBaseHeight()
 	{
-		return m_nBaseHeight;
+		return m_mnBaseHeight[m_nActiveID];
 	}
 
 }
