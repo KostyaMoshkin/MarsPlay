@@ -39,6 +39,9 @@ namespace megdr
 		static const char* nLines()				{ return "Lines";			}
 		static const char* nLineSamples()		{ return "LineSamples";		}
 		static const char* id()					{ return "id";				}
+		static const char* sCount()				{ return "Count";			}
+		static const char* line()				{ return "line";			}
+		static const char* sample()				{ return "sample";			}
 
 	private:
 		std::map<unsigned, lib::XMLnodePtr> m_vMegdrNode;

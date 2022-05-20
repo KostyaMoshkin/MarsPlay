@@ -140,7 +140,7 @@ namespace lib {
 		if (!xNode_)
 			return false;
 
-		std::string sValue = xNode_->ToElement()->Attribute(sNode_);
+		std::string sValue = std::string(xNode_->ToElement()->Attribute(sNode_));
 
 		if (sValue.empty())
 			return false;
