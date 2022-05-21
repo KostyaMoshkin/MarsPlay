@@ -21,13 +21,13 @@ namespace GL {
 
 	bool SceneRender::init()
 	{
-#ifdef __DEBUG
+//#ifdef __DEBUG
 		m_pWindow = glfwCreateWindow(1024, 768, "OpenGL", nullptr, nullptr);
-#else
-		m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
-			glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
-			"OpenGL", glfwGetPrimaryMonitor(), nullptr);
-#endif // __DEBUG
+//#else
+//		m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+//			glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
+//			"OpenGL", glfwGetPrimaryMonitor(), nullptr);
+//#endif // __DEBUG
 
 		if (m_pWindow == nullptr)
 		{

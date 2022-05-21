@@ -71,12 +71,15 @@ namespace megdr
 		bool changeMedgr(bool bDirection_ = true);
 
 		void* getRadius();
+		unsigned getRadiusSize();
 		void* getTopography();
+		unsigned getTopographySize();
 		void* getIndeces();
 		void* getIndirect();
 
+		unsigned getIndecesSize();
 		unsigned getIndecesCount();
-		unsigned getIndirectCount();
+		unsigned getIndirectSize();
 		unsigned getLinesCount();
 		unsigned getLineSamplesCount();
 		unsigned getBaseHeight();

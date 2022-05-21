@@ -184,7 +184,6 @@ namespace megdr
 
 		bool bXMLmistake = false;
 
-		//  эти параметры тоже в map
 		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLines()), m_mnLines[nId_]);
 
 		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLineSamples()), m_mnLineSamples[nId_]);
@@ -254,46 +253,58 @@ namespace megdr
 
 		if (m_nVersionFull >= 43)
 		{
+
+			unsigned nLines = m_mnLines[nId_];
+			unsigned nLineSamples = m_mnLineSamples[nId_];
+			unsigned nQuadCount = nLineSamples;
+
 			//  Индексы
-			m_mvIndeces[nId_].resize(m_mnLines[nId_] * 6);
+			m_mvIndeces[nId_].resize(nQuadCount * 4);
 
-			for (unsigned i = 0; i < m_mnLines[nId_]; ++i)
+			for (unsigned i = 0; i < nQuadCount; ++i)
 			{
-				m_mvIndeces[nId_][6 * i + 0] = i;
-				m_mvIndeces[nId_][6 * i + 1] = i + m_mnLineSamples[nId_];
-				m_mvIndeces[nId_][6 * i + 2] = i + m_mnLineSamples[nId_] + 1;
-
-				m_mvIndeces[nId_][6 * i + 3] = i + m_mnLineSamples[nId_] + 1;
-				m_mvIndeces[nId_][6 * i + 4] = i + 1;
-				m_mvIndeces[nId_][6 * i + 5] = i;
+				unsigned nTailPoint = i == nLineSamples ? 0 : i +1;  //  Замкнуть широты
+				m_mvIndeces[nId_][4 * i + 0] = i;
+				m_mvIndeces[nId_][4 * i + 1] = i + nLineSamples;
+				m_mvIndeces[nId_][4 * i + 2] = nTailPoint;
+				m_mvIndeces[nId_][4 * i + 3] = nTailPoint + nLineSamples;
 			}
 
-			// Inderect
-			m_mvIndirect[nId_].resize(m_mnLineSamples[nId_] - 1);
-			for (unsigned i = 0; i < m_mnLineSamples[nId_] - 1; ++i)
+			// Indirect
+			m_mvIndirect[nId_].resize(nLines - 1);
+			for (unsigned i = 0; i < nLines - 1; ++i)
 			{
-				m_mvIndirect[m_nActiveID][i].count = m_mnLines[nId_] * 6;
+				m_mvIndirect[m_nActiveID][i].count = getIndecesCount();
 				m_mvIndirect[m_nActiveID][i].primCount = 1;
 				m_mvIndirect[m_nActiveID][i].firstIndex = 0;
-				m_mvIndirect[m_nActiveID][i].baseVertex = i * m_mnLines[nId_];
+				m_mvIndirect[m_nActiveID][i].baseVertex = i * nLineSamples;
 				m_mvIndirect[m_nActiveID][i].baseInstance = 0;
 			}
 		}
 		else
 		{
+			unsigned nLines = m_mnLines[nId_];
+			unsigned nLineSamples = m_mnLineSamples[nId_];
+			unsigned nQuadCount = nLineSamples * 6;
+
 			//  Индексы
-			m_mvIndeces[nId_].resize((m_mnLines[nId_] * m_mnLineSamples[nId_] - m_mnLines[nId_]) * 6 * nDataFileCountRaw);
+			m_mvIndeces[nId_].resize(nQuadCount * nLines);
 
-			for (unsigned i = 0; i < (m_mnLines[nId_] * m_mnLineSamples[nId_] - m_mnLines[nId_]) * nDataFileCountRaw; ++i)
-			{
-				m_mvIndeces[nId_][6 * i + 0] = i;
-				m_mvIndeces[nId_][6 * i + 1] = i + m_mnLineSamples[nId_] * nDataFileCountRaw;
-				m_mvIndeces[nId_][6 * i + 2] = i + m_mnLineSamples[nId_] * nDataFileCountRaw + 1;
+			for (unsigned latitude = 0; latitude < nLines - 1; ++latitude)
+				for (unsigned Longitude = 0; Longitude < nLineSamples; ++Longitude)
+				{
+					unsigned nTailPoint = Longitude == nLineSamples ? 0 : Longitude + 1;  //  Замкнуть широты
+					unsigned nIndexShift = latitude * nQuadCount;  //  index shift ot the next tatitude
+					unsigned nVertexShift = latitude * nLineSamples;  //  vertex shift ot the next tatitude
 
-				m_mvIndeces[nId_][6 * i + 3] = i + m_mnLineSamples[nId_] * nDataFileCountRaw + 1;
-				m_mvIndeces[nId_][6 * i + 4] = i + 1;
-				m_mvIndeces[nId_][6 * i + 5] = i;
-			}
+					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 0] = nVertexShift + Longitude;
+					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 1] = nVertexShift + Longitude + nLineSamples;
+					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 2] = nVertexShift + nTailPoint + nLineSamples;
+
+					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 3] = nVertexShift + nTailPoint + nLineSamples;
+					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 4] = nVertexShift + nTailPoint;
+					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 5] = nVertexShift + Longitude;
+				}
 		}
 
 		//----------------------------------------------------------------------------------------
@@ -375,9 +386,19 @@ namespace megdr
 		return m_mvRadius[m_nActiveID].data();
 	}
 
+	unsigned MegdrReader::getRadiusSize()
+	{
+		return unsigned(sizeof(megdr::MSB_INTEGER) * m_mvRadius[m_nActiveID].size());
+	}
+
 	void* MegdrReader::getTopography()
 	{
 		return m_mvTopography[m_nActiveID].data();
+	}
+
+	unsigned MegdrReader::getTopographySize()
+	{
+		return unsigned(sizeof(megdr::MSB_INTEGER) * m_mvTopography[m_nActiveID].size());
 	}
 
 	void* MegdrReader::getIndeces()
@@ -390,14 +411,20 @@ namespace megdr
 		return m_mvIndirect[m_nActiveID].data();
 	}
 
-	unsigned MegdrReader::getIndecesCount()
+	unsigned MegdrReader::getIndecesSize()
 	{
-		return (unsigned)m_mvIndeces[m_nActiveID].size();
+		return unsigned(sizeof(unsigned) * getIndecesCount());
 	}
 
-	unsigned MegdrReader::getIndirectCount()
+	unsigned MegdrReader::getIndecesCount()
 	{
-		return (getIndecesCount() - 1) / 3;
+		return unsigned(m_mvIndeces[m_nActiveID].size());
+	}
+
+	unsigned MegdrReader::getIndirectSize()
+	{
+		//return sizeof(megdr::DrawElementsIndirectCommand) * m_mvIndirect[m_nActiveID].size() / 2;
+		return sizeof(megdr::DrawElementsIndirectCommand) * m_mvIndirect[m_nActiveID].size();
 	}
 
 	unsigned MegdrReader::getLinesCount()

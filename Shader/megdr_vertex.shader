@@ -20,8 +20,8 @@ void main()
 	float fAreoid = m_nRadius - m_nTopography;
 	float fDistance = (m_fScale * m_nTopography + fAreoid) / m_fBaseHeight + 1.0;
 
-	float fLatitude = float(gl_VertexID / m_nLineSamples + 0.5f) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
-	float fLongitude = float(gl_VertexID % m_nLineSamples + 0.5f) / float(m_nLineSamples) * 3.1415926 * 2.0;
+	float fLatitude = float(gl_VertexID / m_nLineSamples) / float(m_nLines) * 3.1415926 - 3.1415926 / 2.0;
+	float fLongitude = float(gl_VertexID % m_nLineSamples) / float(m_nLineSamples) * 3.1415926 * 2.0;
 
 	vec3 vPosition = fDistance * vec3(
 		cos(fLatitude) * sin(fLongitude),

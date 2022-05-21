@@ -119,7 +119,7 @@ namespace GL {
 		if (getVersionGl() >= 43)
 		{
 			BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
-			glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, (GLsizei)m_pMegdr->getIndirectCount(), 0);
+			glMultiDrawElementsIndirect(GL_TRIANGLE_STRIP, GL_UNSIGNED_INT, nullptr, (GLsizei)m_pMegdr->getLinesCount() - 1, 0);
 		}
 		else
 			glDrawElements(GL_TRIANGLES, (GLsizei)m_pMegdr->getIndecesCount(), GL_UNSIGNED_INT, 0);
@@ -222,7 +222,7 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
 
-		if (!m_pRadiusVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getRadius()))
+		if (!m_pRadiusVertex->fillBuffer(m_pMegdr->getRadiusSize(), m_pMegdr->getRadius()))
 		{
 			messageLn("Error m_pRadiusVertex->fillBuffer()");
 			return false;
@@ -230,7 +230,7 @@ namespace GL {
 
 		BufferBounder<VertexBuffer> areoidBounder(m_pTopographyVertex);
 
-		if (!m_pTopographyVertex->fillBuffer(sizeof(megdr::MSB_INTEGER) * nLines * nLineSamples, m_pMegdr->getTopography()))
+		if (!m_pTopographyVertex->fillBuffer(m_pMegdr->getTopographySize(), m_pMegdr->getTopography()))
 		{
 			messageLn("Error m_pTopographyVertex->fillBuffer()");
 			return false;
@@ -243,7 +243,7 @@ namespace GL {
 
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 
-		if (!m_pIndex->fillBuffer(sizeof(unsigned) * m_pMegdr->getIndecesCount(), m_pMegdr->getIndeces()))
+		if (!m_pIndex->fillBuffer(m_pMegdr->getIndecesSize(), m_pMegdr->getIndeces()))
 		{
 			messageLn("Error m_pIndex->fillBuffer()");
 			return false;
@@ -253,7 +253,7 @@ namespace GL {
 		{
 			BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
 
-			if (!m_pIndirect->fillBuffer(sizeof(megdr::DrawElementsIndirectCommand) * m_pMegdr->getIndirectCount(), m_pMegdr->getIndirect()))
+			if (!m_pIndirect->fillBuffer(m_pMegdr->getIndirectSize(), m_pMegdr->getIndirect()))
 			{
 				messageLn("Error m_pIndirect->fillBuffer()");
 				return false;
