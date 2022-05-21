@@ -31,6 +31,4 @@ void main()
 	gl_Position = m_mPerspective * m_mView * vec4(vPosition, 1.0);
 
 	fPaletteIndex = (1.0f * m_nTopography - m_fPaletteValueMin) / (m_fPaletteValueMax - m_fPaletteValueMin);
-
-	fPaletteIndex = min(max(fPaletteIndex, 0.001), 0.999);
 }

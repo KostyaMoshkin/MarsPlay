@@ -21,13 +21,13 @@ namespace GL {
 
 	bool SceneRender::init()
 	{
-//#ifdef __DEBUG
+#ifdef __DEBUG
 		m_pWindow = glfwCreateWindow(1024, 768, "OpenGL", nullptr, nullptr);
-//#else
-//		m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
-//			glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
-//			"OpenGL", glfwGetPrimaryMonitor(), nullptr);
-//#endif // __DEBUG
+#else
+		m_pWindow = glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
+			glfwGetVideoMode(glfwGetPrimaryMonitor())->height,
+			"OpenGL", glfwGetPrimaryMonitor(), nullptr);
+#endif // __DEBUG
 
 		if (m_pWindow == nullptr)
 		{
@@ -73,7 +73,7 @@ namespace GL {
 
 	void SceneRender::clearScreen()
 	{
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -122,7 +122,7 @@ namespace GL {
 
 	lib::fPoint2D SceneRender::getCursorMove()
 	{
-		return std::exchange(m_cursorMove, {0, 0});
+		return std::exchange(m_cursorMove, { 0, 0 });
 	}
 
 	void SceneRender::draw()
@@ -231,6 +231,10 @@ namespace GL {
 			return true;
 		else if (m_vKeyPress[(int)EKeyPress::key_equal])
 			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_home])
+			return true;
+		else if (m_vKeyPress[(int)EKeyPress::key_end])
+			return true;
 		else if (isCursoreMove())
 			return true;
 
@@ -244,7 +248,6 @@ namespace GL {
 
 		m_cursorCurrentPos = { float(fPosX_), float(fPosY_) };
 	}
-
 
 	bool SceneRender::read_error(bool check_error_, const char* szFileName /*= __FILE__*/, unsigned nLine /*= __LINE__*/, const char* szDateTime /*= __TIMESTAMP__*/)
 	{

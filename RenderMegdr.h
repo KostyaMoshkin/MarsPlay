@@ -18,7 +18,7 @@ namespace GL {
 
 	class RenderMegdr : public Render
 	{
-		static const char* nLens() { return "Lens"; }
+		static const char* ViewAngle() { return "ViewAngle"; }
 
 		ShaderProgramPtr m_pMegdrProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
@@ -31,20 +31,28 @@ namespace GL {
 		megdr::MegdrReaderPtr m_pMegdr = nullptr;
 
 		lib::Matrix4 m_mRotate = lib::Matrix4(1.0f);
-		lib::Matrix4 m_mPerspective = lib::Matrix4(1.0f);
 		lib::Matrix4 m_mTransform = lib::Matrix4(1.0f);
 
 		lib::fPoint2D m_fCamPosition;
 
 		float m_fScale = 5.0f;
 
-	public:
+		float m_fViewAngle = 45.0;
+		GLfloat m_fViewAspect = 1.0;
+
 		GLuint m_nVAO = 0;
 
 	public:
 		RenderMegdr();
 
 		static RenderMegdrPtr Create() { return std::make_shared<RenderMegdr>(); }
+
+	private:
+		void setScale();
+		void setViewAngle();
+
+		bool fillPalette();
+		bool fillVertex();
 
 	public:
 		// Унаследовано через Render
@@ -57,8 +65,7 @@ namespace GL {
 		// Унаследовано через Render
 		virtual void keyPress(GL::EKeyPress nKey_) override;
 
-		bool fillPalette();
-		bool fillVertex();
+		void mouseScroll(float fZoom_);
 
 	};
 }

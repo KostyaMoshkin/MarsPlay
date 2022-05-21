@@ -68,10 +68,10 @@ namespace GL {
 		if (!lib::XMLreader::getInt(xmlActivePalette, sInterpolate(), m_nPaletteInterpolate))
 		{
 			messageLn("Config should contain interpolate attribut for: <Palette id=\"2\" interpolate=\"1600\">");
-			m_nPaletteInterpolate = 16;
+			m_nPaletteInterpolate = 2;
 		}
 
-		m_nPaletteInterpolate = std::min<unsigned>(std::max<unsigned>(m_nPaletteInterpolate, 4), 4096);
+		m_nPaletteInterpolate = std::min<unsigned>(std::max<unsigned>(m_nPaletteInterpolate, 2), 8192);
 
 		return true;
 	}
@@ -80,6 +80,9 @@ namespace GL {
 	{
 		auto iterPalette = m_vPaletteMap.find(m_nActivePaletteID);
 		
+		if (iterPalette == m_vPaletteMap.end())
+			iterPalette = m_vPaletteMap.begin();
+
 		if(bDirection_)
 		{
 			++iterPalette;

@@ -70,4 +70,16 @@ namespace lib
 
 	//------------------------------------------------------------------------------------------
 
+	template<typename T>
+	bool isZero(T value, T epsilon = 0.00001)
+	{
+		return value < epsilon;
+	}
+
+	template<typename T>
+	void limit(T& value, T min, T max)
+	{
+		value = std::min<T>(std::max<T>(value, min), max);
+	}
+
 }

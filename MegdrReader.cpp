@@ -424,7 +424,7 @@ namespace megdr
 	unsigned MegdrReader::getIndirectSize()
 	{
 		//return sizeof(megdr::DrawElementsIndirectCommand) * m_mvIndirect[m_nActiveID].size() / 2;
-		return sizeof(megdr::DrawElementsIndirectCommand) * m_mvIndirect[m_nActiveID].size();
+		return unsigned(sizeof(megdr::DrawElementsIndirectCommand) * m_mvIndirect[m_nActiveID].size());
 	}
 
 	unsigned MegdrReader::getLinesCount()

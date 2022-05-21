@@ -19,6 +19,8 @@ namespace GL {
 
 	bool RenderMegdr::init(lib::iPoint2D ptScreenSize_)
 	{
+		m_fViewAspect = (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y;
+
 		m_pPaletteTexture = GL::TextureBuffer::Create(GL_TEXTURE_1D);
 		m_pIndex = GL::IndexBuffer::Create();
 		m_pIndirect = GL::IndirectBuffer::Create();
@@ -41,14 +43,6 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------
 
-		//  Координаты вершин
-		m_pMegdr = megdr::MegdrReader::Create();
-		m_pMegdr->setConfig(getConfig());
-		m_pMegdr->setVersionGl(getVersionGl());
-		if (!m_pMegdr->init())
-			return false;;
-
-
 		m_pRadiusVertex = GL::VertexBuffer::Create();
 		m_pRadiusVertex->setUsage(GL_STATIC_DRAW);
 
@@ -65,21 +59,12 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_pPalette = GL::Palette::Create();
-		m_pPalette->setConfig(getConfig());
-		if (!m_pPalette->init())
-			return false;
+		unsigned nViewAngle = 45;
+		if (!lib::XMLreader::getInt(lib::XMLreader::getNode(getConfig(), ViewAngle()), nViewAngle))
+			nViewAngle = 45;
 
-		//-------------------------------------------------------------------------------------------------
-
-		unsigned nLensFocus = 45;
-		if (!lib::XMLreader::getInt(lib::XMLreader::getNode(getConfig(), nLens()), nLensFocus))
-			nLensFocus = 45;
-
-		float fLens = (float)nLensFocus;
-
-		m_mPerspective = glm::perspective(glm::radians(fLens), (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y, 0.001f, 5.0f);
-		m_pMegdrProgram->setUniformMat4f("m_mPerspective", &m_mPerspective[0][0]);
+		m_fViewAngle = float(nViewAngle);
+		setViewAngle();
 
 		lib::Matrix4 mView = lib::Matrix4(1.0f);
 		m_pMegdrProgram->setUniformMat4f("m_mView", &mView[0][0]);
@@ -88,20 +73,49 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		m_fCamPosition.y = 0.0f;
-
 		renderBounder.unbound();
 
 		//-------------------------------------------------------------------------------------------------
 
+		//  Координаты вершин
+		m_pMegdr = megdr::MegdrReader::Create();
+		m_pMegdr->setConfig(getConfig());
+		m_pMegdr->setVersionGl(getVersionGl());
+		if (!m_pMegdr->init())
+			return false;;
+
 		if (!fillVertex())
+			return false;
+
+		//-------------------------------------------------------------------------------------------------
+
+		m_pPalette = GL::Palette::Create();
+		m_pPalette->setConfig(getConfig());
+		if (!m_pPalette->init())
 			return false;
 
 		if (!fillPalette())
 			return false;
 
+		//-------------------------------------------------------------------------------------------------
+
+		m_fCamPosition.y = 0.0f;
+
 		setVisible(true);
 		return true;
+	}
+
+	void RenderMegdr::setScale()
+	{
+		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
+		m_pMegdrProgram->setUniform1f("m_fScale", &m_fScale);
+	}
+
+	void RenderMegdr::setViewAngle()
+	{
+		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
+		lib::Matrix4 mPerspective = glm::perspective(glm::radians(m_fViewAngle), m_fViewAspect, 0.001f, 5.0f);
+		m_pMegdrProgram->setUniformMat4f("m_mPerspective", &mPerspective[0][0]);
 	}
 
 	void RenderMegdr::draw()
@@ -138,9 +152,15 @@ namespace GL {
 	void RenderMegdr::keyPress(GL::EKeyPress nKey_)
 	{
 		if (nKey_ == GL::EKeyPress::key_1)
-			m_fScale *= 0.8f;
+		{
+			m_fScale /= 1.2f;
+			setScale();
+		}
 		else if (nKey_ == GL::EKeyPress::key_2)
+		{
 			m_fScale *= 1.2f;
+			setScale();
+		}
 		else if (nKey_ == GL::EKeyPress::key_3)
 		{
 			m_pPalette->changePalette(false);
@@ -171,9 +191,6 @@ namespace GL {
 
 			Sleep(300);
 		}
-
-		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
-		m_pMegdrProgram->setUniform1f("m_fScale", &m_fScale);
 	}
 
 	bool RenderMegdr::fillPalette()
@@ -263,6 +280,14 @@ namespace GL {
 		renderBounder.unbound();
 
 		return true;
+	}
+
+	void RenderMegdr::mouseScroll(float fZoom_)
+	{
+		m_fViewAngle += fZoom_;
+		lib::limit(m_fViewAngle, 1.0f, 150.0f);
+
+		setViewAngle();
 	}
 
 	void RenderMegdr::bound()

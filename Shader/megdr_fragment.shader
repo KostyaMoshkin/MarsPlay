@@ -6,5 +6,6 @@ smooth in float fPaletteIndex;
 
 void main()
 {
-	gl_FragColor = vec4(texture(tTexture, fPaletteIndex).rgb, 1.0);
+
+	gl_FragColor = vec4(texture(tTexture, min(max(fPaletteIndex, 0.001), 0.999)).rgb, 1.0);
 }
