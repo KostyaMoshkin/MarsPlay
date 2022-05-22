@@ -83,20 +83,25 @@ int main()
 		if (pSceneRender->isKeyPress(GL::EKeyPress::esk))
 			break;
 
+		bool bError = false;
+
 		if (pSceneRender->isKeyPress(GL::EKeyPress::key_1))
-			pRenderMegdr->keyPress(GL::EKeyPress::key_1);
+			bError |= !pRenderMegdr->keyPress(GL::EKeyPress::key_1);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_2))
-			pRenderMegdr->keyPress(GL::EKeyPress::key_2);
+			bError |= !pRenderMegdr->keyPress(GL::EKeyPress::key_2);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_3))
-			pRenderMegdr->keyPress(GL::EKeyPress::key_3);
+			bError |= !pRenderMegdr->keyPress(GL::EKeyPress::key_3);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_4))
-			pRenderMegdr->keyPress(GL::EKeyPress::key_4);
+			bError |= !pRenderMegdr->keyPress(GL::EKeyPress::key_4);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_5))
-			pRenderMegdr->keyPress(GL::EKeyPress::key_5);
+			bError |= !pRenderMegdr->keyPress(GL::EKeyPress::key_5);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_6))
-			pRenderMegdr->keyPress(GL::EKeyPress::key_6);
+			bError |= !pRenderMegdr->keyPress(GL::EKeyPress::key_6);
 		else if (pSceneRender->isKeyPress(GL::EKeyPress::key_7))
-			pRenderMegdr->keyPress(GL::EKeyPress::key_7);
+			bError |= !pRenderMegdr->keyPress(GL::EKeyPress::key_7);
+
+		if (bError)
+			break;
 
 		if (pSceneRender->isKeyPress(GL::EKeyPress::key_home))
 			pRenderMegdr->mouseScroll(-3.0f);

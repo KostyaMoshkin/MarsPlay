@@ -152,8 +152,10 @@ namespace GL {
 		m_pMegdrProgram->setUniformMat4f("m_mView", &mView[0][0]);
 	}
 
-	void RenderMegdr::keyPress(GL::EKeyPress nKey_)
+	bool RenderMegdr::keyPress(GL::EKeyPress nKey_)
 	{
+		bool bError = false;
+
 		if (nKey_ == GL::EKeyPress::key_1)
 		{
 			m_fScale /= 1.2f;
@@ -167,33 +169,35 @@ namespace GL {
 		else if (nKey_ == GL::EKeyPress::key_3)
 		{
 			m_pPalette->changePalette(false);
-			fillPalette();
+			bError |= !fillPalette();
 			Sleep(300);
 		}
 		else if (nKey_ == GL::EKeyPress::key_4)
 		{
 			m_pPalette->changePalette(true);
-			fillPalette();
+			bError |= !fillPalette();
 			Sleep(300);
 		}
 		else if (nKey_ == GL::EKeyPress::key_5)
 		{
 			if (!m_pMegdr->changeMedgr(false))
-				return;
+				return false;
 
-			fillVertex();
+			bError |= !fillVertex();
 
 			Sleep(300);
 		}
 		else if (nKey_ == GL::EKeyPress::key_6)
 		{
 			if (!m_pMegdr->changeMedgr(true))
-				return;
+				return false;
 
-			fillVertex();
+			bError |= !fillVertex();
 
 			Sleep(300);
 		}
+
+		return !bError;
 	}
 
 	bool RenderMegdr::fillPalette()

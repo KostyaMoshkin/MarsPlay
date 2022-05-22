@@ -261,8 +261,16 @@ namespace megdr
 		m_mnLines[nId_] *= nDataFileCountRaw_;
 		m_mnLineSamples[nId_] *= nDataFileCountRaw_;
 
-		m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-		m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+		try
+		{
+			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+		}
+		catch ( ... )
+		{
+			messageLn(std::string(std::string("Error memory allocation. Ask Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] * 2 / 1024 / 1024)).c_str());
+			return false;
+		}
 
 
 		unsigned nDataFileCount = 1;

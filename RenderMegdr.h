@@ -63,7 +63,7 @@ namespace GL {
 		void unbound() override;
 
 		// Унаследовано через Render
-		virtual void keyPress(GL::EKeyPress nKey_) override;
+		virtual bool keyPress(GL::EKeyPress nKey_) override;
 
 		void mouseScroll(float fZoom_);
 
