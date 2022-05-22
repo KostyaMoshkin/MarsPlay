@@ -17,6 +17,19 @@ namespace GL {
 	{
 	}
 
+	void RenderMegdr::setScale()
+	{
+		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
+		m_pMegdrProgram->setUniform1f("m_fScale", &m_fScale);
+	}
+
+	void RenderMegdr::setViewAngle()
+	{
+		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
+		lib::Matrix4 mPerspective = glm::perspective(glm::radians(m_fViewAngle), m_fViewAspect, 0.001f, 5.0f);
+		m_pMegdrProgram->setUniformMat4f("m_mPerspective", &mPerspective[0][0]);
+	}
+
 	bool RenderMegdr::init(lib::iPoint2D ptScreenSize_)
 	{
 		m_fViewAspect = (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y;
@@ -64,12 +77,10 @@ namespace GL {
 			nViewAngle = 45;
 
 		m_fViewAngle = float(nViewAngle);
-		setViewAngle();
 
 		lib::Matrix4 mView = lib::Matrix4(1.0f);
 		m_pMegdrProgram->setUniformMat4f("m_mView", &mView[0][0]);
 
-		m_pMegdrProgram->setUniform1f("m_fScale", &m_fScale);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -77,10 +88,14 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
+		setViewAngle();
+		setScale();
+
 		//  Координаты вершин
 		m_pMegdr = megdr::MegdrReader::Create();
+
 		m_pMegdr->setConfig(getConfig());
-		m_pMegdr->setVersionGl(getVersionGl());
+
 		if (!m_pMegdr->init())
 			return false;;
 
@@ -90,7 +105,9 @@ namespace GL {
 		//-------------------------------------------------------------------------------------------------
 
 		m_pPalette = GL::Palette::Create();
+
 		m_pPalette->setConfig(getConfig());
+
 		if (!m_pPalette->init())
 			return false;
 
@@ -105,19 +122,6 @@ namespace GL {
 		return true;
 	}
 
-	void RenderMegdr::setScale()
-	{
-		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
-		m_pMegdrProgram->setUniform1f("m_fScale", &m_fScale);
-	}
-
-	void RenderMegdr::setViewAngle()
-	{
-		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
-		lib::Matrix4 mPerspective = glm::perspective(glm::radians(m_fViewAngle), m_fViewAspect, 0.001f, 5.0f);
-		m_pMegdrProgram->setUniformMat4f("m_mPerspective", &mPerspective[0][0]);
-	}
-
 	void RenderMegdr::draw()
 	{
 		if (!isVisible())
@@ -129,14 +133,13 @@ namespace GL {
 		BufferBounder<VertexBuffer> areoidBounder(m_pTopographyVertex);
 		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPaletteTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
+		BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
 
 		if (getVersionGl() >= 43)
-		{
-			BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
 			glMultiDrawElementsIndirect(GL_TRIANGLE_STRIP, GL_UNSIGNED_INT, nullptr, (GLsizei)m_pMegdr->getLinesCount() - 1, 0);
-		}
 		else
-			glDrawElements(GL_TRIANGLES, (GLsizei)m_pMegdr->getIndecesCount(), GL_UNSIGNED_INT, 0);
+			for (int i = 0; i < (GLsizei)m_pMegdr->getLinesCount() - 1; ++i)
+				glDrawElementsIndirect(GL_TRIANGLE_STRIP, GL_UNSIGNED_INT, (void*)(i * m_pMegdr->getIndirectCommandSize()));
 
 		renderBounder.unbound();
 	}
@@ -266,15 +269,12 @@ namespace GL {
 			return false;
 		}
 
-		if (getVersionGl() >= 43)
-		{
-			BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
+		BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
 
-			if (!m_pIndirect->fillBuffer(m_pMegdr->getIndirectSize(), m_pMegdr->getIndirect()))
-			{
-				messageLn("Error m_pIndirect->fillBuffer()");
-				return false;
-			}
+		if (!m_pIndirect->fillBuffer(m_pMegdr->getIndirectSize(), m_pMegdr->getIndirect()))
+		{
+			messageLn("Error m_pIndirect->fillBuffer()");
+			return false;
 		}
 
 		renderBounder.unbound();

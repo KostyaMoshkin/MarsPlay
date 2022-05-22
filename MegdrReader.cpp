@@ -53,9 +53,12 @@ namespace megdr
 		long m_nTopographyFileSize = -1;
 		FILE* pMegdrTopography = openMegdrFile(sTopographyPath_, m_nTopographyFileSize);
 
-		if ((m_nRadiusFileSize != m_nTopographyFileSize) || (m_nRadiusFileSize < 0) || !pMegdrRadius || !pMegdrTopography)
+		if (!pMegdrRadius || !pMegdrTopography)
+			return false;
+
+		if ((m_nRadiusFileSize != m_nTopographyFileSize) || (m_nRadiusFileSize < 0))
 		{
-			messageLn("Data file sizes differ or other read problem.");
+			messageLn("Data file sizes differ.");
 			return false;
 		}
 
@@ -251,60 +254,30 @@ namespace megdr
 
 		//---------------------------------------------------------------------------------------------
 
-		if (m_nVersionFull >= 43)
+		unsigned nLines = m_mnLines[nId_];
+		unsigned nLineSamples = m_mnLineSamples[nId_];
+
+		//  Индексы
+		m_mvIndeces[nId_].resize(nLineSamples * 4);
+
+		for (unsigned i = 0; i < nLineSamples; ++i)
 		{
-
-			unsigned nLines = m_mnLines[nId_];
-			unsigned nLineSamples = m_mnLineSamples[nId_];
-			unsigned nQuadCount = nLineSamples;
-
-			//  Индексы
-			m_mvIndeces[nId_].resize(nQuadCount * 4);
-
-			for (unsigned i = 0; i < nQuadCount; ++i)
-			{
-				unsigned nTailPoint = i == nLineSamples ? 0 : i +1;  //  Замкнуть широты
-				m_mvIndeces[nId_][4 * i + 0] = i;
-				m_mvIndeces[nId_][4 * i + 1] = i + nLineSamples;
-				m_mvIndeces[nId_][4 * i + 2] = nTailPoint;
-				m_mvIndeces[nId_][4 * i + 3] = nTailPoint + nLineSamples;
-			}
-
-			// Indirect
-			m_mvIndirect[nId_].resize(nLines - 1);
-			for (unsigned i = 0; i < nLines - 1; ++i)
-			{
-				m_mvIndirect[m_nActiveID][i].count = getIndecesCount();
-				m_mvIndirect[m_nActiveID][i].primCount = 1;
-				m_mvIndirect[m_nActiveID][i].firstIndex = 0;
-				m_mvIndirect[m_nActiveID][i].baseVertex = i * nLineSamples;
-				m_mvIndirect[m_nActiveID][i].baseInstance = 0;
-			}
+			unsigned nTailPoint = i == nLineSamples ? 0 : i + 1;  //  Замкнуть широты
+			m_mvIndeces[nId_][4 * i + 0] = i;
+			m_mvIndeces[nId_][4 * i + 1] = i + nLineSamples;
+			m_mvIndeces[nId_][4 * i + 2] = nTailPoint;
+			m_mvIndeces[nId_][4 * i + 3] = nTailPoint + nLineSamples;
 		}
-		else
+
+		// Indirect
+		m_mvIndirect[nId_].resize(nLines - 1);
+		for (unsigned i = 0; i < nLines - 1; ++i)
 		{
-			unsigned nLines = m_mnLines[nId_];
-			unsigned nLineSamples = m_mnLineSamples[nId_];
-			unsigned nQuadCount = nLineSamples * 6;
-
-			//  Индексы
-			m_mvIndeces[nId_].resize(nQuadCount * nLines);
-
-			for (unsigned latitude = 0; latitude < nLines - 1; ++latitude)
-				for (unsigned Longitude = 0; Longitude < nLineSamples; ++Longitude)
-				{
-					unsigned nTailPoint = Longitude == nLineSamples ? 0 : Longitude + 1;  //  Замкнуть широты
-					unsigned nIndexShift = latitude * nQuadCount;  //  index shift ot the next tatitude
-					unsigned nVertexShift = latitude * nLineSamples;  //  vertex shift ot the next tatitude
-
-					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 0] = nVertexShift + Longitude;
-					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 1] = nVertexShift + Longitude + nLineSamples;
-					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 2] = nVertexShift + nTailPoint + nLineSamples;
-
-					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 3] = nVertexShift + nTailPoint + nLineSamples;
-					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 4] = nVertexShift + nTailPoint;
-					m_mvIndeces[nId_][nIndexShift + 6 * Longitude + 5] = nVertexShift + Longitude;
-				}
+			m_mvIndirect[m_nActiveID][i].count = getIndecesCount();
+			m_mvIndirect[m_nActiveID][i].primCount = 1;
+			m_mvIndirect[m_nActiveID][i].firstIndex = 0;
+			m_mvIndirect[m_nActiveID][i].baseVertex = i * nLineSamples;
+			m_mvIndirect[m_nActiveID][i].baseInstance = 0;
 		}
 
 		//----------------------------------------------------------------------------------------
@@ -421,10 +394,14 @@ namespace megdr
 		return unsigned(m_mvIndeces[m_nActiveID].size());
 	}
 
+	unsigned MegdrReader::getIndirectCommandSize()
+	{
+		return unsigned(sizeof(megdr::DrawElementsIndirectCommand));
+	}
+
 	unsigned MegdrReader::getIndirectSize()
 	{
-		//return sizeof(megdr::DrawElementsIndirectCommand) * m_mvIndirect[m_nActiveID].size() / 2;
-		return unsigned(sizeof(megdr::DrawElementsIndirectCommand) * m_mvIndirect[m_nActiveID].size());
+		return unsigned(getIndirectCommandSize()  * m_mvIndirect[m_nActiveID].size());
 	}
 
 	unsigned MegdrReader::getLinesCount()

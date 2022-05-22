@@ -28,8 +28,6 @@ namespace megdr
 
 	class MegdrReader : public lib::CConfig
 	{
-		int m_nVersionFull = 0;
-
 	public:
 		static const char* nMegdrDefault()		{ return "MegdrDefault";	}
 		static const char* sMegdr()				{ return "Megdr";			}
@@ -79,11 +77,10 @@ namespace megdr
 
 		unsigned getIndecesSize();
 		unsigned getIndecesCount();
+		unsigned getIndirectCommandSize();
 		unsigned getIndirectSize();
 		unsigned getLinesCount();
 		unsigned getLineSamplesCount();
 		unsigned getBaseHeight();
-
-		void setVersionGl(int nVersionFull_) { m_nVersionFull = nVersionFull_; }
 	};
 }
