@@ -36,7 +36,7 @@ namespace megdr
 		return pMegdrFile_;
 	}
 
-	static bool readSingleFileData(std::vector<MSB_INTEGER>& vRadius_, std::vector<MSB_INTEGER>& vTopography_, 
+	static bool readSectorData(std::vector<MSB_INTEGER>& vRadius_, std::vector<MSB_INTEGER>& vTopography_, 
 		const char *sRadiusPath_, const char* sTopographyPath_,
 		lib::XMLnodePtr xmlActiveMegdr_, 
 		unsigned nFistLine_ = 0, unsigned nFirstSample_ = 0, unsigned nRowCount_ = 1)
@@ -89,8 +89,182 @@ namespace megdr
 		return true;
 	}
 
-	static bool readMultyFileData(std::vector<MSB_INTEGER>& vRadius_, std::vector<MSB_INTEGER>& vTopography_, lib::XMLnodePtr xmlActiveMegdr_)
+	//---------------------------------------------------------------------------------------------
+
+	MegdrReader::MegdrReader()
 	{
+	}
+
+	MegdrReader::~MegdrReader()
+	{
+	}
+
+	bool MegdrReader::init()
+	{
+		lib::XMLnodePtr xmlPaletteDefault = lib::XMLreader::getNode(getConfig(), nMegdrDefault());
+
+		if (!!xmlPaletteDefault && !lib::XMLreader::getInt(xmlPaletteDefault, m_nActiveID))
+			m_nActiveID = 1;
+
+		//---------------------------------------------------------------------------------------
+
+		m_vMegdrNode.clear();
+
+		lib::XMLnodePtr xmlMegdr = lib::XMLreader::getNode(getConfig(), sMegdr());
+		while (!!xmlMegdr)
+		{
+			int nId = -1;
+			if (!lib::XMLreader::getInt(xmlMegdr, id(), nId))
+			{
+				messageLn("Config should contain id attribut for: Megdr id=\"1\"");
+				nId = -1;
+			}
+
+			m_vMegdrNode[nId] = xmlMegdr;
+
+			xmlMegdr = xmlMegdr->NextSibling(sMegdr());
+		}
+
+		if (m_vMegdrNode.empty())
+		{
+			messageLn("In config file node <Megdr> not found");
+			return false;
+		}
+
+		//---------------------------------------------------------------------------------------
+
+		if (!fillMegdr(m_nActiveID))
+			return false;
+
+		return true;
+	}
+
+	bool MegdrReader::fillMegdr(unsigned nId_)
+	{
+		lib::XMLnodePtr xmlActiveMegdr = nullptr;
+
+		if (m_vMegdrNode.contains(nId_))
+			xmlActiveMegdr = m_vMegdrNode[nId_];
+		else
+			xmlActiveMegdr = lib::XMLreader::getNode(getConfig(), sMegdr());
+
+		if (m_mvIndeces.contains(nId_))
+			return true;
+
+		//--------------------------------------------------------------------------------------
+
+		bool bXMLmistake = false;
+
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLines()), m_mnLines[nId_]);
+
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLineSamples()), m_mnLineSamples[nId_]);
+
+		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nBaseHeight()), m_mnBaseHeight[nId_]);
+
+		if (bXMLmistake)
+		{
+			messageLn("Some nodes missed in config file. There should be: <BaseHeight> <Lines> <LineSamples>");
+			return false;
+		}
+
+		//--------------------------------------------------------------------------------------
+
+		unsigned nDataFileCount = 1;
+		bool bMultyData = lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, sCount()), nDataFileCount);
+
+		unsigned nDataFileCountRaw = 1;
+
+		nDataFileCountRaw = (unsigned)sqrt(nDataFileCount);
+		if (nDataFileCountRaw * nDataFileCountRaw != nDataFileCount)
+		{
+			messageLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
+			return false;
+		}
+
+		bool bReadFileSuiccess = true;
+
+		if (bMultyData)
+			bReadFileSuiccess = readMultyFileData(nId_, nDataFileCountRaw, xmlActiveMegdr);
+		else
+			bReadFileSuiccess = readSingleFileData(nId_, xmlActiveMegdr);
+
+		if (!bReadFileSuiccess)
+			return false;
+
+		//---------------------------------------------------------------------------------------------
+
+
+		for (megdr::MSB_INTEGER& value : m_mvRadius[nId_])
+			swapInt16(&value);
+
+		for (megdr::MSB_INTEGER& value : m_mvTopography[nId_])
+			swapInt16(&value);
+
+		//---------------------------------------------------------------------------------------------
+
+		unsigned nLines = m_mnLines[nId_];
+		unsigned nLineSamples = m_mnLineSamples[nId_];
+
+		//  Индексы
+		m_mvIndeces[nId_].resize(nLineSamples * 4);
+
+		for (unsigned i = 0; i < nLineSamples; ++i)
+		{
+			unsigned nTailPoint = i == nLineSamples ? 0 : i + 1;  //  Замкнуть широты
+			m_mvIndeces[nId_][4 * i + 0] = i;
+			m_mvIndeces[nId_][4 * i + 1] = i + nLineSamples;
+			m_mvIndeces[nId_][4 * i + 2] = nTailPoint;
+			m_mvIndeces[nId_][4 * i + 3] = nTailPoint + nLineSamples;
+		}
+
+		// Indirect
+		m_mvIndirect[nId_].resize(nLines - 1);
+		for (unsigned i = 0; i < nLines - 1; ++i)
+		{
+			m_mvIndirect[m_nActiveID][i].count = getIndecesCount();
+			m_mvIndirect[m_nActiveID][i].primCount = 1;
+			m_mvIndirect[m_nActiveID][i].firstIndex = 0;
+			m_mvIndirect[m_nActiveID][i].baseVertex = i * nLineSamples;
+			m_mvIndirect[m_nActiveID][i].baseInstance = 0;
+		}
+
+		//----------------------------------------------------------------------------------------
+
+		return true;
+	}
+
+	bool MegdrReader::readSingleFileData(unsigned nId_, lib::XMLnodePtr xmlActiveMegdr_)
+	{
+		m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+		m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+
+		std::string sRadiusPath;
+
+		bool bXMLmistake = false;
+
+		bXMLmistake |= !lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr_, MegdrReader::sRadiusFile()), sRadiusPath);
+
+		std::string sTopographyPath;
+		bXMLmistake |= !lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr_, MegdrReader::sTopographyFile()), sTopographyPath);
+
+		if (bXMLmistake)
+		{
+			messageLn("Some nodes missed in config file. There should be: <RadiusFile> <TopographyFile>");
+			return false;
+		}
+
+		return readSectorData(m_mvRadius[nId_], m_mvTopography[nId_], sRadiusPath.c_str(), sTopographyPath.c_str(), xmlActiveMegdr_);
+	}
+
+	bool MegdrReader::readMultyFileData(unsigned nId_, unsigned nDataFileCountRaw_, lib::XMLnodePtr xmlActiveMegdr_)
+	{
+		m_mnLines[nId_] *= nDataFileCountRaw_;
+		m_mnLineSamples[nId_] *= nDataFileCountRaw_;
+
+		m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+		m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+
+
 		unsigned nDataFileCount = 1;
 		bool bMultyData = lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr_, MegdrReader::sCount()), nDataFileCount);
 
@@ -149,180 +323,18 @@ namespace megdr
 			xmlMegdrFile = xmlMegdrFile->NextSibling();
 		}
 
+		bool bReadMistake = false;
+
 		for (auto& megdrFile : vMegdrSrs)
 		{
 			if (!megdrFile.first.sFileName.empty())
-				readSingleFileData(vRadius_, vTopography_, 
-					megdrFile.first.sFileName.c_str(), megdrFile.second.sFileName.c_str(), 
-					xmlActiveMegdr_, 
+				bReadMistake |= !readSectorData(m_mvRadius[nId_], m_mvTopography[nId_],
+					megdrFile.first.sFileName.c_str(), megdrFile.second.sFileName.c_str(),
+					xmlActiveMegdr_,
 					megdrFile.first.nLine, megdrFile.first.nSample, nDataFileCountRaw);
 		}
 
-		return true;
-	}
-
-	//---------------------------------------------------------------------------------------------
-
-	MegdrReader::MegdrReader()
-	{
-	}
-
-	MegdrReader::~MegdrReader()
-	{
-	}
-
-	bool MegdrReader::fillMegdr(unsigned nId_)
-	{
-		lib::XMLnodePtr xmlActiveMegdr = nullptr;
-
-		if (m_vMegdrNode.contains(nId_))
-			xmlActiveMegdr = m_vMegdrNode[nId_];
-		else
-			xmlActiveMegdr = lib::XMLreader::getNode(getConfig(), sMegdr());
-
-		if (m_mvIndeces.contains(nId_))
-			return true;
-
-		//--------------------------------------------------------------------------------------
-
-		bool bXMLmistake = false;
-
-		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLines()), m_mnLines[nId_]);
-
-		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nLineSamples()), m_mnLineSamples[nId_]);
-
-		bXMLmistake |= !lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, nBaseHeight()), m_mnBaseHeight[nId_]);
-
-		if (bXMLmistake)
-		{
-			messageLn("Some nodes missed in config file. There should be: <BaseHeight> <Lines> <LineSamples>");
-			return false;
-		}
-
-		//--------------------------------------------------------------------------------------
-
-		unsigned nDataFileCount = 1;
-		bool bMultyData = lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, sCount()), nDataFileCount);
-
-		unsigned nDataFileCountRaw = 1;
-
-		nDataFileCountRaw = (unsigned)sqrt(nDataFileCount);
-		if (nDataFileCountRaw * nDataFileCountRaw != nDataFileCount)
-		{
-			messageLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
-			return false;
-		}
-
-		if (!bMultyData)
-		{
-			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-
-			std::string sRadiusPath;
-			bXMLmistake |= !lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, MegdrReader::sRadiusFile()), sRadiusPath);
-
-			std::string sTopographyPath;
-			bXMLmistake |= !lib::XMLreader::getSting(lib::XMLreader::getNode(xmlActiveMegdr, MegdrReader::sTopographyFile()), sTopographyPath);
-
-			if (bXMLmistake)
-			{
-				messageLn("Some nodes missed in config file. There should be: <RadiusFile> <TopographyFile>");
-				return false;
-			}
-
-			readSingleFileData(m_mvRadius[nId_], m_mvTopography[nId_], sRadiusPath.c_str(), sTopographyPath.c_str(), xmlActiveMegdr);
-		}
-		else
-		{
-			m_mnLines[nId_] *= nDataFileCountRaw;
-			m_mnLineSamples[nId_] *= nDataFileCountRaw;
-
-			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-
-			readMultyFileData(m_mvRadius[nId_], m_mvTopography[nId_], xmlActiveMegdr);
-		}
-
-		//---------------------------------------------------------------------------------------------
-
-
-		for (megdr::MSB_INTEGER& value : m_mvRadius[nId_])
-			swapInt16(&value);
-
-		for (megdr::MSB_INTEGER& value : m_mvTopography[nId_])
-			swapInt16(&value);
-
-		//---------------------------------------------------------------------------------------------
-
-		unsigned nLines = m_mnLines[nId_];
-		unsigned nLineSamples = m_mnLineSamples[nId_];
-
-		//  Индексы
-		m_mvIndeces[nId_].resize(nLineSamples * 4);
-
-		for (unsigned i = 0; i < nLineSamples; ++i)
-		{
-			unsigned nTailPoint = i == nLineSamples ? 0 : i + 1;  //  Замкнуть широты
-			m_mvIndeces[nId_][4 * i + 0] = i;
-			m_mvIndeces[nId_][4 * i + 1] = i + nLineSamples;
-			m_mvIndeces[nId_][4 * i + 2] = nTailPoint;
-			m_mvIndeces[nId_][4 * i + 3] = nTailPoint + nLineSamples;
-		}
-
-		// Indirect
-		m_mvIndirect[nId_].resize(nLines - 1);
-		for (unsigned i = 0; i < nLines - 1; ++i)
-		{
-			m_mvIndirect[m_nActiveID][i].count = getIndecesCount();
-			m_mvIndirect[m_nActiveID][i].primCount = 1;
-			m_mvIndirect[m_nActiveID][i].firstIndex = 0;
-			m_mvIndirect[m_nActiveID][i].baseVertex = i * nLineSamples;
-			m_mvIndirect[m_nActiveID][i].baseInstance = 0;
-		}
-
-		//----------------------------------------------------------------------------------------
-
-		return true;
-	}
-
-	bool MegdrReader::init()
-	{
-		lib::XMLnodePtr xmlPaletteDefault = lib::XMLreader::getNode(getConfig(), nMegdrDefault());
-
-		if (!!xmlPaletteDefault && !lib::XMLreader::getInt(xmlPaletteDefault, m_nActiveID))
-			m_nActiveID = 1;
-
-		//---------------------------------------------------------------------------------------
-
-		m_vMegdrNode.clear();
-
-		lib::XMLnodePtr xmlMegdr = lib::XMLreader::getNode(getConfig(), sMegdr());
-		while (!!xmlMegdr)
-		{
-			int nId = -1;
-			if (!lib::XMLreader::getInt(xmlMegdr, id(), nId))
-			{
-				messageLn("Config should contain id attribut for: Megdr id=\"1\"");
-				nId = -1;
-			}
-
-			m_vMegdrNode[nId] = xmlMegdr;
-
-			xmlMegdr = xmlMegdr->NextSibling(sMegdr());
-		}
-
-		if (m_vMegdrNode.empty())
-		{
-			messageLn("In config file node <Megdr> not found");
-			return false;
-		}
-
-		//---------------------------------------------------------------------------------------
-
-		if (!fillMegdr(m_nActiveID))
-			return false;
-
-		return true;
+		return !bReadMistake;
 	}
 
 	bool MegdrReader::changeMedgr(bool bDirection_)

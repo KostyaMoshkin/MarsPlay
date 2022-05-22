@@ -63,6 +63,9 @@ namespace megdr
 	private:
 		bool fillMegdr(unsigned nId_ = 1);
 
+		bool readSingleFileData(unsigned nId_, lib::XMLnodePtr xmlActiveMegdr_);
+		bool readMultyFileData(unsigned nId_, unsigned nDataFileCountRaw_, lib::XMLnodePtr xmlActiveMegdr_);
+
 	public:
 		bool init();
 
