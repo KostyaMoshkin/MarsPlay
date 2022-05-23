@@ -27,8 +27,10 @@ namespace GL {
 
 	void RenderMegdr::setViewAngle()
 	{
+		lib::limit(m_fViewAngle, 1.0f, 150.0f);
+
 		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
-		lib::Matrix4 mPerspective = glm::perspective(glm::radians(m_fViewAngle), m_fViewAspect, 0.001f, 5.0f);
+		lib::Matrix4 mPerspective = glm::perspective(glm::radians(m_fViewAngle), m_fViewAspect, 0.001f, 2.0f);
 		m_pMegdrProgram->setUniformMat4f("m_mPerspective", &mPerspective[0][0]);
 	}
 
@@ -272,7 +274,6 @@ namespace GL {
 	void RenderMegdr::mouseScroll(float fZoom_)
 	{
 		m_fViewAngle += fZoom_;
-		lib::limit(m_fViewAngle, 1.0f, 150.0f);
 
 		setViewAngle();
 	}
