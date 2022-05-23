@@ -76,7 +76,7 @@ namespace GL {
 		return true;
 	}
 
-	void Palette::changePalette(bool bDirection_)
+	bool Palette::changePalette(bool bDirection_)
 	{
 		auto iterPalette = m_vPaletteMap.find(m_nActivePaletteID);
 		
@@ -98,7 +98,7 @@ namespace GL {
 		}
 
 		m_nActivePaletteID = iterPalette->first;
-		fillPalette(m_nActivePaletteID);
+		return fillPalette(m_nActivePaletteID);
 	}
 
 	void Palette::arrange()

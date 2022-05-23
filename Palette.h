@@ -52,7 +52,7 @@ namespace GL {
 		void getMinMax(float& fMin_, float& fMax_);
 		unsigned getInterpolate();
 		bool fillPalette(unsigned nPaletteID_);
-		void changePalette(bool bDirection_ = true);
+		bool changePalette(bool bDirection_ = true);
 	};
 }
 

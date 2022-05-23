@@ -19,6 +19,8 @@ namespace GL {
 
 	void RenderMegdr::setScale()
 	{
+		lib::limit(m_fScale, 0.1f, 30.0f);
+
 		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
 		m_pMegdrProgram->setUniform1f("m_fScale", &m_fScale);
 	}
@@ -139,7 +141,7 @@ namespace GL {
 			glMultiDrawElementsIndirect(GL_TRIANGLE_STRIP, GL_UNSIGNED_INT, nullptr, (GLsizei)m_pMegdr->getLinesCount() - 1, 0);
 		else
 			for (int i = 0; i < (GLsizei)m_pMegdr->getLinesCount() - 1; ++i)
-				glDrawElementsIndirect(GL_TRIANGLE_STRIP, GL_UNSIGNED_INT, (void*)(i * m_pMegdr->getIndirectCommandSize()));
+				glDrawElementsIndirect(GL_TRIANGLE_STRIP, GL_UNSIGNED_INT, (void *)size_t(i * m_pMegdr->getIndirectCommandSize()));
 
 		renderBounder.unbound();
 	}
@@ -154,50 +156,31 @@ namespace GL {
 
 	bool RenderMegdr::keyPress(GL::EKeyPress nKey_)
 	{
-		bool bError = false;
-
-		if (nKey_ == GL::EKeyPress::key_1)
+		if ((nKey_ == GL::EKeyPress::key_1) || (nKey_ == GL::EKeyPress::key_2) )
 		{
-			m_fScale /= 1.2f;
+			m_fScale = (nKey_ == GL::EKeyPress::key_1) ? m_fScale /= 1.2f : m_fScale *= 1.2f;
 			setScale();
 		}
-		else if (nKey_ == GL::EKeyPress::key_2)
+		else if ((nKey_ == GL::EKeyPress::key_3) || (nKey_ == GL::EKeyPress::key_4))
 		{
-			m_fScale *= 1.2f;
-			setScale();
-		}
-		else if (nKey_ == GL::EKeyPress::key_3)
-		{
-			m_pPalette->changePalette(false);
-			bError |= !fillPalette();
-			Sleep(300);
-		}
-		else if (nKey_ == GL::EKeyPress::key_4)
-		{
-			m_pPalette->changePalette(true);
-			bError |= !fillPalette();
-			Sleep(300);
-		}
-		else if (nKey_ == GL::EKeyPress::key_5)
-		{
-			if (!m_pMegdr->changeMedgr(false))
+			if (!m_pPalette->changePalette(nKey_ == GL::EKeyPress::key_4))
 				return false;
 
-			bError |= !fillVertex();
-
-			Sleep(300);
+			if (!fillPalette())
+				return false;
 		}
-		else if (nKey_ == GL::EKeyPress::key_6)
+		else if ((nKey_ == GL::EKeyPress::key_5) || (nKey_ == GL::EKeyPress::key_6))
 		{
-			if (!m_pMegdr->changeMedgr(true))
+			if (!m_pMegdr->changeMedgr(nKey_ == GL::EKeyPress::key_6))
 				return false;
 
-			bError |= !fillVertex();
-
-			Sleep(300);
+			if (!fillVertex())
+				return false;
 		}
 
-		return !bError;
+		Sleep(300);
+
+		return true;
 	}
 
 	bool RenderMegdr::fillPalette()

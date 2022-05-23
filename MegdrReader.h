@@ -64,7 +64,7 @@ namespace megdr
 		bool fillMegdr(unsigned nId_ = 1);
 
 		bool readSingleFileData(unsigned nId_, lib::XMLnodePtr xmlActiveMegdr_);
-		bool readMultyFileData(unsigned nId_, unsigned nDataFileCountRaw_, lib::XMLnodePtr xmlActiveMegdr_);
+		bool readMultyFileData(unsigned nId_, lib::XMLnodePtr xmlActiveMegdr_);
 
 	public:
 		bool init();
@@ -72,16 +72,17 @@ namespace megdr
 		bool changeMedgr(bool bDirection_ = true);
 
 		void* getRadius();
-		unsigned getRadiusSize();
 		void* getTopography();
-		unsigned getTopographySize();
 		void* getIndeces();
 		void* getIndirect();
 
+		unsigned getTopographySize();
+		unsigned getRadiusSize();
 		unsigned getIndecesSize();
-		unsigned getIndecesCount();
 		unsigned getIndirectCommandSize();
 		unsigned getIndirectSize();
+
+		unsigned getIndecesCount();
 		unsigned getLinesCount();
 		unsigned getLineSamplesCount();
 		unsigned getBaseHeight();

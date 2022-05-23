@@ -169,22 +169,14 @@ namespace megdr
 
 		//--------------------------------------------------------------------------------------
 
-		unsigned nDataFileCount = 1;
-		bool bMultyData = lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, sCount()), nDataFileCount);
-
-		unsigned nDataFileCountRaw = 1;
-
-		nDataFileCountRaw = (unsigned)sqrt(nDataFileCount);
-		if (nDataFileCountRaw * nDataFileCountRaw != nDataFileCount)
-		{
-			messageLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
-			return false;
-		}
+		unsigned nDataFileCount = 0;
+		if (!lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr, sCount()), nDataFileCount))
+			nDataFileCount = 0;
 
 		bool bReadFileSuiccess = true;
 
-		if (bMultyData)
-			bReadFileSuiccess = readMultyFileData(nId_, nDataFileCountRaw, xmlActiveMegdr);
+		if (nDataFileCount > 3)
+			bReadFileSuiccess = readMultyFileData(nId_, xmlActiveMegdr);
 		else
 			bReadFileSuiccess = readSingleFileData(nId_, xmlActiveMegdr);
 
@@ -235,8 +227,16 @@ namespace megdr
 
 	bool MegdrReader::readSingleFileData(unsigned nId_, lib::XMLnodePtr xmlActiveMegdr_)
 	{
-		m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-		m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+		try
+		{
+			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+		}
+		catch (...)
+		{
+			messageLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
+			return false;
+		}
 
 		std::string sRadiusPath;
 
@@ -253,28 +253,15 @@ namespace megdr
 			return false;
 		}
 
+		//--------------------------------------------------------------------------------------------
+
 		return readSectorData(m_mvRadius[nId_], m_mvTopography[nId_], sRadiusPath.c_str(), sTopographyPath.c_str(), xmlActiveMegdr_);
 	}
 
-	bool MegdrReader::readMultyFileData(unsigned nId_, unsigned nDataFileCountRaw_, lib::XMLnodePtr xmlActiveMegdr_)
+	bool MegdrReader::readMultyFileData(unsigned nId_, lib::XMLnodePtr xmlActiveMegdr_)
 	{
-		m_mnLines[nId_] *= nDataFileCountRaw_;
-		m_mnLineSamples[nId_] *= nDataFileCountRaw_;
-
-		try
-		{
-			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
-		}
-		catch ( ... )
-		{
-			messageLn(std::string(std::string("Error memory allocation. Ask Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] * 2 / 1024 / 1024)).c_str());
-			return false;
-		}
-
-
 		unsigned nDataFileCount = 1;
-		bool bMultyData = lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr_, MegdrReader::sCount()), nDataFileCount);
+		bool bMultyData = lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr_, sCount()), nDataFileCount);
 
 		unsigned nDataFileCountRaw = 1;
 
@@ -284,6 +271,22 @@ namespace megdr
 			messageLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
 			return false;
 		}
+		
+		m_mnLines[nId_] *= nDataFileCountRaw;
+		m_mnLineSamples[nId_] *= nDataFileCountRaw;
+
+		try
+		{
+			m_mvRadius[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+			m_mvTopography[nId_].resize(m_mnLines[nId_] * m_mnLineSamples[nId_]);
+		}
+		catch ( ... )
+		{
+			messageLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
+			return false;
+		}
+
+		//--------------------------------------------------------------------------------------------
 
 		std::vector<std::pair<SMegdrFile, SMegdrFile>> vMegdrSrs(nDataFileCount);    // first - radius, second - topography
 
@@ -331,6 +334,8 @@ namespace megdr
 			xmlMegdrFile = xmlMegdrFile->NextSibling();
 		}
 
+		//--------------------------------------------------------------------------------------------
+
 		bool bReadMistake = false;
 
 		for (auto& megdrFile : vMegdrSrs)
@@ -341,6 +346,8 @@ namespace megdr
 					xmlActiveMegdr_,
 					megdrFile.first.nLine, megdrFile.first.nSample, nDataFileCountRaw);
 		}
+
+		//--------------------------------------------------------------------------------------------
 
 		return !bReadMistake;
 	}
