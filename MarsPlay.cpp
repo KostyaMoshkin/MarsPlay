@@ -63,13 +63,14 @@ int main()
 
 	//------------------------------------------------------------------------------------------
 
-	lib::Vector3 vCamPosition3D(0, 0, -1.2);
+	lib::Vector3 vCamPosition3D(0, 0, -1.5);
 	lib::Vector3 vCamRight3D(1, 0, 0);
+	lib::Vector3 vCamCenter(0, 1, 0);
 
 	float fStepForward = 0.3f;
 	float fRoteteAngle = 0.4f;
 
-	pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+	pRenderMegdr->rotate(vCamPosition3D, vCamCenter, vCamPosition3D);
 	pSceneRender->draw();
 
 	while (!pSceneRender->WindowShouldClose())
@@ -118,7 +119,7 @@ int main()
 		lib::fPoint2D ptCursorMove = pSceneRender->getCursorMove();
 
 		//  Ближе - дальше
-		vCamPosition3D *= 1 - ptCursorMove.y / 700;
+		vCamPosition3D *= 1.0 - ptCursorMove.y / 500;
 
 		//  Полетет вперед - назад
 		lib::Quat qMove(0.0f, 0.0f, 0.0f, 0.0f);
@@ -140,7 +141,10 @@ int main()
 		//  Применение поворота
 		vCamPosition3D = qMove * qRotate * vCamPosition3D;
 
-		pRenderMegdr->rotate(vCamPosition3D, glm::cross(-vCamPosition3D, vCamRight3D));
+		lib::Vector3 vCamUp = vCamPosition3D;
+		vCamCenter = glm::cross(-vCamPosition3D, vCamRight3D);
+
+		pRenderMegdr->rotate(vCamPosition3D, vCamCenter, vCamUp);
 		pSceneRender->draw();
 	}
 

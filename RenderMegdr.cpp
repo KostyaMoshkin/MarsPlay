@@ -30,7 +30,7 @@ namespace GL {
 		lib::limit(m_fViewAngle, 1.0f, 150.0f);
 
 		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
-		lib::Matrix4 mPerspective = glm::perspective(glm::radians(m_fViewAngle), m_fViewAspect, 0.001f, 2.0f);
+		lib::Matrix4 mPerspective = glm::perspective(glm::radians(m_fViewAngle), m_fViewAspect, 0.001f, 5.0f);
 		m_pMegdrProgram->setUniformMat4f("m_mPerspective", &mPerspective[0][0]);
 	}
 
@@ -148,9 +148,9 @@ namespace GL {
 		renderBounder.unbound();
 	}
 
-	void RenderMegdr::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_)
+	void RenderMegdr::rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamCenter_, lib::dPoint3D vCamUp_)
 	{
-		lib::Matrix4 mView = glm::lookAt(fCamPosition_, vCamUp3D_, vCamUp3D_);  //  eye, center, up
+		lib::Matrix4 mView = glm::lookAt(fCamPosition_, glm::normalize(vCamCenter_), glm::normalize(vCamUp_));  //  eye, center, up
 
 		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
 		m_pMegdrProgram->setUniformMat4f("m_mView", &mView[0][0]);

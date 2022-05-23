@@ -39,7 +39,7 @@
 
         public:
             virtual bool init(lib::iPoint2D ptScreenSize_) = 0;
-            virtual void rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_) = 0;
+            virtual void rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamCenter_, lib::dPoint3D vCamUp_) = 0;
             virtual void draw() = 0;
 
             virtual bool keyPress(GL::EKeyPress nKey_) = 0;

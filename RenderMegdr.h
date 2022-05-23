@@ -58,7 +58,7 @@ namespace GL {
 		// Унаследовано через Render
 		bool init(lib::iPoint2D ptScreenSize_) override;
 		void draw() override;
-		void rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamUp3D_) override;
+		void rotate(lib::dPoint3D fCamPosition_, lib::dPoint3D vCamCenter_, lib::dPoint3D vCamUp_) override;
 		void bound() override;
 		void unbound() override;
 
