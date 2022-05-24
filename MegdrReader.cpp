@@ -14,14 +14,6 @@ namespace megdr
 		std::string sFileName;
 	};
 
-	static void swapInt16(MSB_INTEGER* a) {
-		unsigned char b[2], c[2];
-		memcpy(b, a, 2);
-		c[0] = b[1];
-		c[1] = b[0];
-		memcpy(a, c, 2);
-	}
-
 	static FILE* openMegdrFile(const char* sFileName, long& nFileSize_)
 	{
 		FILE* pMegdrFile_ = nullptr;
@@ -47,6 +39,13 @@ namespace megdr
 		if (!pMegdrFile)
 			return false;
 
+		auto swapInt = [](MSB_INTEGER* a) {		
+			unsigned char b[2], c[2];
+			memcpy(b, a, 2);
+			c[0] = b[1]; c[1] = b[0];
+			memcpy(a, c, 2);
+		};
+
 		for (unsigned i = 0; i < nLines_; ++i)
 		{
 			if (fread(vDest_ + nArraySegment_ + i * nPointsInRaw_, nLineSamples_ * sizeof(megdr::MSB_INTEGER), 1, pMegdrFile) != 1)
@@ -57,7 +56,7 @@ namespace megdr
 			}
 
 			for (size_t k = 0; k < nLineSamples_; ++k)
-				swapInt16(vDest_ + k + nArraySegment_ + i * nPointsInRaw_);
+				swapInt(vDest_ + k + nArraySegment_ + i * nPointsInRaw_);
 		}
 
 		fclose(pMegdrFile);
