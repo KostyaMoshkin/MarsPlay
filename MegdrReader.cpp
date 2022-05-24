@@ -84,6 +84,12 @@ namespace megdr
 		std::future<bool> syncRadius		= std::async(std::launch::async, loadArray, sRadiusPath_, vRadius_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
 		std::future<bool> syncTopography	= std::async(std::launch::async, loadArray, sTopographyPath_, vTopography_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
 
+		if (syncRadius.valid() && syncTopography.valid())
+		{
+			bError |= !syncRadius.get();
+			bError |= !syncTopography.get();
+		}
+
 		if (bError)
 			return false;
 
@@ -342,6 +348,10 @@ namespace megdr
 					megdrFile.first.nLine, megdrFile.first.nSample, nDataFileCountRaw));
 
 		//--------------------------------------------------------------------------------------------
+
+		for (auto& fut : vFutureRead)
+			if (fut.valid())
+				bReadMistake |= !fut.get();
 
 		return !bReadMistake;
 	}
