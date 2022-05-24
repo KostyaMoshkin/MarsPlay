@@ -3,7 +3,6 @@
 #include "LOG/logger.h"
 
 #include <windows.h>
-#include <chrono>
 #include <future>
 
 namespace megdr
@@ -62,6 +61,7 @@ namespace megdr
 		}
 
 		fclose(pMegdrFile);
+
 		return true;
 	}
 
@@ -83,9 +83,6 @@ namespace megdr
 
 		std::future<bool> syncRadius		= std::async(std::launch::async, loadArray, sRadiusPath_, vRadius_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
 		std::future<bool> syncTopography	= std::async(std::launch::async, loadArray, sTopographyPath_, vTopography_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
-
-		//bError |= !loadArray(sRadiusPath_, vRadius_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
-		//bError |= !loadArray(sTopographyPath_, vTopography_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
 
 		if (bError)
 			return false;
@@ -179,8 +176,6 @@ namespace megdr
 
 		bool bReadFileSuiccess = true;
 
-		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
 		if (nDataFileCount > 3)
 			bReadFileSuiccess = readMultyFileData(nId_, xmlActiveMegdr);
 		else
@@ -188,8 +183,6 @@ namespace megdr
 
 		if (!bReadFileSuiccess)
 			return false;
-
-		std::chrono::steady_clock::time_point endRead = std::chrono::steady_clock::now();
 
 		//---------------------------------------------------------------------------------------------
 
@@ -208,8 +201,6 @@ namespace megdr
 			m_mvIndeces[nId_][4 * i + 3] = nTailPoint + nLineSamples;
 		}
 
-		std::chrono::steady_clock::time_point endIndex = std::chrono::steady_clock::now();
-
 		// Indirect
 		m_mvIndirect[nId_].resize(nLines - 1);
 		for (unsigned i = 0; i < nLines - 1; ++i)
@@ -220,16 +211,6 @@ namespace megdr
 			m_mvIndirect[m_nActiveID][i].baseVertex = i * nLineSamples;
 			m_mvIndirect[m_nActiveID][i].baseInstance = 0;
 		}
-
-		std::chrono::steady_clock::time_point endIndirect = std::chrono::steady_clock::now();
-
-		//----------------------------------------------------------------------------------------
-
-		informLn(std::string("Количество файлов: " + std::to_string(nDataFileCount)).c_str());
-		informLn(std::string("Загрузка данных, с: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endRead - begin).count() * 1.0 / 1000)).c_str());
-		informLn(std::string("Индексы, с: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endIndex - begin).count() * 1.0 / 1000)).c_str());
-		informLn(std::string("Inderect, с: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endIndirect - begin).count() * 1.0 / 1000)).c_str());
-		informLn(std::string("---------------------------------------------------------------").c_str());
 
 		//---------------------------------------------------------------------------------------------
 
@@ -354,15 +335,11 @@ namespace megdr
 		std::vector<std::future<bool>> vFutureRead(vMegdrSrs.size());
 
 		for (auto& megdrFile : vMegdrSrs)
-		{
 			if (!megdrFile.first.sFileName.empty())
-			{
 				vFutureRead.push_back(std::async(std::launch::async, readSectorData, m_mvRadius[nId_].data(), m_mvTopography[nId_].data(),
 					megdrFile.first.sFileName.c_str(), megdrFile.second.sFileName.c_str(),
 					xmlActiveMegdr_,
 					megdrFile.first.nLine, megdrFile.first.nSample, nDataFileCountRaw));
-			}
-		}
 
 		//--------------------------------------------------------------------------------------------
 
