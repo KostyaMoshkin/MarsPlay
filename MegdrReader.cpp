@@ -2,6 +2,9 @@
 
 #include "LOG/logger.h"
 
+#include <chrono>
+#include <future>
+
 namespace megdr
 {
 	struct SMegdrFile
@@ -19,12 +22,29 @@ namespace megdr
 		memcpy(a, c, 2);
 	}
 
+	static bool loadArray(FILE* pFile_, std::vector<MSB_INTEGER>& vDest_, unsigned nPointsInRaw_, unsigned nArraySegment_, unsigned nLines_, unsigned nLineSamples_)
+	{
+		for (unsigned i = 0; i < nLines_; ++i)
+		{
+			if (fread(&vDest_[nArraySegment_ + i * nPointsInRaw_], nLineSamples_ * sizeof(megdr::MSB_INTEGER), 1, pFile_) != 1)
+			{
+				informLn("Radius didn't read properly.");
+				return false;
+			}
+
+			for (size_t k = 0; k < nLineSamples_; ++k)
+				swapInt16(&vDest_[k + nArraySegment_ + i * nPointsInRaw_]);
+		}
+
+		return true;
+	}
+
 	static FILE* openMegdrFile(const char *sFileName, long &nFileSize_)
 	{
 		FILE* pMegdrFile_ = nullptr;
 		if (fopen_s(&pMegdrFile_, sFileName, "rb") != 0)
 		{
-			messageLn(std::string(std::string("Radius File not found: ") + std::string(sFileName)).c_str());
+			informLn(std::string(std::string("Radius File not found: ") + std::string(sFileName)).c_str());
 			nFileSize_ = -1;
 			return nullptr;
 		}
@@ -58,33 +78,29 @@ namespace megdr
 
 		if ((m_nRadiusFileSize != m_nTopographyFileSize) || (m_nRadiusFileSize < 0))
 		{
-			messageLn("Data file sizes differ.");
+			informLn("Data file sizes differ.");
 			return false;
 		}
 
 		if (m_nRadiusFileSize != vRadius_.size() * sizeof(megdr::MSB_INTEGER) / nRowCount_ / nRowCount_)
 		{
-			messageLn("File sizes doesn't match with m_nLines * m_nLineSamples * 2 <MSB_INTEGER>.");
+			informLn("File sizes doesn't match with m_nLines * m_nLineSamples * 2 <MSB_INTEGER>.");
 			return false;
 		}
 		
 		unsigned nPointsInRaw = nRowCount_ * nLineSamples;
 		unsigned nArraySegment = nPointsInRaw * nLines * nFistLine_ * (nRowCount_ - 1) + nFirstSample_ * nLineSamples;
 
-		for (unsigned i = 0; i < nLines; ++i)
-		{
-			if (fread(&vRadius_[nArraySegment + i * nPointsInRaw], nLineSamples * sizeof(megdr::MSB_INTEGER), 1, pMegdrRadius) != 1)
-			{
-				messageLn("Radius didn't read properly.");
-				return false;
-			}
+		bool bError = false;
 
-			if (fread(&vTopography_[nArraySegment + i * nPointsInRaw], nLineSamples * sizeof(megdr::MSB_INTEGER), 1, pMegdrTopography) != 1)
-			{
-				messageLn("Topography didn't read properly.");
-				return false;
-			}
-		}
+		bError |= !loadArray(pMegdrRadius, vRadius_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
+		bError |= !loadArray(pMegdrTopography, vTopography_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
+
+		fclose(pMegdrRadius);
+		fclose(pMegdrTopography);
+
+		if (bError)
+			return false;
 
 		return true;
 	}
@@ -116,7 +132,7 @@ namespace megdr
 			int nId = -1;
 			if (!lib::XMLreader::getInt(xmlMegdr, id(), nId))
 			{
-				messageLn("Config should contain id attribut for: Megdr id=\"1\"");
+				informLn("Config should contain id attribut for: Megdr id=\"1\"");
 				nId = -1;
 			}
 
@@ -127,7 +143,7 @@ namespace megdr
 
 		if (m_vMegdrNode.empty())
 		{
-			messageLn("In config file node <Megdr> not found");
+			informLn("In config file node <Megdr> not found");
 			return false;
 		}
 
@@ -163,7 +179,7 @@ namespace megdr
 
 		if (bXMLmistake)
 		{
-			messageLn("Some nodes missed in config file. There should be: <BaseHeight> <Lines> <LineSamples>");
+			informLn("Some nodes missed in config file. There should be: <BaseHeight> <Lines> <LineSamples>");
 			return false;
 		}
 
@@ -175,6 +191,8 @@ namespace megdr
 
 		bool bReadFileSuiccess = true;
 
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		if (nDataFileCount > 3)
 			bReadFileSuiccess = readMultyFileData(nId_, xmlActiveMegdr);
 		else
@@ -183,14 +201,7 @@ namespace megdr
 		if (!bReadFileSuiccess)
 			return false;
 
-		//---------------------------------------------------------------------------------------------
-
-
-		for (megdr::MSB_INTEGER& value : m_mvRadius[nId_])
-			swapInt16(&value);
-
-		for (megdr::MSB_INTEGER& value : m_mvTopography[nId_])
-			swapInt16(&value);
+		std::chrono::steady_clock::time_point endRead = std::chrono::steady_clock::now();
 
 		//---------------------------------------------------------------------------------------------
 
@@ -209,6 +220,8 @@ namespace megdr
 			m_mvIndeces[nId_][4 * i + 3] = nTailPoint + nLineSamples;
 		}
 
+		std::chrono::steady_clock::time_point endIndex = std::chrono::steady_clock::now();
+
 		// Indirect
 		m_mvIndirect[nId_].resize(nLines - 1);
 		for (unsigned i = 0; i < nLines - 1; ++i)
@@ -220,7 +233,17 @@ namespace megdr
 			m_mvIndirect[m_nActiveID][i].baseInstance = 0;
 		}
 
+		std::chrono::steady_clock::time_point endIndirect = std::chrono::steady_clock::now();
+
 		//----------------------------------------------------------------------------------------
+
+		informLn(std::string("Количество файлов: " + std::to_string(nDataFileCount)).c_str());
+		informLn(std::string("Загрузка данных, с: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endRead - begin).count() * 1.0 / 1000)).c_str());
+		informLn(std::string("Индексы, с: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endIndex - begin).count() * 1.0 / 1000)).c_str());
+		informLn(std::string("Inderect, с: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endIndirect - begin).count() * 1.0 / 1000)).c_str());
+		informLn(std::string("---------------------------------------------------------------").c_str());
+
+		//---------------------------------------------------------------------------------------------
 
 		return true;
 	}
@@ -234,7 +257,7 @@ namespace megdr
 		}
 		catch (...)
 		{
-			messageLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
+			informLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
 			return false;
 		}
 
@@ -249,7 +272,7 @@ namespace megdr
 
 		if (bXMLmistake)
 		{
-			messageLn("Some nodes missed in config file. There should be: <RadiusFile> <TopographyFile>");
+			informLn("Some nodes missed in config file. There should be: <RadiusFile> <TopographyFile>");
 			return false;
 		}
 
@@ -268,7 +291,7 @@ namespace megdr
 		nDataFileCountRaw = (unsigned)sqrt(nDataFileCount);
 		if (nDataFileCountRaw * nDataFileCountRaw != nDataFileCount)
 		{
-			messageLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
+			informLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
 			return false;
 		}
 		
@@ -282,7 +305,7 @@ namespace megdr
 		}
 		catch ( ... )
 		{
-			messageLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
+			informLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
 			return false;
 		}
 

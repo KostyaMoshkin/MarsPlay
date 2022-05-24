@@ -3,9 +3,9 @@
 
 namespace util {
 
-#define inform(m) std::cout << m << std::endl
+#define to_cout(m) std::cout << m << std::endl
 
 #define wait() system("pause")
-#define wait_return() inform("Check log file"); wait(); return -1
+#define wait_return() to_cout("Check log file"); wait(); return -1
 
 }

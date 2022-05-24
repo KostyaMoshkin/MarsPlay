@@ -31,7 +31,7 @@ namespace GL {
 
 		if (m_pWindow == nullptr)
 		{
-			messageLn("no window");
+			informLn("no window");
 			return false;
 		}
 
@@ -44,7 +44,7 @@ namespace GL {
 
 		if( glewInit() != GLEW_OK )
 		{
-			messageLn("glewInit error");
+			informLn("glewInit error");
 			return false;
 		}
 
@@ -258,7 +258,7 @@ namespace GL {
 		while (((err = glGetError()) != GL_NO_ERROR) && ++nCount < 1000)
 		{
 			if (check_error_)
-				messageLn(std::string(std::string("OpenGL error: ") + std::to_string(err)).c_str());
+				informLn(std::string(std::string("OpenGL error: ") + std::to_string(err)).c_str());
 
 			result = false;
 		}
