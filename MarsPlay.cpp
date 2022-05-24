@@ -16,9 +16,9 @@ int main()
 
 	lib::LoggerSetup(lib::XMLreader::getNode(pXMLconfig->getRoot(), "Logger"));
 
-	lib::logger::putSeparator();
-	lib::logger::putTimeStamp();
-	informLn("");
+	toLog("==============================================================");
+	toLog(lib::getCurrentDateTime());
+	toLog("");
 
 
 	GL::SceneRenderPtr pSceneRender = GL::SceneRender::Create();
@@ -26,7 +26,7 @@ int main()
 	if (!pSceneRender->init())
 	{
 		pSceneRender.reset();
-		inform("OpenGL init ERROR");
+		toLog("OpenGL init ERROR");
 		wait_return();
 	}
 
@@ -35,12 +35,12 @@ int main()
 	int nVersionFull = pSceneRender->GetVersion();
 
 	std::cout << "OpenGL version: " << nVersionFull << std::endl;
-	informLn(std::string(std::string("OpenGL version : ") + std::to_string(nVersionFull)).c_str());
+	toLog("OpenGL version : " + std::to_string(nVersionFull));
 
 	if (nVersionFull < 40)
 	{
 		pSceneRender.reset();
-		informLn("OpenGL version should be 40 or higher.");
+		toLog("OpenGL version should be 40 or higher.");
 		wait_return();
 	}
 
@@ -55,7 +55,7 @@ int main()
 	if (!pRenderMegdr->init(ptScreenSize))
 	{
 		pSceneRender.reset();
-		informLn("OpenGL RenderMegdr init ERROR");
+		toLog("OpenGL RenderMegdr init ERROR");
 		wait_return();
 	}
 	pRenderMegdr->setVisible(true);

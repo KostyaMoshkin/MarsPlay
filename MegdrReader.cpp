@@ -19,7 +19,7 @@ namespace megdr
 		FILE* pMegdrFile_ = nullptr;
 		if (fopen_s(&pMegdrFile_, sFileName, "rb") != 0)
 		{
-			informLn(std::string(std::string("Radius File not found: ") + std::string(sFileName)).c_str());
+			toLog(std::string("Radius File not found: ") + std::string(sFileName));
 			nFileSize_ = -1;
 			return nullptr;
 		}
@@ -50,7 +50,7 @@ namespace megdr
 		{
 			if (fread(vDest_ + nArraySegment_ + i * nPointsInRaw_, nLineSamples_ * sizeof(megdr::MSB_INTEGER), 1, pMegdrFile) != 1)
 			{
-				informLn("Radius didn't read properly.");
+				toLog("Radius didn't read properly.");
 				fclose(pMegdrFile);
 				return false;
 			}
@@ -122,7 +122,7 @@ namespace megdr
 			int nId = -1;
 			if (!lib::XMLreader::getInt(xmlMegdr, id(), nId))
 			{
-				informLn("Config should contain id attribut for: Megdr id=\"1\"");
+				toLog("Config should contain id attribut for: Megdr id=\"1\"");
 				nId = -1;
 			}
 
@@ -133,7 +133,7 @@ namespace megdr
 
 		if (m_vMegdrNode.empty())
 		{
-			informLn("In config file node <Megdr> not found");
+			toLog("In config file node <Megdr> not found");
 			return false;
 		}
 
@@ -169,7 +169,7 @@ namespace megdr
 
 		if (bXMLmistake)
 		{
-			informLn("Some nodes missed in config file. There should be: <BaseHeight> <Lines> <LineSamples>");
+			toLog("Some nodes missed in config file. There should be: <BaseHeight> <Lines> <LineSamples>");
 			return false;
 		}
 
@@ -231,7 +231,7 @@ namespace megdr
 		}
 		catch (...)
 		{
-			informLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
+			toLog("No enough memory. Ask for: " + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] * 2 / 1024 / 1024) + " x 2 Mb");
 			return false;
 		}
 
@@ -246,7 +246,7 @@ namespace megdr
 
 		if (bXMLmistake)
 		{
-			informLn("Some nodes missed in config file. There should be: <RadiusFile> <TopographyFile>");
+			toLog("Some nodes missed in config file. There should be: <RadiusFile> <TopographyFile>");
 			return false;
 		}
 
@@ -267,7 +267,7 @@ namespace megdr
 		nDataFileCountRaw = (unsigned)sqrt(nDataFileCount);
 		if (nDataFileCountRaw * nDataFileCountRaw != nDataFileCount)
 		{
-			informLn("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
+			toLog("Node <Count> should be i^2^ 4, 9, 16, 25 ...");
 			return false;
 		}
 		
@@ -281,7 +281,7 @@ namespace megdr
 		}
 		catch ( ... )
 		{
-			informLn(std::string(std::string("No enough memory. Ask for Mb: ") + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] / 1024 / 1024)).c_str());
+			toLog("No enough memory. Ask for: " + std::to_string(m_mnLines[nId_] * m_mnLineSamples[nId_] * 2 / 1024 / 1024) + " x 2 Mb");
 			return false;
 		}
 

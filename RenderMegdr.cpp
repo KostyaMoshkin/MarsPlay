@@ -197,7 +197,7 @@ namespace GL {
 
 		if (!m_pPaletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))
 		{
-			informLn("ERROR    m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))");
+			toLog("ERROR    m_pPeletteTexture->fillBuffer1D(GL_RGB, vColorText.size(), GL_RGB, GL_FLOAT, vColorText.data()))");
 			return false;
 		}
 
@@ -227,7 +227,7 @@ namespace GL {
 
 		if (!m_pRadiusVertex->fillBuffer(m_pMegdr->getRadiusSize(), m_pMegdr->getRadius()))
 		{
-			informLn("Error m_pRadiusVertex->fillBuffer()");
+			toLog("Error m_pRadiusVertex->fillBuffer()");
 			return false;
 		}
 
@@ -237,7 +237,7 @@ namespace GL {
 
 		if (!m_pTopographyVertex->fillBuffer(m_pMegdr->getTopographySize(), m_pMegdr->getTopography()))
 		{
-			informLn("Error m_pTopographyVertex->fillBuffer()");
+			toLog("Error m_pTopographyVertex->fillBuffer()");
 			return false;
 		}
 
@@ -250,7 +250,7 @@ namespace GL {
 
 		if (!m_pIndex->fillBuffer(m_pMegdr->getIndecesSize(), m_pMegdr->getIndeces()))
 		{
-			informLn("Error m_pIndex->fillBuffer()");
+			toLog("Error m_pIndex->fillBuffer()");
 			return false;
 		}
 
@@ -258,7 +258,7 @@ namespace GL {
 
 		if (!m_pIndirect->fillBuffer(m_pMegdr->getIndirectSize(), m_pMegdr->getIndirect()))
 		{
-			informLn("Error m_pIndirect->fillBuffer()");
+			toLog("Error m_pIndirect->fillBuffer()");
 			return false;
 		}
 

@@ -72,13 +72,13 @@ namespace GL {
 
         if (nCompileStatus == GL_FALSE)
         {
-            informLn(std::string(std::string("Shader compilation of file: ") + m_sShaderFile).c_str());
+            toLog("Shader compilation of file: " + m_sShaderFile);
 
             GLsizei logLength;
             GLchar  log[1024];
             glGetShaderInfoLog(id, sizeof(log), &logLength, log);
 
-            informLn(std::string(std::string("Shader info log: ") + std::string(log)).c_str());
+            toLog("Shader info log: " + std::string(log));
 
             glDeleteShader(id);
 
@@ -111,7 +111,7 @@ namespace GL {
             char buf[2048];
             glGetProgramInfoLog(m_nProgramId, nLog_length, &nLog_length, buf);
 
-            informLn(std::string(std::string("ShaderProgram::compileProgram(). The function 'glGetProgramiv' return an error: ") + std::string(buf) + std::string(" in shader: ") + m_sShaderFile).c_str());
+            toLog("ShaderProgram::compileProgram(). The function 'glGetProgramiv' return an error: " + std::string(buf) + std::string(" in shader: ") + m_sShaderFile);
 
             for (size_t i = 0; i < m_vShader.size(); ++i)
             {
