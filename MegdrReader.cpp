@@ -2,6 +2,7 @@
 
 #include "LOG/logger.h"
 
+#include <windows.h>
 #include <chrono>
 #include <future>
 
@@ -22,24 +23,7 @@ namespace megdr
 		memcpy(a, c, 2);
 	}
 
-	static bool loadArray(FILE* pFile_, std::vector<MSB_INTEGER>& vDest_, unsigned nPointsInRaw_, unsigned nArraySegment_, unsigned nLines_, unsigned nLineSamples_)
-	{
-		for (unsigned i = 0; i < nLines_; ++i)
-		{
-			if (fread(&vDest_[nArraySegment_ + i * nPointsInRaw_], nLineSamples_ * sizeof(megdr::MSB_INTEGER), 1, pFile_) != 1)
-			{
-				informLn("Radius didn't read properly.");
-				return false;
-			}
-
-			for (size_t k = 0; k < nLineSamples_; ++k)
-				swapInt16(&vDest_[k + nArraySegment_ + i * nPointsInRaw_]);
-		}
-
-		return true;
-	}
-
-	static FILE* openMegdrFile(const char *sFileName, long &nFileSize_)
+	static FILE* openMegdrFile(const char* sFileName, long& nFileSize_)
 	{
 		FILE* pMegdrFile_ = nullptr;
 		if (fopen_s(&pMegdrFile_, sFileName, "rb") != 0)
@@ -56,7 +40,32 @@ namespace megdr
 		return pMegdrFile_;
 	}
 
-	static bool readSectorData(std::vector<MSB_INTEGER>& vRadius_, std::vector<MSB_INTEGER>& vTopography_, 
+	static bool loadArray(const char* pFile_, MSB_INTEGER* vDest_, unsigned nPointsInRaw_, unsigned nArraySegment_, unsigned nLines_, unsigned nLineSamples_)
+	{
+		long nFileSize = -1;
+		FILE* pMegdrFile = openMegdrFile(pFile_, nFileSize);
+
+		if (!pMegdrFile)
+			return false;
+
+		for (unsigned i = 0; i < nLines_; ++i)
+		{
+			if (fread(vDest_ + nArraySegment_ + i * nPointsInRaw_, nLineSamples_ * sizeof(megdr::MSB_INTEGER), 1, pMegdrFile) != 1)
+			{
+				informLn("Radius didn't read properly.");
+				fclose(pMegdrFile);
+				return false;
+			}
+
+			for (size_t k = 0; k < nLineSamples_; ++k)
+				swapInt16(vDest_ + k + nArraySegment_ + i * nPointsInRaw_);
+		}
+
+		fclose(pMegdrFile);
+		return true;
+	}
+
+	static bool readSectorData(MSB_INTEGER* vRadius_, MSB_INTEGER* vTopography_,
 		const char *sRadiusPath_, const char* sTopographyPath_,
 		lib::XMLnodePtr xmlActiveMegdr_, 
 		unsigned nFistLine_ = 0, unsigned nFirstSample_ = 0, unsigned nRowCount_ = 1)
@@ -66,38 +75,17 @@ namespace megdr
 
 		unsigned nLineSamples = 0;
 		lib::XMLreader::getInt(lib::XMLreader::getNode(xmlActiveMegdr_, MegdrReader::nLineSamples()), nLineSamples);
-
-		long m_nRadiusFileSize = -1;
-		FILE* pMegdrRadius = openMegdrFile(sRadiusPath_, m_nRadiusFileSize);
-
-		long m_nTopographyFileSize = -1;
-		FILE* pMegdrTopography = openMegdrFile(sTopographyPath_, m_nTopographyFileSize);
-
-		if (!pMegdrRadius || !pMegdrTopography)
-			return false;
-
-		if ((m_nRadiusFileSize != m_nTopographyFileSize) || (m_nRadiusFileSize < 0))
-		{
-			informLn("Data file sizes differ.");
-			return false;
-		}
-
-		if (m_nRadiusFileSize != vRadius_.size() * sizeof(megdr::MSB_INTEGER) / nRowCount_ / nRowCount_)
-		{
-			informLn("File sizes doesn't match with m_nLines * m_nLineSamples * 2 <MSB_INTEGER>.");
-			return false;
-		}
 		
 		unsigned nPointsInRaw = nRowCount_ * nLineSamples;
 		unsigned nArraySegment = nPointsInRaw * nLines * nFistLine_ * (nRowCount_ - 1) + nFirstSample_ * nLineSamples;
 
 		bool bError = false;
 
-		bError |= !loadArray(pMegdrRadius, vRadius_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
-		bError |= !loadArray(pMegdrTopography, vTopography_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
+		std::future<bool> syncRadius		= std::async(std::launch::async, loadArray, sRadiusPath_, vRadius_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
+		std::future<bool> syncTopography	= std::async(std::launch::async, loadArray, sTopographyPath_, vTopography_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
 
-		fclose(pMegdrRadius);
-		fclose(pMegdrTopography);
+		//bError |= !loadArray(sRadiusPath_, vRadius_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
+		//bError |= !loadArray(sTopographyPath_, vTopography_, nPointsInRaw, nArraySegment, nLines, nLineSamples);
 
 		if (bError)
 			return false;
@@ -278,7 +266,9 @@ namespace megdr
 
 		//--------------------------------------------------------------------------------------------
 
-		return readSectorData(m_mvRadius[nId_], m_mvTopography[nId_], sRadiusPath.c_str(), sTopographyPath.c_str(), xmlActiveMegdr_);
+		bool bResult = readSectorData(m_mvRadius[nId_].data(), m_mvTopography[nId_].data(), sRadiusPath.c_str(), sTopographyPath.c_str(), xmlActiveMegdr_);
+
+		return bResult;
 	}
 
 	bool MegdrReader::readMultyFileData(unsigned nId_, lib::XMLnodePtr xmlActiveMegdr_)
@@ -361,13 +351,17 @@ namespace megdr
 
 		bool bReadMistake = false;
 
+		std::vector<std::future<bool>> vFutureRead(vMegdrSrs.size());
+
 		for (auto& megdrFile : vMegdrSrs)
 		{
 			if (!megdrFile.first.sFileName.empty())
-				bReadMistake |= !readSectorData(m_mvRadius[nId_], m_mvTopography[nId_],
+			{
+				vFutureRead.push_back(std::async(std::launch::async, readSectorData, m_mvRadius[nId_].data(), m_mvTopography[nId_].data(),
 					megdrFile.first.sFileName.c_str(), megdrFile.second.sFileName.c_str(),
 					xmlActiveMegdr_,
-					megdrFile.first.nLine, megdrFile.first.nSample, nDataFileCountRaw);
+					megdrFile.first.nLine, megdrFile.first.nSample, nDataFileCountRaw));
+			}
 		}
 
 		//--------------------------------------------------------------------------------------------
