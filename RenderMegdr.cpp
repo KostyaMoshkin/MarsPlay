@@ -63,16 +63,10 @@ namespace GL {
 		m_pRadiusVertex = GL::VertexBuffer::Create();
 		m_pRadiusVertex->setUsage(GL_STATIC_DRAW);
 
-		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
-		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
-
 		//-------------------------------------------------------------------------------------------------
 
 		m_pTopographyVertex = GL::VertexBuffer::Create();
 		m_pTopographyVertex->setUsage(GL_STATIC_DRAW);
-
-		BufferBounder<VertexBuffer> areoidnBounder(m_pTopographyVertex);
-		m_pTopographyVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
 
 		//-------------------------------------------------------------------------------------------------
 
@@ -237,7 +231,9 @@ namespace GL {
 			return false;
 		}
 
-		BufferBounder<VertexBuffer> areoidBounder(m_pTopographyVertex);
+		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
+
+		BufferBounder<VertexBuffer> topographyBounder(m_pTopographyVertex);
 
 		if (!m_pTopographyVertex->fillBuffer(m_pMegdr->getTopographySize(), m_pMegdr->getTopography()))
 		{
@@ -246,7 +242,7 @@ namespace GL {
 		}
 
 		m_pTopographyVertex->attribIPointer(1, 1, GL_SHORT, 0, 0);
-		m_pRadiusVertex->attribIPointer(0, 1, GL_SHORT, 0, 0);
+
 
 		//-------------------------------------------------------------------------------------------------
 
