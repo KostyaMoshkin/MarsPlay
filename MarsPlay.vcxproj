@@ -207,6 +207,7 @@
     <ClInclude Include="CBitmap.h" />
     <ClInclude Include="CConfig.h" />
     <ClInclude Include="Include\LOG\logger.h" />
+    <ClInclude Include="Include\stb_image.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="IndirectBuffer.h" />
     <ClInclude Include="lib.h" />

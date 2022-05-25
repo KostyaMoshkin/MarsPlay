@@ -176,6 +176,9 @@
     <ClInclude Include="IndirectBuffer.h">
       <Filter>GL</Filter>
     </ClInclude>
+    <ClInclude Include="Include\stb_image.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Shader.rc">

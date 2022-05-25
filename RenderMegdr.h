@@ -18,7 +18,8 @@ namespace GL {
 
 	class RenderMegdr : public Render
 	{
-		static const char* ViewAngle() { return "ViewAngle"; }
+		static const char* ViewAngle()	{ return "ViewAngle";	}
+		static const char* Albedo()		{ return "Albedo";		}
 
 		ShaderProgramPtr m_pMegdrProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
@@ -26,6 +27,7 @@ namespace GL {
 		IndexBufferPtr m_pIndex = nullptr;
 		IndirectBufferPtr m_pIndirect = nullptr;
 		TextureBufferPtr m_pPaletteTexture = nullptr;
+		TextureBufferPtr m_pAlbedoTexture = nullptr;
 
 		PalettePtr m_pPalette = nullptr;
 		megdr::MegdrReaderPtr m_pMegdr = nullptr;
@@ -52,6 +54,7 @@ namespace GL {
 		void setViewAngle();
 
 		bool fillPalette();
+		bool fillAlbedo(const char* sAlbedoFile_);
 		bool fillVertex();
 
 	public:

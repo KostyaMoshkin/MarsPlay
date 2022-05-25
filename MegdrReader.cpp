@@ -39,11 +39,11 @@ namespace megdr
 		if (!pMegdrFile)
 			return false;
 
-		auto swapInt = [](MSB_INTEGER* a) {		
-			unsigned char b[2], c[2];
-			memcpy(b, a, 2);
-			c[0] = b[1]; c[1] = b[0];
-			memcpy(a, c, 2);
+		auto swapInt = [](MSB_INTEGER* a) {	
+			struct int_byte {
+				unsigned char a, b;
+			}* value = (int_byte * )a;
+			std::swap<unsigned char>(value->a, value->b);
 		};
 
 		for (unsigned i = 0; i < nLines_; ++i)

@@ -1,6 +1,7 @@
 #include "TextureBuffer.h"
 
 #include <GLEW/glew.h>
+#include <stb_image.h>
 
 
 
@@ -87,9 +88,28 @@ namespace GL {
         return m_nBufferId;
       }
 
+      bool TextureBuffer::loadFromFile(const char* sAlbedoFile_) const
+      {
+          int nWidth, nHeight, nrChannels;
+
+          unsigned char* pImage = stbi_load(sAlbedoFile_, &nWidth, &nHeight, &nrChannels, 0);
+
+          if (!pImage)
+              return false;
+
+          glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nWidth, nHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage);
+          glGenerateMipmap(GL_TEXTURE_2D);
+
+          stbi_image_free(pImage);
+
+          m_bInit = true;
+
+          return true;
+      }
+
       void TextureBuffer::alignment(int nAlignment_) const
       {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, nAlignment_);
+          glPixelStorei(GL_UNPACK_ALIGNMENT, nAlignment_);
       }
 
       void TextureBuffer::setTexParametr(int nTexParametr_)

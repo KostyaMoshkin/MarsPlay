@@ -39,6 +39,7 @@ namespace GL {
 		m_fViewAspect = (GLfloat)ptScreenSize_.x / (GLfloat)ptScreenSize_.y;
 
 		m_pPaletteTexture = GL::TextureBuffer::Create(GL_TEXTURE_1D);
+		m_pAlbedoTexture = GL::TextureBuffer::Create(GL_TEXTURE_2D);
 		m_pIndex = GL::IndexBuffer::Create();
 		m_pIndirect = GL::IndirectBuffer::Create();
 
@@ -114,6 +115,14 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
+		std::string sAlbedoFile;
+		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(getConfig(), Albedo()), sAlbedoFile))
+			return false;
+
+		fillAlbedo(sAlbedoFile.c_str());
+
+		//-------------------------------------------------------------------------------------------------
+
 		m_fCamPosition.y = 0.0f;
 
 		setVisible(true);
@@ -129,7 +138,8 @@ namespace GL {
 		BufferBounder<RenderMegdr> renderBounder(this);
 		BufferBounder<VertexBuffer> radiusBounder(m_pRadiusVertex);
 		BufferBounder<VertexBuffer> areoidBounder(m_pTopographyVertex);
-		BufferBounder<TextureBuffer> PeletteTextureBounder(m_pPaletteTexture);
+		BufferBounder<TextureBuffer> peletteTextureBounder(m_pPaletteTexture);
+		BufferBounder<TextureBuffer> albedoTextureBounder(m_pAlbedoTexture);
 		BufferBounder<IndexBuffer> indexBounder(m_pIndex);
 		BufferBounder<IndirectBuffer> indirectBounder(m_pIndirect);
 
@@ -203,6 +213,20 @@ namespace GL {
 
 		m_pMegdrProgram->setUniform1f("m_fPaletteValueMin", &fDataMin);
 		m_pMegdrProgram->setUniform1f("m_fPaletteValueMax", &fDataMax);
+
+		return true;
+	}
+
+	bool RenderMegdr::fillAlbedo(const char* sAlbedoFile_)
+	{
+		BufferBounder<ShaderProgram> programBounder(m_pMegdrProgram);
+		BufferBounder<TextureBuffer> albedoTextureBounder(m_pAlbedoTexture);
+
+		if (!m_pAlbedoTexture->loadFromFile(sAlbedoFile_))
+		{
+			toLog("ERROR    m_pAlbedoTexture->loadFromFile(sAlbedoFile_)");
+			return false;
+		}
 
 		return true;
 	}

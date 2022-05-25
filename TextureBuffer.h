@@ -29,6 +29,8 @@ namespace GL {
 
         int getBufferId() const;
 
+        bool loadFromFile(const char* sAlbedoFile_) const;
+
         void alignment(int nAlignment_) const;
 
         void setTexParametr(int nTexParametr_);
