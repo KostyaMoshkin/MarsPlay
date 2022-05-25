@@ -119,7 +119,7 @@ namespace GL {
 		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(getConfig(), Albedo()), sAlbedoFile))
 			return false;
 
-		fillAlbedo(sAlbedoFile.c_str());
+		//fillAlbedo(sAlbedoFile.c_str());
 
 		//-------------------------------------------------------------------------------------------------
 

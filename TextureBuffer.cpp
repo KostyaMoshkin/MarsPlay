@@ -3,7 +3,7 @@
 #include <GLEW/glew.h>
 #include <stb_image.h>
 
-
+#define STB_IMAGE_IMPLEMENTATION
 
 namespace GL {
 
@@ -90,19 +90,17 @@ namespace GL {
 
       bool TextureBuffer::loadFromFile(const char* sAlbedoFile_) const
       {
-          int nWidth, nHeight, nrChannels;
+          //int nWidth, nHeight, nrChannels;
 
-          unsigned char* pImage = stbi_load(sAlbedoFile_, &nWidth, &nHeight, &nrChannels, 0);
+          //unsigned char* pImage = stbi_load(sAlbedoFile_, &nWidth, &nHeight, &nrChannels, 0);
 
-          if (!pImage)
-              return false;
+          //if (!pImage)
+          //    return false;
 
-          glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nWidth, nHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage);
-          glGenerateMipmap(GL_TEXTURE_2D);
+          //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, nWidth, nHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage);
+          //glGenerateMipmap(GL_TEXTURE_2D);
 
-          stbi_image_free(pImage);
-
-          m_bInit = true;
+          //stbi_image_free(pImage);
 
           return true;
       }
