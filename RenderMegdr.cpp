@@ -115,14 +115,6 @@ namespace GL {
 
 		//-------------------------------------------------------------------------------------------------
 
-		std::string sAlbedoFile;
-		if (!lib::XMLreader::getSting(lib::XMLreader::getNode(getConfig(), Albedo()), sAlbedoFile))
-			return false;
-
-		//fillAlbedo(sAlbedoFile.c_str());
-
-		//-------------------------------------------------------------------------------------------------
-
 		m_fCamPosition.y = 0.0f;
 
 		setVisible(true);

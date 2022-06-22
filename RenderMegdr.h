@@ -19,7 +19,6 @@ namespace GL {
 	class RenderMegdr : public Render
 	{
 		static const char* ViewAngle()	{ return "ViewAngle";	}
-		static const char* Albedo()		{ return "Albedo";		}
 
 		ShaderProgramPtr m_pMegdrProgram = nullptr;
 		VertexBufferPtr m_pRadiusVertex = nullptr;
