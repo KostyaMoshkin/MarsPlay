@@ -1,7 +1,7 @@
 Программа отображения рельефа поверхности Марса
 
 Для работы программы необходимо загрузить файлы megR*.img megT*.img с данными рельефа поверхности 
-с сайта NASA:
+с сайта NASA. Несколько загруженных файлов и настроенный config лежат в папке Result в решении.
 разрешение 4 пикселя на градус https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg004/
 разрешение 16 пикселей на градус https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg016/
 разрешение 32 пикселя на градус https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg032/
